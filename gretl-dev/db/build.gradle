@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        maven { url "http://download.osgeo.org/webdav/geotools/" }
+        jcenter()
+        mavenCentral()
+        maven { url "http://jars.interlis.ch" }
+    }
+}
+
+plugins {
+    id "ch.so.agi.gretl" version "2.0.74"
+    id "com.bmuschko.docker-remote-api" version "4.9.0"
+}
+
+apply from: "$rootDir/versioning.gradle"
+
+import java.text.SimpleDateFormat
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer.ExposedPort
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerLogsContainer
+
+def getCheckedOutGitCommitHash() {
+    'git log -1 --pretty=%H'.execute().text.trim()
+}
+
+task buildDockerImage(type: DockerBuildImage) {
+    description = "Build docker image."
+    inputDir = project.rootDir
+    tags = ["edigonzales/oereb-edit-db:"+version.toString(), "edigonzales/oereb-edit-db:latest"]
+    labels = ["oereb-edit-db.created": new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), 
+            "oereb-edit-db.git_commit": getCheckedOutGitCommitHash(), 
+            "oereb-edit-db.travis_build": version.toString()]
+}
+
+task createDockerContainer(dependsOn: 'buildDockerImage', type: DockerCreateContainer) {
+    description = "Create docker container."
+    targetImageId buildDockerImage.getImageId()
+    containerName = "oereb-edit-db"
+    portBindings = ['54321:5432']
+    exposedPorts = [new ExposedPort("tcp", [5432])]
+    envVars.set(["PG_DATABASE": "edit",
+               "PG_LOCALE": "de_CH.UTF-8",
+               "PG_PRIMARY_PORT": "5432",
+               "PG_MODE": "primary",
+               "PG_USER": "admin",
+               "PG_PASSWORD": "admin",
+               "PG_PRIMARY_USER": "repl",
+               "PG_PRIMARY_PASSWORD": "repl",
+               "PG_ROOT_PASSWORD": "secret",
+               "PG_WRITE_USER": "gretl",
+               "PG_WRITE_PASSWORD": "gretl",
+               "PG_READ_USER": "ogc_server",
+               "PG_READ_PASSWORD": "ogc_server"])
+    volumes = ["/tmp:/pgdata"]
+}
+
+task startDockerContainer(dependsOn: 'createDockerContainer', type: DockerStartContainer) {	
+    description = "Start docker container."
+    targetContainerId createDockerContainer.getContainerId()
+
+    finalizedBy {
+        logDockerContainer
+    }
+}
+
+task logDockerContainer(type: DockerLogsContainer) {
+    description = "Show docker container logs on standard out."
+    targetContainerId  startDockerContainer.getContainerId()
+    follow = true
+    tailAll = true
+}
