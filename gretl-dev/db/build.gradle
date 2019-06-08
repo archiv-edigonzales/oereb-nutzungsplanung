@@ -1,14 +1,4 @@
-buildscript {
-    repositories {
-        maven { url "http://download.osgeo.org/webdav/geotools/" }
-        jcenter()
-        mavenCentral()
-        maven { url "http://jars.interlis.ch" }
-    }
-}
-
 plugins {
-    id "ch.so.agi.gretl" version "2.0.74"
     id "com.bmuschko.docker-remote-api" version "4.9.0"
 }
 
@@ -17,10 +7,12 @@ apply from: "$rootDir/versioning.gradle"
 import java.text.SimpleDateFormat
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer.ExposedPort
 import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerLogsContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
 
 def getCheckedOutGitCommitHash() {
     'git log -1 --pretty=%H'.execute().text.trim()
@@ -28,14 +20,15 @@ def getCheckedOutGitCommitHash() {
 
 task buildDockerImage(type: DockerBuildImage) {
     description = "Build docker image."
-    inputDir = project.rootDir
+    //inputDir = project.rootDir
+    inputDir = projectDir
     tags = ["edigonzales/oereb-edit-db:"+version.toString(), "edigonzales/oereb-edit-db:latest"]
     labels = ["oereb-edit-db.created": new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), 
             "oereb-edit-db.git_commit": getCheckedOutGitCommitHash(), 
             "oereb-edit-db.travis_build": version.toString()]
 }
 
-task createDockerContainer(dependsOn: 'buildDockerImage', type: DockerCreateContainer) {
+task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreateContainer) {
     description = "Create docker container."
     targetImageId buildDockerImage.getImageId()
     containerName = "oereb-edit-db"
@@ -57,14 +50,35 @@ task createDockerContainer(dependsOn: 'buildDockerImage', type: DockerCreateCont
     volumes = ["/tmp:/pgdata"]
 }
 
+task removeDockerContainer(dependsOn: 'buildDockerImage', type: DockerRemoveContainer) {
+    description = "Remove existing docker container."
+    removeVolumes = true
+    force = true
+    targetContainerId createDockerContainer.containerName 
+
+    onError { exception -> 
+        println exception.message
+    }
+}
+
 task startDockerContainer(dependsOn: 'createDockerContainer', type: DockerStartContainer) {	
     description = "Start docker container."
     targetContainerId createDockerContainer.getContainerId()
 
+    /*
     finalizedBy {
         logDockerContainer
     }
+    */
 }
+
+task startAndWaitOnHealthyContainer(dependsOn: 'startDockerContainer', type: DockerWaitHealthyContainer) {
+    description = "Wait on healthy docker container."
+    targetContainerId createDockerContainer.getContainerId()
+    awaitStatusTimeout = 120
+    checkInterval = 10000
+}
+
 
 task logDockerContainer(type: DockerLogsContainer) {
     description = "Show docker container logs on standard out."

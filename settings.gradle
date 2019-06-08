@@ -1,0 +1,4 @@
+rootProject.name = 'oereb-datenumbau-npl'
+include 'gretl'
+include 'gretl-dev:db'
+include 'gretl-dev:data'

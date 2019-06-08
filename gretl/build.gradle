@@ -1,0 +1,104 @@
+buildscript {
+    repositories {
+        maven { url "http://download.osgeo.org/webdav/geotools/" }
+        jcenter()
+        mavenCentral()
+        maven { url "http://jars.interlis.ch" }
+    }
+}
+
+plugins {
+    id "ch.so.agi.gretl" version "2.0.74"
+    id "de.undercouch.download" version "3.4.3"
+}
+
+import java.nio.file.Paths
+import ch.so.agi.gretl.tasks.*
+
+ext {
+    dbUriEdit = "jdbc:postgresql://localhost:54321/edit"
+    dbUserEdit = "gretl"
+    dbPwdEdit = "gretl"
+
+    iliModelLandUsePlans = "SO_Nutzungsplanung_20171118"
+    dbSchemaLandUsePlans = "arp_npl"
+
+    iliModelVorschriften = "OeREBKRMvs_V1_1"
+    iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
+    dbSchemaLandUsePlansOerebStaging = "agi_oereb_npl_staging"
+}
+
+def pathToTempFolder = System.getProperty("java.io.tmpdir")
+
+def cantonalLegalBasisBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.sk.oereb/"
+def cantonalLegalBaseDataSet = "ch.so.sk.gesetze.oereb"
+
+def responsibleOfficesBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung.oereb-dev/"
+def responsibleOfficesDataSet = "ch.so.arp.nutzungsplanung.zustaendigestelle"
+
+def GROUP = "Datenumbau NPLSO -> Transferstruktur (Staging)"
+
+// Löscht sämtliche Daten aus dem ÖREB-NPL-Staging-Schema in der Edit-DB.
+task deleteFromStaging(type: SqlExecutor) {
+    description = "Löscht die Daten aus dem Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
+    group = GROUP
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    sqlFiles = ["delete_oereb_landuseplans_staging_tables.sql"]
+}
+
+// Macht den Datenumbau aus dem kantonalen Modell der NPL in die Transferstruktur im ÖREB-NPL-Staging-Schema.
+task insertToStaging(type: SqlExecutor, dependsOn: 'deleteStaging') {
+    description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
+    group = GROUP
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    sqlFiles = ["insert_oereb_npl_staging.sql", "insert_oereb_npl_staging_legal_basis.sql", "update_oereb_npl_staging_responsible_office.sql", "update_oereb_npl_staging_fix_empty_responsible_office_errors.sql"]
+}
+
+// Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-Staging-Schema.
+task downloadCantonalLegalBasis(type: Download) {
+    description = "Download kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    group = GROUP
+    src cantonalLegalBasisBaseUrl + cantonalLegalBaseDataSet + ".xml"
+    dest pathToTempFolder
+    overwrite true
+
+    doLast {
+        println "File downloaded to: " + pathToTempFolder
+    }        
+}
+
+task importCantonalLegalBasisToStaging(type: Ili2pgReplace, dependsOn: 'downloadCantonalLegalBasis') {
+    description = "Import kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    group = GROUP
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelVorschriften
+    dbschema = dbSchemaLandUsePlansOerebStaging
+    dataFile = file(Paths.get(pathToTempFolder.toString(), cantonalLegalBaseDataSet + ".xml"))
+    dataset = "ch.so.sk.legal_basis" // Anderes (in diesem Fall beliebig) Dataset, da die dazugehörigen Daten nicht Bestandteil des Transfers (des exportierten Files) sein dürfen.
+    disableValidation = true
+}
+
+// Lädt die Daten der zuständigen Stellen der Nutzungsplanung herunter und importiert diese in das
+// ÖREB-NPL-Staging-Schema.
+task downloadResponsibleOffices(type: Download) {
+    description = "Download zuständige Stellen ($responsibleOfficesDataSet)."
+    group = GROUP
+    src responsibleOfficesBaseUrl + responsibleOfficesDataSet + ".xtf"
+    dest pathToTempFolder
+    overwrite true
+
+    doLast {
+        println "File downloaded to: " + pathToTempFolder
+    }        
+}
+
+task importResponsibleOfficesToStaging(type: Ili2pgReplace, dependsOn: 'downloadResponsibleOffices') {
+    description = "Import zuständige Stellen ($responsibleOfficesDataSet)."
+    group = GROUP
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelTransferstruktur
+    dbschema = dbSchemaLandUsePlansOerebStaging
+    dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
+    dataset = "ch.so.arp.nutzungsplanung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. TODO: Herausforderung pro Gemeinde in Verbindung mit der/den fehlenden zuständigen Stelle(n)
+    disableValidation = true
+}

@@ -1,0 +1,76 @@
+buildscript {
+    repositories {
+        maven { url "http://download.osgeo.org/webdav/geotools/" }
+        jcenter()
+        mavenCentral()
+        maven { url "http://jars.interlis.ch" }
+    }
+}
+
+plugins {
+    id "ch.so.agi.gretl" version "2.0.74"
+    id "de.undercouch.download" version "3.4.3"
+}
+
+import ch.so.agi.gretl.tasks.*
+import java.nio.file.Paths
+
+ext {
+    dbUriEdit = "jdbc:postgresql://localhost:54321/edit"
+    dbUserEdit = "gretl"
+    dbPwdEdit = "gretl"
+
+    iliModelLandUsePlans = "SO_Nutzungsplanung_20171118"
+    dbSchemaLandUsePlans = "arp_npl"
+}
+
+// Download-Verzeichnis
+def pathToTempFolder = System.getProperty("java.io.tmpdir")
+def pathToUnzipFolder = Paths.get(pathToTempFolder, 'unzip_data')
+def pathToExportFolder = Paths.get(pathToTempFolder, 'export_data')
+
+// Daten Nutzungsplanung
+//def landUsePlansDataSets = ["2405", "2457", "2474", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614","2615"]
+def landUsePlansDataSets = ["2502"]
+def landUsePlansBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung-dev/"
+
+def GROUP = "Datenimport"
+
+// Definieren der einzelnen Download- und Import/Replace-Tasks
+landUsePlansDataSets.each { landUsePlansDataSet ->
+    def dataSet = landUsePlansDataSet.toString()
+    task "downloadLandUsePlansData_$dataSet"(type: Download) {
+        group = GROUP
+        src landUsePlansBaseUrl + dataSet + ".xtf"
+        dest pathToTempFolder
+        overwrite true
+
+        doLast {
+            println "File downloaded to: " + pathToTempFolder
+        }        
+    }
+
+    task "replaceLandUsePlansData_$dataSet"(type: Ili2pgReplace, dependsOn: "downloadLandUsePlansData_$dataSet") {
+        group = GROUP
+        database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+        models = iliModelLandUsePlans
+        dbschema = dbSchemaLandUsePlans
+        dataFile = file(Paths.get(pathToTempFolder.toString(), dataSet + ".xtf"))
+        dataset = dataSet
+        disableValidation = true
+    }
+}
+
+// Aggregationstask
+task replaceLandUsePlansData() {
+    description = "Aggregationstask für Importieren/Ersetzen sämtlicher Nutzungsplanungsdatensätze (im kantonalen Modell)."
+    group = GROUP
+    doLast {
+        println "All dynamic tasks were performed."
+    }
+}
+
+replaceLandUsePlansData.dependsOn {
+    tasks.findAll { task -> task.name.startsWith('replaceLandUsePlansData_') }
+}
+
