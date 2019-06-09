@@ -10,7 +10,8 @@
 * sqlEnableNull beim Erstellen des Staging-Scheams während der Entwicklung, ggf. (resp. falls möglich) wieder ausschalten.
 
 
-## Starting from scratch
+## Starting from scratch
+
 1. Buildet Datenbank-Docker-Image
 2. Startet die Datenbank als Docker-Container:
    - Erstellt `edit`-Datenbank
