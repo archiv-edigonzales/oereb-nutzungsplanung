@@ -7,8 +7,8 @@
 
 ## Hinweise
 
-* sqlEnableNull beim Erstellen des Staging-Scheams während der Entwicklung, ggf. (resp. falls möglich) wieder ausschalten.
-
+* nein, noch nicht (sqlEnableNull beim Erstellen des Staging-Scheams während der Entwicklung, ggf. (resp. falls möglich) wieder ausschalten.)
+* --idSeqMin: Vorhandende Dokumente (Gesetzte etc.) "verbrauchen" die Sequenz. Das kann zu Kollisionen mit Primary Keys führen, die aus einer anderen Tabelle reinkopiert werden.
 
 ## Starting from scratch
 

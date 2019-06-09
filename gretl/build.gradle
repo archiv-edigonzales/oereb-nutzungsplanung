@@ -47,11 +47,11 @@ task deleteFromStaging(type: SqlExecutor) {
 }
 
 // Macht den Datenumbau aus dem kantonalen Modell der NPL in die Transferstruktur im ÖREB-NPL-Staging-Schema.
-task insertToStaging(type: SqlExecutor, dependsOn: 'deleteStaging') {
+task insertToStaging(type: SqlExecutor, dependsOn: 'deleteFromStaging') {
     description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    sqlFiles = ["insert_oereb_npl_staging.sql", "insert_oereb_npl_staging_legal_basis.sql", "update_oereb_npl_staging_responsible_office.sql", "update_oereb_npl_staging_fix_empty_responsible_office_errors.sql"]
+    sqlFiles = ["insert_oereb_landuseplans_staging_tables.sql"]
 }
 
 // Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-Staging-Schema.

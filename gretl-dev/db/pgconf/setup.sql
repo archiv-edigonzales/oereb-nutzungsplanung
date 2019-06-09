@@ -831,64 +831,10 @@ CREATE TABLE arp_npl.T_ILI2DB_MODEL (
   ,modelName text NOT NULL
   ,content text NOT NULL
   ,importDate timestamp NOT NULL
-  ,PRIMARY KEY (modelName,iliversion)
+  ,PRIMARY KEY (iliversion,modelName)
 )
 ;
-CREATE TABLE arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.halignment (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.chcantoncode (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.valignment (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.rechtsstatus (
+CREATE TABLE arp_npl.verfahrenstand_planungsart (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -915,7 +861,7 @@ CREATE TABLE arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_linie (
   ,description varchar(1024) NULL
 )
 ;
-CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (
+CREATE TABLE arp_npl.verbindlichkeit (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -924,7 +870,7 @@ CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt 
   ,description varchar(1024) NULL
 )
 ;
-CREATE TABLE arp_npl.verfahrenstand_planungsart (
+CREATE TABLE arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -933,16 +879,7 @@ CREATE TABLE arp_npl.verfahrenstand_planungsart (
   ,description varchar(1024) NULL
 )
 ;
-CREATE TABLE arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
-)
-;
-CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_punktobjekt (
+CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -960,7 +897,34 @@ CREATE TABLE arp_npl.verfahrenstand_verfahrensstufe (
   ,description varchar(1024) NULL
 )
 ;
-CREATE TABLE arp_npl.verbindlichkeit (
+CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_punktobjekt (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.halignment (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.rechtsstatus (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -970,6 +934,42 @@ CREATE TABLE arp_npl.verbindlichkeit (
 )
 ;
 CREATE TABLE arp_npl.schriftgroesse (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.chcantoncode (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
+CREATE TABLE arp_npl.valignment (
   itfCode integer PRIMARY KEY
   ,iliCode varchar(1024) NOT NULL
   ,seq integer NULL
@@ -988,7 +988,7 @@ CREATE TABLE arp_npl.T_ILI2DB_ATTRNAME (
   ,SqlName varchar(1024) NOT NULL
   ,ColOwner varchar(1024) NOT NULL
   ,Target varchar(1024) NULL
-  ,PRIMARY KEY (ColOwner,SqlName)
+  ,PRIMARY KEY (SqlName,ColOwner)
 )
 ;
 CREATE TABLE arp_npl.T_ILI2DB_COLUMN_PROP (
@@ -1093,9 +1093,9 @@ CREATE UNIQUE INDEX T_ILI2DB_DATASET_datasetName_key ON arp_npl.T_ILI2DB_DATASET
 ;
 ALTER TABLE arp_npl.T_ILI2DB_IMPORT_BASKET ADD CONSTRAINT T_ILI2DB_IMPORT_BASKET_importrun_fkey FOREIGN KEY ( importrun ) REFERENCES arp_npl.T_ILI2DB_IMPORT DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE arp_npl.T_ILI2DB_IMPORT_BASKET ADD CONSTRAINT T_ILI2DB_IMPORT_BASKET_basket_fkey FOREIGN KEY ( basket ) REFERENCES arp_npl.T_ILI2DB_BASKET DEFERRABLE INITIALLY DEFERRED;
-CREATE UNIQUE INDEX T_ILI2DB_MODEL_modelName_iliversion_key ON arp_npl.T_ILI2DB_MODEL (modelName,iliversion)
+CREATE UNIQUE INDEX T_ILI2DB_MODEL_iliversion_modelName_key ON arp_npl.T_ILI2DB_MODEL (iliversion,modelName)
 ;
-CREATE UNIQUE INDEX T_ILI2DB_ATTRNAME_ColOwner_SqlName_key ON arp_npl.T_ILI2DB_ATTRNAME (ColOwner,SqlName)
+CREATE UNIQUE INDEX T_ILI2DB_ATTRNAME_SqlName_ColOwner_key ON arp_npl.T_ILI2DB_ATTRNAME (SqlName,ColOwner)
 ;
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie_Dokument','nutzungsplanung_typ_ueberlagernd_linie_dokument');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie_Pos','nutzungsplanung_ueberlagernd_linie_pos');
@@ -1157,8 +1157,8 @@ INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungspla
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.Verfahrensstufe','verfahrenstand_verfahrensstufe');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche_Dokument','nutzungsplanung_typ_ueberlagernd_flaeche_dokument');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ','nutzungsplanung_typ');
-INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Rechtsstatus','rechtsstatus');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.NP_Typ_Kanton_Ueberlagernd_Linie','nutzungsplanung_np_typ_kanton_ueberlagernd_linie');
+INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Rechtsstatus','rechtsstatus');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt','erschlssngsplnung_erschliessung_punktobjekt');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('CHAdminCodes_V1.CHCantonCode','chcantoncode');
 INSERT INTO arp_npl.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt_Pos','erschlssngsplnung_erschliessung_flaechenobjekt_pos');
@@ -1407,164 +1407,61 @@ INSERT INTO arp_npl.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('SO_Nutzungspla
 INSERT INTO arp_npl.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung_Grundnutzung_Pos','ch.ehi.ili2db.inheritance','embedded');
 INSERT INTO arp_npl.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.zustStelle_Daten','ch.ehi.ili2db.inheritance','embedded');
 INSERT INTO arp_npl.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('SO_Nutzungsplanung_20171118.Rechtsvorschriften.Dokument','ch.ehi.ili2db.inheritance','newClass');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Rechtsvorschriften.Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Rechtsvorschriften.HinweisWeitereDokumente',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie_Linie',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.Amt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche_Flaeche',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt_Flaeche',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt_Punkt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt_Punkt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Rechtsvorschriften.Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Verfahrensstand',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.zustStelle_Daten',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Rechtsvorschriften.HinweisWeitereDokumente',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Pos_Verfahrensstand',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt_Punkt_Pos',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt_Linie',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.Amt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt_Linie_Pos',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Flaeche_Flaeche_Pos',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung',NULL);
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie_Linie_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Grundnutzung_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt_Punkt_Pos',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Flaeche_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt_Flaeche_Pos',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie_Linie',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt_Dokument',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung_Grundnutzung_Pos',NULL);
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Grundnutzung','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Flaeche',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Flaeche_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt_Punkt_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.Datenbestand',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt_Punkt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Punkt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt_Punkt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt_Punkt_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Flaeche_Flaeche_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung_Grundnutzung_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt_Flaeche_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt_Flaeche',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Pos_Verfahrensstand',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.zustStelle_Daten',NULL);
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Verfahrensstand',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Flaeche','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Linienobjekt_Linie',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Grundnutzung_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Verfahrenstand.VS_Perimeter_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Grundnutzung_Grundnutzung',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt_Linie_Pos',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Punktobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
 INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Ueberlagernd_Linie_Dokument',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Linie',NULL);
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Ueberlagernd_Punkt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
-INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Punktobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N810_geschuetzter_Einzelbaum',0,'N810 geschuetzter Einzelbaum',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N811_erhaltenswerter_Einzelbaum',1,'N811 erhaltenswerter Einzelbaum',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N812_geologisches_Objekt',2,'N812 geologisches Objekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N813_Naturobjekt',3,'N813 Naturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N820_kantonal_geschuetztes_Kulturobjekt',4,'N820 kantonal geschuetztes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N821_kommunal_geschuetztes_Kulturobjekt',5,'N821 kommunal geschuetztes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N822_schuetzenswertes_Kulturobjekt',6,'N822 schuetzenswertes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N823_erhaltenswertes_Kulturobjekt',7,'N823 erhaltenswertes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N899_weitere_punktbezogene_Festlegungen_NP',8,'N899 weitere punktbezogene Festlegungen NP',FALSE,NULL);
-INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (0,'Left',0,'Left',FALSE,NULL);
-INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (1,'Center',1,'Center',FALSE,NULL);
-INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (2,'Right',2,'Right',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E560_Nationalstrasse',0,'E560 Nationalstrasse',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E561_Kantonsstrasse',1,'E561 Kantonsstrasse',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E562_Sammelstrasse_kommunal',2,'E562 Sammelstrasse kommunal',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E563_Erschliessungsstrasse_kommunal',3,'E563 Erschliessungsstrasse kommunal',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E564_Flurweg_mit_Erschliessungsfunktion',4,'E564 Flurweg mit Erschliessungsfunktion',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E565_Flurweg_ohne_Erschliessungsfunktion',5,'E565 Flurweg ohne Erschliessungsfunktion',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E566_private_Erschliessungsstrasse',6,'E566 private Erschliessungsstrasse',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E567_unklassierte_Strasse',7,'E567 unklassierte Strasse',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E568_Strassenbankett_Verkehrsinsel',8,'E568 Strassenbankett Verkehrsinsel',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E569_uebrige_Verkehrsflaechen',9,'E569 uebrige Verkehrsflaechen',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E570_Gehweg_Trottoir',10,'E570 Gehweg Trottoir',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E571_Fussweg',11,'E571 Fussweg',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E572_Radweg',12,'E572 Radweg',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E573_Fuss_und_Radweg',13,'E573 Fuss und Radweg',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E574_Gruenstreifen_Rabatte',14,'E574 Gruenstreifen Rabatte',FALSE,NULL);
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E579_uebrige_Flaechen_Langsamverkehr',15,'E579 uebrige Flaechen Langsamverkehr',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZH',0,'ZH',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BE',1,'BE',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'LU',2,'LU',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'UR',3,'UR',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SZ',4,'SZ',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'OW',5,'OW',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NW',6,'NW',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GL',7,'GL',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZG',8,'ZG',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FR',9,'FR',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SO',10,'SO',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BS',11,'BS',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BL',12,'BL',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SH',13,'SH',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AR',14,'AR',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AI',15,'AI',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SG',16,'SG',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GR',17,'GR',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AG',18,'AG',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TG',19,'TG',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TI',20,'TI',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VD',21,'VD',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VS',22,'VS',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NE',23,'NE',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GE',24,'GE',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'JU',25,'JU',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FL',26,'FL',FALSE,NULL);
-INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'CH',27,'CH',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N510_ueberlagernde_Ortsbildschutzzone',0,'N510 ueberlagernde Ortsbildschutzzone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N520_BLN_Gebiet',1,'N520 BLN Gebiet',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N521_Juraschutzzone',2,'N521 Juraschutzzone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N522_Naturreservat_inkl_Geotope',3,'N522 Naturreservat inkl Geotope',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N523_Landschaftsschutzzone',4,'N523 Landschaftsschutzzone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N524_Siedlungstrennguertel_von_kommunaler_Bedeutung',5,'N524 Siedlungstrennguertel von kommunaler Bedeutung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N525_Siedlungstrennguertel_von_kantonaler_Bedeutung',6,'N525 Siedlungstrennguertel von kantonaler Bedeutung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N526_kantonale_Landwirtschafts_und_Schutzzone_Witi',7,'N526 kantonale Landwirtschafts und Schutzzone Witi',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N527_kantonale_Uferschutzzone',8,'N527 kantonale Uferschutzzone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N528_kommunale_Uferschutzzone_ausserhalb_Bauzonen',9,'N528 kommunale Uferschutzzone ausserhalb Bauzonen',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N529_weitere_Schutzzonen_fuer_Lebensraeume_und_Landschaften',10,'N529 weitere Schutzzonen fuer Lebensraeume und Landschaften',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N530_Naturgefahren_erhebliche_Gefaehrdung',11,'N530 Naturgefahren erhebliche Gefaehrdung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N531_Naturgefahren_mittlere_Gefaehrdung',12,'N531 Naturgefahren mittlere Gefaehrdung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N532_Naturgefahren_geringe_Gefaehrdung',13,'N532 Naturgefahren geringe Gefaehrdung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N533_Naturgefahren_Restgefaehrdung',14,'N533 Naturgefahren Restgefaehrdung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N590_Hofstattzone_Freihaltezone',15,'N590 Hofstattzone Freihaltezone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N591_Bauliche_Einschraenkungen',16,'N591 Bauliche Einschraenkungen',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N592_Hecken_Feldgehoelz_Ufergehoelz',17,'N592 Hecken Feldgehoelz Ufergehoelz',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N593_Grundwasserschutzzone_S1',18,'N593 Grundwasserschutzzone S1',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N594_Grundwasserschutzzone_S2',19,'N594 Grundwasserschutzzone S2',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N595_Grundwasserschutzzone_S3',20,'N595 Grundwasserschutzzone S3',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N596_Grundwasserschutzareal',21,'N596 Grundwasserschutzareal',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N599_weitere_ueberlagernde_Nutzungszonen',22,'N599 weitere ueberlagernde Nutzungszonen',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N610_Perimeter_kantonaler_Nutzungsplan',23,'N610 Perimeter kantonaler Nutzungsplan',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N611_Perimeter_kommunaler_Gestaltungsplan',24,'N611 Perimeter kommunaler Gestaltungsplan',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N620_Perimeter_Gestaltungsplanpflicht',25,'N620 Perimeter Gestaltungsplanpflicht',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N680_Empfindlichkeitsstufe_I',26,'N680 Empfindlichkeitsstufe I',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N681_Empfindlichkeitsstufe_II',27,'N681 Empfindlichkeitsstufe II',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N682_Empfindlichkeitsstufe_II_aufgestuft',28,'N682 Empfindlichkeitsstufe II aufgestuft',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N683_Empfindlichkeitsstufe_III',29,'N683 Empfindlichkeitsstufe III',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N684_Empfindlichkeitsstufe_III_aufgestuft',30,'N684 Empfindlichkeitsstufe III aufgestuft',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N685_Empfindlichkeitsstufe_IV',31,'N685 Empfindlichkeitsstufe IV',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N686_keine_Empfindlichkeitsstufe',32,'N686 keine Empfindlichkeitsstufe',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N690_kantonales_Vorranggebiet_Natur_und_Landschaft',33,'N690 kantonales Vorranggebiet Natur und Landschaft',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N691_kommunales_Vorranggebiet_Natur_und_Landschaft',34,'N691 kommunales Vorranggebiet Natur und Landschaft',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N692_Planungszone',35,'N692 Planungszone',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N699_weitere_flaechenbezogene_Festlegungen_NP',36,'N699 weitere flaechenbezogene Festlegungen NP',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N812_geologisches_Objekt',37,'N812 geologisches Objekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N813_Naturobjekt',38,'N813 Naturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N820_kantonal_geschuetztes_Kulturobjekt',39,'N820 kantonal geschuetztes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N821_kommunal_geschuetztes_Kulturobjekt',40,'N821 kommunal geschuetztes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N822_schuetzenswertes_Kulturobjekt',41,'N822 schuetzenswertes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N823_erhaltenswertes_Kulturobjekt',42,'N823 erhaltenswertes Kulturobjekt',FALSE,NULL);
-INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (0,'Top',0,'Top',FALSE,NULL);
-INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (1,'Cap',1,'Cap',FALSE,NULL);
-INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (2,'Half',2,'Half',FALSE,NULL);
-INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (3,'Base',3,'Base',FALSE,NULL);
-INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (4,'Bottom',4,'Bottom',FALSE,NULL);
-INSERT INTO arp_npl.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'inKraft',0,'inKraft',FALSE,'Ist in Kraft');
-INSERT INTO arp_npl.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'laufendeAenderung',1,'laufendeAenderung',FALSE,'Noch nicht in Kraft, eine �nderung ist in Vorbereitung.');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Typ_Erschliessung_Flaechenobjekt','SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Linienobjekt',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Erschliessungsplanung.Erschliessung_Flaechenobjekt_Pos','SO_Nutzungsplanung_20171118.Nutzungsplanung.Pos');
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.TransferMetadaten.Datenbestand',NULL);
+INSERT INTO arp_npl.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('SO_Nutzungsplanung_20171118.Nutzungsplanung.Typ_Grundnutzung_Dokument',NULL);
+INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanung',0,'Nutzungsplanung',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Erschliessungsplanung',1,'Erschliessungsplanung',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldfeststellung',2,'Waldfeststellung',FALSE,NULL);
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_grundnutzung (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N110_Wohnzone_1_G',0,'N110 Wohnzone 1 G',FALSE,NULL);
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_grundnutzung (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N111_Wohnzone_2_G',1,'N111 Wohnzone 2 G',FALSE,NULL);
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_grundnutzung (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N112_Wohnzone_3_G',2,'N112 Wohnzone 3 G',FALSE,NULL);
@@ -1625,6 +1522,88 @@ INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_linie (seq,iliCod
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_linie (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N792_Waldgrenze',2,'N792 Waldgrenze',FALSE,NULL);
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_linie (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N793_negative_Waldfeststellung',3,'N793 negative Waldfeststellung',FALSE,NULL);
 INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_linie (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N799_weitere_linienbezogene_Festlegungen_NP',4,'N799 weitere linienbezogene Festlegungen NP',FALSE,NULL);
+INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanfestlegung',0,'Nutzungsplanfestlegung',FALSE,'Eigent�merverbindlich, im Verfahren der Nutzungsplanung festgelegt.');
+INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'orientierend',1,'orientierend',FALSE,'Eigent�merverbindlich, in einem anderen Verfahren festgelegt.');
+INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'hinweisend',2,'hinweisend',FALSE,'Nicht eigent�merverbindlich, Informationsinhalte.');
+INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'wegleitend',3,'wegleitend',FALSE,'Nicht eigent�merverbindlich, sie umfassen Qualit�ten, Standards und dergleichen, die zu ber�cksichtigen sind.');
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N510_ueberlagernde_Ortsbildschutzzone',0,'N510 ueberlagernde Ortsbildschutzzone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N520_BLN_Gebiet',1,'N520 BLN Gebiet',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N521_Juraschutzzone',2,'N521 Juraschutzzone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N522_Naturreservat_inkl_Geotope',3,'N522 Naturreservat inkl Geotope',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N523_Landschaftsschutzzone',4,'N523 Landschaftsschutzzone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N524_Siedlungstrennguertel_von_kommunaler_Bedeutung',5,'N524 Siedlungstrennguertel von kommunaler Bedeutung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N525_Siedlungstrennguertel_von_kantonaler_Bedeutung',6,'N525 Siedlungstrennguertel von kantonaler Bedeutung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N526_kantonale_Landwirtschafts_und_Schutzzone_Witi',7,'N526 kantonale Landwirtschafts und Schutzzone Witi',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N527_kantonale_Uferschutzzone',8,'N527 kantonale Uferschutzzone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N528_kommunale_Uferschutzzone_ausserhalb_Bauzonen',9,'N528 kommunale Uferschutzzone ausserhalb Bauzonen',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N529_weitere_Schutzzonen_fuer_Lebensraeume_und_Landschaften',10,'N529 weitere Schutzzonen fuer Lebensraeume und Landschaften',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N530_Naturgefahren_erhebliche_Gefaehrdung',11,'N530 Naturgefahren erhebliche Gefaehrdung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N531_Naturgefahren_mittlere_Gefaehrdung',12,'N531 Naturgefahren mittlere Gefaehrdung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N532_Naturgefahren_geringe_Gefaehrdung',13,'N532 Naturgefahren geringe Gefaehrdung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N533_Naturgefahren_Restgefaehrdung',14,'N533 Naturgefahren Restgefaehrdung',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N590_Hofstattzone_Freihaltezone',15,'N590 Hofstattzone Freihaltezone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N591_Bauliche_Einschraenkungen',16,'N591 Bauliche Einschraenkungen',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N592_Hecken_Feldgehoelz_Ufergehoelz',17,'N592 Hecken Feldgehoelz Ufergehoelz',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N593_Grundwasserschutzzone_S1',18,'N593 Grundwasserschutzzone S1',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N594_Grundwasserschutzzone_S2',19,'N594 Grundwasserschutzzone S2',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N595_Grundwasserschutzzone_S3',20,'N595 Grundwasserschutzzone S3',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N596_Grundwasserschutzareal',21,'N596 Grundwasserschutzareal',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N599_weitere_ueberlagernde_Nutzungszonen',22,'N599 weitere ueberlagernde Nutzungszonen',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N610_Perimeter_kantonaler_Nutzungsplan',23,'N610 Perimeter kantonaler Nutzungsplan',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N611_Perimeter_kommunaler_Gestaltungsplan',24,'N611 Perimeter kommunaler Gestaltungsplan',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N620_Perimeter_Gestaltungsplanpflicht',25,'N620 Perimeter Gestaltungsplanpflicht',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N680_Empfindlichkeitsstufe_I',26,'N680 Empfindlichkeitsstufe I',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N681_Empfindlichkeitsstufe_II',27,'N681 Empfindlichkeitsstufe II',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N682_Empfindlichkeitsstufe_II_aufgestuft',28,'N682 Empfindlichkeitsstufe II aufgestuft',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N683_Empfindlichkeitsstufe_III',29,'N683 Empfindlichkeitsstufe III',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N684_Empfindlichkeitsstufe_III_aufgestuft',30,'N684 Empfindlichkeitsstufe III aufgestuft',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N685_Empfindlichkeitsstufe_IV',31,'N685 Empfindlichkeitsstufe IV',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N686_keine_Empfindlichkeitsstufe',32,'N686 keine Empfindlichkeitsstufe',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N690_kantonales_Vorranggebiet_Natur_und_Landschaft',33,'N690 kantonales Vorranggebiet Natur und Landschaft',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N691_kommunales_Vorranggebiet_Natur_und_Landschaft',34,'N691 kommunales Vorranggebiet Natur und Landschaft',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N692_Planungszone',35,'N692 Planungszone',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N699_weitere_flaechenbezogene_Festlegungen_NP',36,'N699 weitere flaechenbezogene Festlegungen NP',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N812_geologisches_Objekt',37,'N812 geologisches Objekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N813_Naturobjekt',38,'N813 Naturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N820_kantonal_geschuetztes_Kulturobjekt',39,'N820 kantonal geschuetztes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N821_kommunal_geschuetztes_Kulturobjekt',40,'N821 kommunal geschuetztes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N822_schuetzenswertes_Kulturobjekt',41,'N822 schuetzenswertes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N823_erhaltenswertes_Kulturobjekt',42,'N823 erhaltenswertes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E560_Nationalstrasse',0,'E560 Nationalstrasse',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E561_Kantonsstrasse',1,'E561 Kantonsstrasse',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E562_Sammelstrasse_kommunal',2,'E562 Sammelstrasse kommunal',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E563_Erschliessungsstrasse_kommunal',3,'E563 Erschliessungsstrasse kommunal',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E564_Flurweg_mit_Erschliessungsfunktion',4,'E564 Flurweg mit Erschliessungsfunktion',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E565_Flurweg_ohne_Erschliessungsfunktion',5,'E565 Flurweg ohne Erschliessungsfunktion',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E566_private_Erschliessungsstrasse',6,'E566 private Erschliessungsstrasse',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E567_unklassierte_Strasse',7,'E567 unklassierte Strasse',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E568_Strassenbankett_Verkehrsinsel',8,'E568 Strassenbankett Verkehrsinsel',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E569_uebrige_Verkehrsflaechen',9,'E569 uebrige Verkehrsflaechen',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E570_Gehweg_Trottoir',10,'E570 Gehweg Trottoir',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E571_Fussweg',11,'E571 Fussweg',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E572_Radweg',12,'E572 Radweg',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E573_Fuss_und_Radweg',13,'E573 Fuss und Radweg',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E574_Gruenstreifen_Rabatte',14,'E574 Gruenstreifen Rabatte',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_flaechenobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E579_uebrige_Flaechen_Langsamverkehr',15,'E579 uebrige Flaechen Langsamverkehr',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Vorpruefung',0,'Vorpruefung',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Planauflage',1,'Planauflage',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'zur_Genehmigung_beantragt',2,'zur Genehmigung beantragt',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'genehmigt_Beschwerde_haengig',3,'genehmigt Beschwerde haengig',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'rechtskraeftig',4,'rechtskraeftig',FALSE,NULL);
+INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'von_Genehmigung_ausgenommen',5,'von Genehmigung ausgenommen',FALSE,NULL);
+INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_punktobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E889_weitere_punktbezogene_Objekte_EP',0,'E889 weitere punktbezogene Objekte EP',FALSE,NULL);
+INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (0,'Left',0,'Left',FALSE,NULL);
+INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (1,'Center',1,'Center',FALSE,NULL);
+INSERT INTO arp_npl.halignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (2,'Right',2,'Right',FALSE,NULL);
+INSERT INTO arp_npl.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'inKraft',0,'inKraft',FALSE,'Ist in Kraft');
+INSERT INTO arp_npl.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'laufendeAenderung',1,'laufendeAenderung',FALSE,'Noch nicht in Kraft, eine �nderung ist in Vorbereitung.');
+INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Baumassenziffer',0,'Baumassenziffer',FALSE,'Bauvolumen �ber massgebendem Terrain / anrechenbare Grundst�cksfl�che (�37ter PBG)');
+INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Geschossflaechen',1,'Geschossflaechen',FALSE,'Summe aller Geschossfl�chen / anrechenbare Grundst�cksfl�che (�37bis PBG)');
+INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Ueberbauungsziffer',2,'Ueberbauungsziffer',FALSE,'Anrechenbare Geb�udefl�che / anrechenbare Grundst�cksfl�che (�35 PBG)');
+INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Ausnuetzungsziffer',3,'Ausnuetzungsziffer',FALSE,'Anrechenbare Bruttogeschossfl�che / anrechenbare Grundst�cksfl�che ((�37 PBG, wurde gestrichen)');
+INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'klein',0,'klein',FALSE,NULL);
+INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'mittel',1,'mittel',FALSE,NULL);
+INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'gross',2,'gross',FALSE,NULL);
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E710_nationale_Baulinie',0,'E710 nationale Baulinie',FALSE,NULL);
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E711_Baulinie_Strasse_kantonal',1,'E711 Baulinie Strasse kantonal',FALSE,NULL);
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E712_Vorbaulinie_kantonal',2,'E712 Vorbaulinie kantonal',FALSE,NULL);
@@ -1643,195 +1622,216 @@ INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E728_Immissionsstreifen',15,'E728 Immissionsstreifen',FALSE,NULL);
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E729_weitere_kommunale_Baulinien',16,'E729 weitere kommunale Baulinien',FALSE,NULL);
 INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_linienobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E789_weitere_linienbezogene_Objekte_EP',17,'E789 weitere linienbezogene Objekte EP',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanung',0,'Nutzungsplanung',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Erschliessungsplanung',1,'Erschliessungsplanung',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_planungsart (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldfeststellung',2,'Waldfeststellung',FALSE,NULL);
-INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Baumassenziffer',0,'Baumassenziffer',FALSE,'Bauvolumen �ber massgebendem Terrain / anrechenbare Grundst�cksfl�che (�37ter PBG)');
-INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Geschossflaechen',1,'Geschossflaechen',FALSE,'Summe aller Geschossfl�chen / anrechenbare Grundst�cksfl�che (�37bis PBG)');
-INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Ueberbauungsziffer',2,'Ueberbauungsziffer',FALSE,'Anrechenbare Geb�udefl�che / anrechenbare Grundst�cksfl�che (�35 PBG)');
-INSERT INTO arp_npl.nutzungsplanung_typ_grundnutzung_nutzungsziffer_art (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Ausnuetzungsziffer',3,'Ausnuetzungsziffer',FALSE,'Anrechenbare Bruttogeschossfl�che / anrechenbare Grundst�cksfl�che ((�37 PBG, wurde gestrichen)');
-INSERT INTO arp_npl.erschlssngsplnung_ep_typ_kanton_erschliessung_punktobjekt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'E889_weitere_punktbezogene_Objekte_EP',0,'E889 weitere punktbezogene Objekte EP',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Vorpruefung',0,'Vorpruefung',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Planauflage',1,'Planauflage',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'zur_Genehmigung_beantragt',2,'zur Genehmigung beantragt',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'genehmigt_Beschwerde_haengig',3,'genehmigt Beschwerde haengig',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'rechtskraeftig',4,'rechtskraeftig',FALSE,NULL);
-INSERT INTO arp_npl.verfahrenstand_verfahrensstufe (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'von_Genehmigung_ausgenommen',5,'von Genehmigung ausgenommen',FALSE,NULL);
-INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanfestlegung',0,'Nutzungsplanfestlegung',FALSE,'Eigent�merverbindlich, im Verfahren der Nutzungsplanung festgelegt.');
-INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'orientierend',1,'orientierend',FALSE,'Eigent�merverbindlich, in einem anderen Verfahren festgelegt.');
-INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'hinweisend',2,'hinweisend',FALSE,'Nicht eigent�merverbindlich, Informationsinhalte.');
-INSERT INTO arp_npl.verbindlichkeit (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'wegleitend',3,'wegleitend',FALSE,'Nicht eigent�merverbindlich, sie umfassen Qualit�ten, Standards und dergleichen, die zu ber�cksichtigen sind.');
-INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'klein',0,'klein',FALSE,NULL);
-INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'mittel',1,'mittel',FALSE,NULL);
-INSERT INTO arp_npl.schriftgroesse (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'gross',2,'gross',FALSE,NULL);
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt_dokument',NULL,'typ_ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_punkt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'typ_ueberlagernd_linie','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_linie');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt_dokument',NULL,'typ_erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_punktobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_grundnutzung');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'typ_grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_grundnutzung');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_linienobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'vs_perimeter_verfahrensstand','ch.ehi.ili2db.foreignKey','verfahrenstand_vs_perimeter_verfahrensstand');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_punktobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'ueberlagernd_flaeche','ch.ehi.ili2db.foreignKey','nutzungsplanung_ueberlagernd_flaeche');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt_dokument',NULL,'typ_erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_flaechenobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_hinweisweiteredokumente',NULL,'hinweis','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZH',0,'ZH',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BE',1,'BE',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'LU',2,'LU',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'UR',3,'UR',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SZ',4,'SZ',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'OW',5,'OW',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NW',6,'NW',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GL',7,'GL',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZG',8,'ZG',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FR',9,'FR',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SO',10,'SO',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BS',11,'BS',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BL',12,'BL',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SH',13,'SH',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AR',14,'AR',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AI',15,'AI',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SG',16,'SG',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GR',17,'GR',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AG',18,'AG',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TG',19,'TG',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TI',20,'TI',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VD',21,'VD',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VS',22,'VS',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NE',23,'NE',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GE',24,'GE',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'JU',25,'JU',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FL',26,'FL',FALSE,NULL);
+INSERT INTO arp_npl.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'CH',27,'CH',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N810_geschuetzter_Einzelbaum',0,'N810 geschuetzter Einzelbaum',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N811_erhaltenswerter_Einzelbaum',1,'N811 erhaltenswerter Einzelbaum',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N812_geologisches_Objekt',2,'N812 geologisches Objekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N813_Naturobjekt',3,'N813 Naturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N820_kantonal_geschuetztes_Kulturobjekt',4,'N820 kantonal geschuetztes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N821_kommunal_geschuetztes_Kulturobjekt',5,'N821 kommunal geschuetztes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N822_schuetzenswertes_Kulturobjekt',6,'N822 schuetzenswertes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N823_erhaltenswertes_Kulturobjekt',7,'N823 erhaltenswertes Kulturobjekt',FALSE,NULL);
+INSERT INTO arp_npl.nutzungsplanung_np_typ_kanton_ueberlagernd_punkt (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'N899_weitere_punktbezogene_Festlegungen_NP',8,'N899 weitere punktbezogene Festlegungen NP',FALSE,NULL);
+INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (0,'Top',0,'Top',FALSE,NULL);
+INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (1,'Cap',1,'Cap',FALSE,NULL);
+INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (2,'Half',2,'Half',FALSE,NULL);
+INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (3,'Base',3,'Base',FALSE,NULL);
+INSERT INTO arp_npl.valignment (seq,iliCode,itfCode,dispName,inactive,description) VALUES (4,'Bottom',4,'Bottom',FALSE,NULL);
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','LINESTRING');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_ueberlagernd_punkt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_hinweisweiteredokumente',NULL,'ursprung','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'typ_ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_punkt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung_dokument',NULL,'typ_grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_grundnutzung');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_flaechenobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transfermetadaten_datenbestand',NULL,'amt','ch.ehi.ili2db.foreignKey','transfermetadaten_amt');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'typ_ueberlagernd_flaeche','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_flaeche');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','LINESTRING');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'ueberlagernd_linie','ch.ehi.ili2db.foreignKey','nutzungsplanung_ueberlagernd_linie');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt_dokument',NULL,'typ_erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_linienobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'vs_perimeter_verfahrensstand','ch.ehi.ili2db.foreignKey','verfahrenstand_vs_perimeter_verfahrensstand');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'typ_ueberlagernd_linie','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_linie');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt_dokument',NULL,'typ_ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_punkt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'ueberlagernd_flaeche','ch.ehi.ili2db.foreignKey','nutzungsplanung_ueberlagernd_flaeche');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_dokument',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_linienobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche_dokument',NULL,'typ_ueberlagernd_flaeche','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_flaeche');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_punktobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_ueberlagernd_punkt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'typ_erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_punktobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_hinweisweiteredokumente',NULL,'hinweis','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'typ_erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_linienobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.geomType','LINESTRING');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'typ_grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_grundnutzung');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt_dokument',NULL,'typ_erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_flaechenobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transfermetadaten_datenbestand',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie_dokument',NULL,'typ_ueberlagernd_linie','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_linie');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie_dokument',NULL,'typ_ueberlagernd_linie','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_linie');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'typ_erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_punktobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_erschliessung_flaechenobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.geomType','LINESTRING');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'typ_erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_flaechenobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'typ_erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_linienobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung_dokument',NULL,'typ_grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_grundnutzung');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transfermetadaten_datenbestand',NULL,'amt','ch.ehi.ili2db.foreignKey','transfermetadaten_amt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt_dokument',NULL,'typ_erschliessung_linienobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_linienobjekt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_dokument',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.geomType','POLYGON');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'grundnutzung','ch.ehi.ili2db.foreignKey','nutzungsplanung_grundnutzung');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transfermetadaten_datenbestand',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung',NULL,'geometrie','ch.ehi.ili2db.coordDimension','2');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'geometrie','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('rechtsvorschrften_hinweisweiteredokumente',NULL,'ursprung','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_linie',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'typ_ueberlagernd_punkt','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_punkt');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_linienobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
 INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.geomType','POINT');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt_pos',NULL,'pos','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt',NULL,'geometrie','ch.ehi.ili2db.srid','2056');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_grundnutzung_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche_dokument',NULL,'typ_ueberlagernd_flaeche','ch.ehi.ili2db.foreignKey','nutzungsplanung_typ_ueberlagernd_flaeche');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt_dokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','rechtsvorschrften_dokument');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_punktobjekt',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_pos',NULL,'pos','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('verfahrenstand_vs_perimeter_verfahrensstand',NULL,'geometrie','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_flaechenobjekt',NULL,'typ_erschliessung_flaechenobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_flaechenobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_erschliessung_linienobjekt',NULL,'geometrie','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt_dokument',NULL,'typ_erschliessung_punktobjekt','ch.ehi.ili2db.foreignKey','erschlssngsplnung_typ_erschliessung_punktobjekt');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_linie_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_punkt_pos',NULL,'pos','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO arp_npl.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('nutzungsplanung_ueberlagernd_flaeche',NULL,'bemerkungen','ch.ehi.ili2db.textKind','MTEXT');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_typ_grundnutzung_nutzungsziffer_art','ch.ehi.ili2db.tableKind','ENUM');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_flaechenobjekt_dokument','ch.ehi.ili2db.tableKind','ASSOCIATION');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_punkt_dokument','ch.ehi.ili2db.tableKind','ASSOCIATION');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('rechtsstatus','ch.ehi.ili2db.tableKind','ENUM');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_typ_ueberlagernd_flaeche_dokument','ch.ehi.ili2db.tableKind','ASSOCIATION');
-INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_np_typ_kanton_ueberlagernd_punkt','ch.ehi.ili2db.tableKind','ENUM');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('erschlssngsplnung_ep_typ_kanton_erschliessung_punktobjekt','ch.ehi.ili2db.tableKind','ENUM');
+INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_np_typ_kanton_ueberlagernd_punkt','ch.ehi.ili2db.tableKind','ENUM');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('erschlssngsplnung_typ_erschliessung_punktobjekt_dokument','ch.ehi.ili2db.tableKind','ASSOCIATION');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('nutzungsplanung_np_typ_kanton_ueberlagernd_flaeche','ch.ehi.ili2db.tableKind','ENUM');
 INSERT INTO arp_npl.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('verfahrenstand_planungsart','ch.ehi.ili2db.tableKind','ENUM');
@@ -2068,7 +2068,7 @@ MODEL AdministrativeUnitsCH_V1 (en)
 END AdministrativeUnitsCH_V1.
 
 !! ########################################################################
-','2019-06-07 11:21:43.412');
+','2019-06-09 17:29:21.966');
 INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('SO_Nutzungsplanung_20171118.ili','2.3','SO_Nutzungsplanung_20171118{ GeometryCHLV95_V1 CHAdminCodes_V1}','INTERLIS 2.3;
 
 !!==============================================================================
@@ -2906,7 +2906,7 @@ VERSION "2017-11-18"  =
   END TransferMetadaten;
 
 END SO_Nutzungsplanung_20171118.
-','2019-06-07 11:21:43.412');
+','2019-06-09 17:29:21.966');
 INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('Units-20120220.ili','2.3','Units','!! File Units.ili Release 2012-02-20
 
 INTERLIS 2.3;
@@ -3004,7 +3004,179 @@ CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
 
 END Units.
 
-','2019-06-07 11:21:43.412');
+','2019-06-09 17:29:21.966');
+INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part2_LOCALISATION_20110830.ili','2.3','InternationalCodes_V1 Localisation_V1{ InternationalCodes_V1} LocalisationCH_V1{ InternationalCodes_V1 Localisation_V1} Dictionaries_V1{ InternationalCodes_V1} DictionariesCH_V1{ InternationalCodes_V1 Dictionaries_V1}','/* ########################################################################
+   CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
+   ======
+   BASISMODULE DES BUNDES           MODULES DE BASE DE LA CONFEDERATION
+   FÜR MINIMALE GEODATENMODELLE     POUR LES MODELES DE GEODONNEES MINIMAUX
+   
+   PROVIDER: GKG/KOGIS - GCS/COSIG             CONTACT: models@geo.admin.ch
+   PUBLISHED: 2011-08-30
+   ########################################################################
+*/
+
+INTERLIS 2.3;
+
+/* ########################################################################
+   ########################################################################
+   PART II -- LOCALISATION
+   - Package InternationalCodes
+   - Packages Localisation, LocalisationCH
+   - Packages Dictionaries, DictionariesCH
+*/
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL InternationalCodes_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  DOMAIN
+    LanguageCode_ISO639_1 = (de,fr,it,rm,en,
+      aa,ab,af,am,ar,as,ay,az,ba,be,bg,bh,bi,bn,bo,br,ca,co,cs,cy,da,dz,el,
+      eo,es,et,eu,fa,fi,fj,fo,fy,ga,gd,gl,gn,gu,ha,he,hi,hr,hu,hy,ia,id,ie,
+      ik,is,iu,ja,jw,ka,kk,kl,km,kn,ko,ks,ku,ky,la,ln,lo,lt,lv,mg,mi,mk,ml,
+      mn,mo,mr,ms,mt,my,na,ne,nl,no,oc,om,or,pa,pl,ps,pt,qu,rn,ro,ru,rw,sa,
+      sd,sg,sh,si,sk,sl,sm,sn,so,sq,sr,ss,st,su,sv,sw,ta,te,tg,th,ti,tk,tl,
+      tn,to,tr,ts,tt,tw,ug,uk,ur,uz,vi,vo,wo,xh,yi,yo,za,zh,zu);
+
+    CountryCode_ISO3166_1 = (CHE,
+      ABW,AFG,AGO,AIA,ALA,ALB,AND_,ANT,ARE,ARG,ARM,ASM,ATA,ATF,ATG,AUS,
+      AUT,AZE,BDI,BEL,BEN,BFA,BGD,BGR,BHR,BHS,BIH,BLR,BLZ,BMU,BOL,BRA,
+      BRB,BRN,BTN,BVT,BWA,CAF,CAN,CCK,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
+      COM,CPV,CRI,CUB,CXR,CYM,CYP,CZE,DEU,DJI,DMA,DNK,DOM,DZA,ECU,EGY,
+      ERI,ESH,ESP,EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,GEO,GGY,GHA,
+      GIB,GIN,GLP,GMB,GNB,GNQ,GRC,GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,
+      HRV,HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,ISR,ITA,JAM,JEY,JOR,
+      JPN,KAZ,KEN,KGZ,KHM,KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,LKA,
+      LSO,LTU,LUX,LVA,MAC,MAR,MCO,MDA,MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,
+      MNE,MNG,MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,NCL,NER,NFK,NGA,
+      NIC,NIU,NLD,NOR,NPL,NRU,NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
+      PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,RWA,SAU,SDN,SEN,SGP,SGS,
+      SHN,SJM,SLB,SLE,SLV,SMR,SOM,SPM,SRB,STP,SUR,SVK,SVN,SWE,SWZ,SYC,
+      SYR,TCA,TCD,TGO,THA,TJK,TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
+      UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,VIR,VNM,VUT,WLF,WSM,YEM,
+      ZAF,ZMB,ZWE);
+
+END InternationalCodes_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL Localisation_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+
+  STRUCTURE LocalisedText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY TEXT;
+  END LocalisedText;
+  
+  STRUCTURE LocalisedMText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY MTEXT;
+  END LocalisedMText;
+
+  STRUCTURE MultilingualText =
+    LocalisedText : BAG {1..*} OF LocalisedText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualText;  
+  
+  STRUCTURE MultilingualMText =
+    LocalisedText : BAG {1..*} OF LocalisedMText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualMText;
+
+END Localisation_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL LocalisationCH_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+  IMPORTS Localisation_V1;
+
+  STRUCTURE LocalisedText EXTENDS Localisation_V1.LocalisedText =
+  MANDATORY CONSTRAINT
+    Language == #de OR
+    Language == #fr OR
+    Language == #it OR
+    Language == #rm OR
+    Language == #en;
+  END LocalisedText;
+  
+  STRUCTURE LocalisedMText EXTENDS Localisation_V1.LocalisedMText =
+  MANDATORY CONSTRAINT
+    Language == #de OR
+    Language == #fr OR
+    Language == #it OR
+    Language == #rm OR
+    Language == #en;
+  END LocalisedMText;
+
+  STRUCTURE MultilingualText EXTENDS Localisation_V1.MultilingualText =
+    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedText;
+  END MultilingualText;  
+  
+  STRUCTURE MultilingualMText EXTENDS Localisation_V1.MultilingualMText =
+    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedMText;
+  END MultilingualMText;
+
+END LocalisationCH_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+MODEL Dictionaries_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+
+  TOPIC Dictionaries (ABSTRACT) =
+
+    STRUCTURE Entry (ABSTRACT) =
+      Text: MANDATORY TEXT;
+    END Entry;
+      
+    CLASS Dictionary =
+      Language: MANDATORY LanguageCode_ISO639_1;
+      Entries: LIST OF Entry;
+    END Dictionary;
+
+  END Dictionaries;
+
+END Dictionaries_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+MODEL DictionariesCH_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+  IMPORTS Dictionaries_V1;
+
+  TOPIC Dictionaries (ABSTRACT) EXTENDS Dictionaries_V1.Dictionaries =
+
+    CLASS Dictionary (EXTENDED) =
+    MANDATORY CONSTRAINT
+      Language == #de OR
+      Language == #fr OR
+      Language == #it OR
+      Language == #rm OR
+      Language == #en;
+    END Dictionary;
+
+  END Dictionaries;
+
+END DictionariesCH_V1.
+
+!! ########################################################################
+','2019-06-09 17:29:21.966');
 INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CoordSys-20151124.ili','2.3','CoordSys','!! File CoordSys.ili Release 2015-11-24
 
 INTERLIS 2.3;
@@ -3219,179 +3391,7 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
 
 END CoordSys.
 
-','2019-06-07 11:21:43.412');
-INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part2_LOCALISATION_20110830.ili','2.3','InternationalCodes_V1 Localisation_V1{ InternationalCodes_V1} LocalisationCH_V1{ InternationalCodes_V1 Localisation_V1} Dictionaries_V1{ InternationalCodes_V1} DictionariesCH_V1{ InternationalCodes_V1 Dictionaries_V1}','/* ########################################################################
-   CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
-   ======
-   BASISMODULE DES BUNDES           MODULES DE BASE DE LA CONFEDERATION
-   FÜR MINIMALE GEODATENMODELLE     POUR LES MODELES DE GEODONNEES MINIMAUX
-   
-   PROVIDER: GKG/KOGIS - GCS/COSIG             CONTACT: models@geo.admin.ch
-   PUBLISHED: 2011-08-30
-   ########################################################################
-*/
-
-INTERLIS 2.3;
-
-/* ########################################################################
-   ########################################################################
-   PART II -- LOCALISATION
-   - Package InternationalCodes
-   - Packages Localisation, LocalisationCH
-   - Packages Dictionaries, DictionariesCH
-*/
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL InternationalCodes_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  DOMAIN
-    LanguageCode_ISO639_1 = (de,fr,it,rm,en,
-      aa,ab,af,am,ar,as,ay,az,ba,be,bg,bh,bi,bn,bo,br,ca,co,cs,cy,da,dz,el,
-      eo,es,et,eu,fa,fi,fj,fo,fy,ga,gd,gl,gn,gu,ha,he,hi,hr,hu,hy,ia,id,ie,
-      ik,is,iu,ja,jw,ka,kk,kl,km,kn,ko,ks,ku,ky,la,ln,lo,lt,lv,mg,mi,mk,ml,
-      mn,mo,mr,ms,mt,my,na,ne,nl,no,oc,om,or,pa,pl,ps,pt,qu,rn,ro,ru,rw,sa,
-      sd,sg,sh,si,sk,sl,sm,sn,so,sq,sr,ss,st,su,sv,sw,ta,te,tg,th,ti,tk,tl,
-      tn,to,tr,ts,tt,tw,ug,uk,ur,uz,vi,vo,wo,xh,yi,yo,za,zh,zu);
-
-    CountryCode_ISO3166_1 = (CHE,
-      ABW,AFG,AGO,AIA,ALA,ALB,AND_,ANT,ARE,ARG,ARM,ASM,ATA,ATF,ATG,AUS,
-      AUT,AZE,BDI,BEL,BEN,BFA,BGD,BGR,BHR,BHS,BIH,BLR,BLZ,BMU,BOL,BRA,
-      BRB,BRN,BTN,BVT,BWA,CAF,CAN,CCK,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
-      COM,CPV,CRI,CUB,CXR,CYM,CYP,CZE,DEU,DJI,DMA,DNK,DOM,DZA,ECU,EGY,
-      ERI,ESH,ESP,EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,GEO,GGY,GHA,
-      GIB,GIN,GLP,GMB,GNB,GNQ,GRC,GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,
-      HRV,HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,ISR,ITA,JAM,JEY,JOR,
-      JPN,KAZ,KEN,KGZ,KHM,KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,LKA,
-      LSO,LTU,LUX,LVA,MAC,MAR,MCO,MDA,MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,
-      MNE,MNG,MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,NCL,NER,NFK,NGA,
-      NIC,NIU,NLD,NOR,NPL,NRU,NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
-      PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,RWA,SAU,SDN,SEN,SGP,SGS,
-      SHN,SJM,SLB,SLE,SLV,SMR,SOM,SPM,SRB,STP,SUR,SVK,SVN,SWE,SWZ,SYC,
-      SYR,TCA,TCD,TGO,THA,TJK,TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
-      UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,VIR,VNM,VUT,WLF,WSM,YEM,
-      ZAF,ZMB,ZWE);
-
-END InternationalCodes_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL Localisation_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-
-  STRUCTURE LocalisedText =
-    Language: LanguageCode_ISO639_1;
-    Text: MANDATORY TEXT;
-  END LocalisedText;
-  
-  STRUCTURE LocalisedMText =
-    Language: LanguageCode_ISO639_1;
-    Text: MANDATORY MTEXT;
-  END LocalisedMText;
-
-  STRUCTURE MultilingualText =
-    LocalisedText : BAG {1..*} OF LocalisedText;
-    UNIQUE (LOCAL) LocalisedText:Language;
-  END MultilingualText;  
-  
-  STRUCTURE MultilingualMText =
-    LocalisedText : BAG {1..*} OF LocalisedMText;
-    UNIQUE (LOCAL) LocalisedText:Language;
-  END MultilingualMText;
-
-END Localisation_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL LocalisationCH_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-  IMPORTS Localisation_V1;
-
-  STRUCTURE LocalisedText EXTENDS Localisation_V1.LocalisedText =
-  MANDATORY CONSTRAINT
-    Language == #de OR
-    Language == #fr OR
-    Language == #it OR
-    Language == #rm OR
-    Language == #en;
-  END LocalisedText;
-  
-  STRUCTURE LocalisedMText EXTENDS Localisation_V1.LocalisedMText =
-  MANDATORY CONSTRAINT
-    Language == #de OR
-    Language == #fr OR
-    Language == #it OR
-    Language == #rm OR
-    Language == #en;
-  END LocalisedMText;
-
-  STRUCTURE MultilingualText EXTENDS Localisation_V1.MultilingualText =
-    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedText;
-  END MultilingualText;  
-  
-  STRUCTURE MultilingualMText EXTENDS Localisation_V1.MultilingualMText =
-    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedMText;
-  END MultilingualMText;
-
-END LocalisationCH_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-MODEL Dictionaries_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-
-  TOPIC Dictionaries (ABSTRACT) =
-
-    STRUCTURE Entry (ABSTRACT) =
-      Text: MANDATORY TEXT;
-    END Entry;
-      
-    CLASS Dictionary =
-      Language: MANDATORY LanguageCode_ISO639_1;
-      Entries: LIST OF Entry;
-    END Dictionary;
-
-  END Dictionaries;
-
-END Dictionaries_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-MODEL DictionariesCH_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-  IMPORTS Dictionaries_V1;
-
-  TOPIC Dictionaries (ABSTRACT) EXTENDS Dictionaries_V1.Dictionaries =
-
-    CLASS Dictionary (EXTENDED) =
-    MANDATORY CONSTRAINT
-      Language == #de OR
-      Language == #fr OR
-      Language == #it OR
-      Language == #rm OR
-      Language == #en;
-    END Dictionary;
-
-  END Dictionaries;
-
-END DictionariesCH_V1.
-
-!! ########################################################################
-','2019-06-07 11:21:43.412');
+','2019-06-09 17:29:21.966');
 INSERT INTO arp_npl.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part1_GEOMETRY_20110830.ili','2.3','GeometryCHLV03_V1{ CoordSys Units INTERLIS} GeometryCHLV95_V1{ CoordSys Units INTERLIS}','/* ########################################################################
    CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
    ======
@@ -3569,7 +3569,7 @@ TYPE MODEL GeometryCHLV95_V1 (en)
 END GeometryCHLV95_V1.
 
 !! ########################################################################
-','2019-06-07 11:21:43.412');
+','2019-06-09 17:29:21.966');
 INSERT INTO arp_npl.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.createMetaInfo','True');
 INSERT INTO arp_npl.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.beautifyEnumDispName','underscore');
 INSERT INTO arp_npl.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.arrayTrafo','coalesce');
@@ -3612,7 +3612,7 @@ INSERT INTO arp_npl.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES
 INSERT INTO arp_npl.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('SO_Nutzungsplanung_20171118','File','SO_Nutzungsplanung_20171118.ili');
 INSERT INTO arp_npl.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('SO_Nutzungsplanung_20171118','technicalContact','http://agi.so.ch');
 CREATE SCHEMA IF NOT EXISTS agi_oereb_npl_staging;
-CREATE SEQUENCE agi_oereb_npl_staging.t_ili2db_seq;;
+CREATE SEQUENCE agi_oereb_npl_staging.t_ili2db_seq MINVALUE 1000000000000;;
 -- Localisation_V1.LocalisedText
 CREATE TABLE agi_oereb_npl_staging.localisedtext (
   T_Id bigint PRIMARY KEY DEFAULT nextval('agi_oereb_npl_staging.t_ili2db_seq')
@@ -3983,17 +3983,17 @@ CREATE TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift (
   ,T_basket bigint NOT NULL
   ,T_datasetname varchar(200) NOT NULL
   ,eigentumsbeschraenkung bigint NOT NULL
-  ,vorschrift_vorschriften_dokument bigint NULL
   ,vorschrift_vorschriften_artikel bigint NULL
+  ,vorschrift_vorschriften_dokument bigint NULL
 )
 ;
 CREATE INDEX transfrstrktrhnwsvrschrift_t_basket_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( t_basket );
 CREATE INDEX transfrstrktrhnwsvrschrift_t_datasetname_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( t_datasetname );
 CREATE INDEX transfrstrktrhnwsvrschrift_eigentumsbeschraenkung_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( eigentumsbeschraenkung );
-CREATE INDEX transfrstrktrhnwsvrschrift_vorschrft_vrschrftn_dkment_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( vorschrift_vorschriften_dokument );
 CREATE INDEX transfrstrktrhnwsvrschrift_vorschrift_vrschrftn_rtkel_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( vorschrift_vorschriften_artikel );
-COMMENT ON COLUMN agi_oereb_npl_staging.transferstruktur_hinweisvorschrift.vorschrift_vorschriften_dokument IS 'Rechtsvorschrift der Eigentumsbeschränkung';
+CREATE INDEX transfrstrktrhnwsvrschrift_vorschrft_vrschrftn_dkment_idx ON agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ( vorschrift_vorschriften_dokument );
 COMMENT ON COLUMN agi_oereb_npl_staging.transferstruktur_hinweisvorschrift.vorschrift_vorschriften_artikel IS 'Rechtsvorschrift der Eigentumsbeschränkung';
+COMMENT ON COLUMN agi_oereb_npl_staging.transferstruktur_hinweisvorschrift.vorschrift_vorschriften_dokument IS 'Rechtsvorschrift der Eigentumsbeschränkung';
 CREATE TABLE agi_oereb_npl_staging.T_ILI2DB_BASKET (
   T_Id bigint PRIMARY KEY
   ,dataset bigint NULL
@@ -4049,16 +4049,7 @@ CREATE TABLE agi_oereb_npl_staging.T_ILI2DB_MODEL (
   ,modelName text NOT NULL
   ,content text NOT NULL
   ,importDate timestamp NOT NULL
-  ,PRIMARY KEY (iliversion,modelName)
-)
-;
-CREATE TABLE agi_oereb_npl_staging.languagecode_iso639_1 (
-  itfCode integer PRIMARY KEY
-  ,iliCode varchar(1024) NOT NULL
-  ,seq integer NULL
-  ,inactive boolean NOT NULL
-  ,dispName varchar(250) NOT NULL
-  ,description varchar(1024) NULL
+  ,PRIMARY KEY (modelName,iliversion)
 )
 ;
 CREATE TABLE agi_oereb_npl_staging.thema (
@@ -4088,6 +4079,15 @@ CREATE TABLE agi_oereb_npl_staging.rechtsstatus (
   ,description varchar(1024) NULL
 )
 ;
+CREATE TABLE agi_oereb_npl_staging.languagecode_iso639_1 (
+  itfCode integer PRIMARY KEY
+  ,iliCode varchar(1024) NOT NULL
+  ,seq integer NULL
+  ,inactive boolean NOT NULL
+  ,dispName varchar(250) NOT NULL
+  ,description varchar(1024) NULL
+)
+;
 CREATE TABLE agi_oereb_npl_staging.T_ILI2DB_CLASSNAME (
   IliName varchar(1024) PRIMARY KEY
   ,SqlName varchar(1024) NOT NULL
@@ -4098,7 +4098,7 @@ CREATE TABLE agi_oereb_npl_staging.T_ILI2DB_ATTRNAME (
   ,SqlName varchar(1024) NOT NULL
   ,ColOwner varchar(1024) NOT NULL
   ,Target varchar(1024) NULL
-  ,PRIMARY KEY (SqlName,ColOwner)
+  ,PRIMARY KEY (ColOwner,SqlName)
 )
 ;
 CREATE TABLE agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (
@@ -4164,16 +4164,16 @@ ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisdefinitiondokument ADD
 ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisdefinitiondokument ADD CONSTRAINT transfrstrktrwsdfntndkment_dokument_fkey FOREIGN KEY ( dokument ) REFERENCES agi_oereb_npl_staging.vorschriften_dokument DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ADD CONSTRAINT transfrstrktrhnwsvrschrift_T_basket_fkey FOREIGN KEY ( T_basket ) REFERENCES agi_oereb_npl_staging.T_ILI2DB_BASKET DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ADD CONSTRAINT transfrstrktrhnwsvrschrift_eigentumsbeschraenkung_fkey FOREIGN KEY ( eigentumsbeschraenkung ) REFERENCES agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ADD CONSTRAINT transfrstrktrhnwsvrschrift_vorschrft_vrschrftn_dkment_fkey FOREIGN KEY ( vorschrift_vorschriften_dokument ) REFERENCES agi_oereb_npl_staging.vorschriften_dokument DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ADD CONSTRAINT transfrstrktrhnwsvrschrift_vorschrift_vrschrftn_rtkel_fkey FOREIGN KEY ( vorschrift_vorschriften_artikel ) REFERENCES agi_oereb_npl_staging.vorschriften_artikel DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE agi_oereb_npl_staging.transferstruktur_hinweisvorschrift ADD CONSTRAINT transfrstrktrhnwsvrschrift_vorschrft_vrschrftn_dkment_fkey FOREIGN KEY ( vorschrift_vorschriften_dokument ) REFERENCES agi_oereb_npl_staging.vorschriften_dokument DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE agi_oereb_npl_staging.T_ILI2DB_BASKET ADD CONSTRAINT T_ILI2DB_BASKET_dataset_fkey FOREIGN KEY ( dataset ) REFERENCES agi_oereb_npl_staging.T_ILI2DB_DATASET DEFERRABLE INITIALLY DEFERRED;
 CREATE UNIQUE INDEX T_ILI2DB_DATASET_datasetName_key ON agi_oereb_npl_staging.T_ILI2DB_DATASET (datasetName)
 ;
 ALTER TABLE agi_oereb_npl_staging.T_ILI2DB_IMPORT_BASKET ADD CONSTRAINT T_ILI2DB_IMPORT_BASKET_importrun_fkey FOREIGN KEY ( importrun ) REFERENCES agi_oereb_npl_staging.T_ILI2DB_IMPORT DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE agi_oereb_npl_staging.T_ILI2DB_IMPORT_BASKET ADD CONSTRAINT T_ILI2DB_IMPORT_BASKET_basket_fkey FOREIGN KEY ( basket ) REFERENCES agi_oereb_npl_staging.T_ILI2DB_BASKET DEFERRABLE INITIALLY DEFERRED;
-CREATE UNIQUE INDEX T_ILI2DB_MODEL_iliversion_modelName_key ON agi_oereb_npl_staging.T_ILI2DB_MODEL (iliversion,modelName)
+CREATE UNIQUE INDEX T_ILI2DB_MODEL_modelName_iliversion_key ON agi_oereb_npl_staging.T_ILI2DB_MODEL (modelName,iliversion)
 ;
-CREATE UNIQUE INDEX T_ILI2DB_ATTRNAME_SqlName_ColOwner_key ON agi_oereb_npl_staging.T_ILI2DB_ATTRNAME (SqlName,ColOwner)
+CREATE UNIQUE INDEX T_ILI2DB_ATTRNAME_ColOwner_SqlName_key ON agi_oereb_npl_staging.T_ILI2DB_ATTRNAME (ColOwner,SqlName)
 ;
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('Localisation_V1.MultilingualText','multilingualtext');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_CLASSNAME (IliName,SqlName) VALUES ('OeREBKRM_V1_1.ArtikelInhaltMehrsprachig','artikelinhaltmehrsprachig');
@@ -4328,39 +4328,87 @@ INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Artikel.Text','ch.ehi.ili2db.multilingualTrafo','expand');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Dokument.Abkuerzung','ch.ehi.ili2db.multilingualTrafo','expand');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TRAFO (iliname,tag,setting) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisVorschrift','ch.ehi.ili2db.inheritance','newClass');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Dokument','OeREBKRMvs_V1_1.Vorschriften.DokumentBasis');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.MultilingualUri',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.MultilingualMText',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.LocalisedMText','Localisation_V1.LocalisedMText');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisDefinitionDokument',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.Eigentumsbeschraenkung',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisVorschrift',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Rechtsvorschrift','OeREBKRMvs_V1_1.Vorschriften.Dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.Geometrie',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.LocalisedMText',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.DarstellungsDienst',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisDefinition',NULL);
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.MultilingualText','Localisation_V1.MultilingualText');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.LocalisedUri',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.ZustaendigeStelleDokument',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.DarstellungsDienstEigentumsbeschraenkung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.HinweisWeitereDokumente',NULL);
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.ZustaendigeStelleGeometrie',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Amt',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.ZustaendigeStelleEigentumsbeschraenkung',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.DokumentArtikel',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.LocalisedMText',NULL);
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.LegendeEintrag',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.DarstellungsDienstEigentumsbeschraenkung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.DokumentBasis',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.Geometrie',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.ArtikelNummer_',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.LocalisedUri',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.ZustaendigeStelleEigentumsbeschraenkung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.DarstellungsDienst',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.LocalisedText','Localisation_V1.LocalisedText');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.MultilingualText',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisDefinition',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Rechtsvorschrift','OeREBKRMvs_V1_1.Vorschriften.Dokument');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisVorschrift',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Dokument','OeREBKRMvs_V1_1.Vorschriften.DokumentBasis');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.GeometrieEigentumsbeschraenkung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.ArtikelInhaltMehrsprachig','LocalisationCH_V1.MultilingualMText');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.ZustaendigeStelleDokument',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.DokumentArtikel',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.GrundlageVerfeinerung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisDefinitionDokument',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.LocalisedText',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.MultilingualUri',NULL);
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Artikel','OeREBKRMvs_V1_1.Vorschriften.DokumentBasis');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.MultilingualMText','Localisation_V1.MultilingualMText');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.ArtikelInhaltMehrsprachig','LocalisationCH_V1.MultilingualMText');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.HinweisWeitereDokumente',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.LocalisedText','Localisation_V1.LocalisedText');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.DokumentBasis',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.GeometrieEigentumsbeschraenkung',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.MultilingualText',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.Eigentumsbeschraenkung',NULL);
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.HinweisDefinitionZustaendigeStelle',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.LocalisedText',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRM_V1_1.ArtikelNummer_',NULL);
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMtrsfr_V1_1.Transferstruktur.GrundlageVerfeinerung',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('Localisation_V1.MultilingualMText',NULL);
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('LocalisationCH_V1.LocalisedMText','Localisation_V1.LocalisedMText');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_INHERITANCE (thisClass,baseClass) VALUES ('OeREBKRMvs_V1_1.Vorschriften.Amt',NULL);
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanung',0,'Nutzungsplanung',FALSE,'GeoIV Datensatz 73');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenNationalstrassen',1,'ProjektierungszonenNationalstrassen',FALSE,'87');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienNationalstrassen',2,'BaulinienNationalstrassen',FALSE,'88');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenEisenbahnanlagen',3,'ProjektierungszonenEisenbahnanlagen',FALSE,'96');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienEisenbahnanlagen',4,'BaulinienEisenbahnanlagen',FALSE,'97');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenFlughafenanlagen',5,'ProjektierungszonenFlughafenanlagen',FALSE,'103');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienFlughafenanlagen',6,'BaulinienFlughafenanlagen',FALSE,'104');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SicherheitszonenplanFlughafen',7,'SicherheitszonenplanFlughafen',FALSE,'108');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorte',8,'BelasteteStandorte',FALSE,'116');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteMilitaer',9,'BelasteteStandorteMilitaer',FALSE,'117');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteZivileFlugplaetze',10,'BelasteteStandorteZivileFlugplaetze',FALSE,'118');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteOeffentlicherVerkehr',11,'BelasteteStandorteOeffentlicherVerkehr',FALSE,'119');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Grundwasserschutzzonen',12,'Grundwasserschutzzonen',FALSE,'131');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Grundwasserschutzareale',13,'Grundwasserschutzareale',FALSE,'132');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Laermemfindlichkeitsstufen',14,'Laermemfindlichkeitsstufen',FALSE,'145');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldgrenzen',15,'Waldgrenzen',FALSE,'157');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldabstandslinien',16,'Waldabstandslinien',FALSE,'159');
+INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'WeiteresThema',17,'WeiteresThema',FALSE,'Fuer weitere Themen');
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZH',0,'ZH',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BE',1,'BE',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'LU',2,'LU',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'UR',3,'UR',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SZ',4,'SZ',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'OW',5,'OW',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NW',6,'NW',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GL',7,'GL',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZG',8,'ZG',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FR',9,'FR',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SO',10,'SO',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BS',11,'BS',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BL',12,'BL',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SH',13,'SH',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AR',14,'AR',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AI',15,'AI',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SG',16,'SG',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GR',17,'GR',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AG',18,'AG',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TG',19,'TG',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TI',20,'TI',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VD',21,'VD',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VS',22,'VS',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NE',23,'NE',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GE',24,'GE',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'JU',25,'JU',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FL',26,'FL',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'CH',27,'CH',FALSE,NULL);
+INSERT INTO agi_oereb_npl_staging.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'inKraft',0,'inKraft',FALSE,'Die Eigentumsbeschränkung ist in Kraft.');
+INSERT INTO agi_oereb_npl_staging.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'laufendeAenderung',1,'laufendeAenderung',FALSE,'gem. OeREBKV Art. 12 Abs. 2');
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'de',0,'de',FALSE,NULL);
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'fr',1,'fr',FALSE,NULL);
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'it',2,'it',FALSE,NULL);
@@ -4500,126 +4548,78 @@ INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dis
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'za',136,'za',FALSE,NULL);
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'zh',137,'zh',FALSE,NULL);
 INSERT INTO agi_oereb_npl_staging.languagecode_iso639_1 (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'zu',138,'zu',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Nutzungsplanung',0,'Nutzungsplanung',FALSE,'GeoIV Datensatz 73');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenNationalstrassen',1,'ProjektierungszonenNationalstrassen',FALSE,'87');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienNationalstrassen',2,'BaulinienNationalstrassen',FALSE,'88');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenEisenbahnanlagen',3,'ProjektierungszonenEisenbahnanlagen',FALSE,'96');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienEisenbahnanlagen',4,'BaulinienEisenbahnanlagen',FALSE,'97');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ProjektierungszonenFlughafenanlagen',5,'ProjektierungszonenFlughafenanlagen',FALSE,'103');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BaulinienFlughafenanlagen',6,'BaulinienFlughafenanlagen',FALSE,'104');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SicherheitszonenplanFlughafen',7,'SicherheitszonenplanFlughafen',FALSE,'108');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorte',8,'BelasteteStandorte',FALSE,'116');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteMilitaer',9,'BelasteteStandorteMilitaer',FALSE,'117');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteZivileFlugplaetze',10,'BelasteteStandorteZivileFlugplaetze',FALSE,'118');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BelasteteStandorteOeffentlicherVerkehr',11,'BelasteteStandorteOeffentlicherVerkehr',FALSE,'119');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Grundwasserschutzzonen',12,'Grundwasserschutzzonen',FALSE,'131');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Grundwasserschutzareale',13,'Grundwasserschutzareale',FALSE,'132');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Laermemfindlichkeitsstufen',14,'Laermemfindlichkeitsstufen',FALSE,'145');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldgrenzen',15,'Waldgrenzen',FALSE,'157');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'Waldabstandslinien',16,'Waldabstandslinien',FALSE,'159');
-INSERT INTO agi_oereb_npl_staging.thema (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'WeiteresThema',17,'WeiteresThema',FALSE,'Fuer weitere Themen');
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZH',0,'ZH',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BE',1,'BE',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'LU',2,'LU',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'UR',3,'UR',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SZ',4,'SZ',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'OW',5,'OW',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NW',6,'NW',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GL',7,'GL',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'ZG',8,'ZG',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FR',9,'FR',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SO',10,'SO',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BS',11,'BS',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'BL',12,'BL',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SH',13,'SH',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AR',14,'AR',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AI',15,'AI',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'SG',16,'SG',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GR',17,'GR',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'AG',18,'AG',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TG',19,'TG',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'TI',20,'TI',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VD',21,'VD',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'VS',22,'VS',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'NE',23,'NE',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'GE',24,'GE',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'JU',25,'JU',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'FL',26,'FL',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.chcantoncode (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'CH',27,'CH',FALSE,NULL);
-INSERT INTO agi_oereb_npl_staging.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'inKraft',0,'inKraft',FALSE,'Die Eigentumsbeschränkung ist in Kraft.');
-INSERT INTO agi_oereb_npl_staging.rechtsstatus (seq,iliCode,itfCode,dispName,inactive,description) VALUES (NULL,'laufendeAenderung',1,'laufendeAenderung',FALSE,'gem. OeREBKV Art. 12 Abs. 2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c1Min','460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.srid','21781');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c1Min','460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_eigentumsbeschraenkung',NULL,'darstellungsdienst','ch.ehi.ili2db.foreignKey','transferstruktur_darstellungsdienst');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c1Max','870000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.srid','2056');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'multilingualmtext_localisedtext','ch.ehi.ili2db.foreignKey','multilingualmtext');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_eigentumsbeschraenkung',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c2Min','45000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_localisedtext","localisedtext"]');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.srid','21781');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_multilingualtext","multilingualtext"]');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisdefinitiondokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c2Min','45000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualmtext',NULL,'T_Type','ch.ehi.ili2db.types','["artikelinhaltmehrsprachig","localisationch_v1_multilingualmtext","multilingualmtext"]');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c2Max','310000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_dokument',NULL,'T_Type','ch.ehi.ili2db.types','["vorschriften_dokument","vorschriften_rechtsvorschrift"]');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_artikel',NULL,'dokument','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c2Min','45000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.geomType','LINESTRING');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisvorschrift',NULL,'eigentumsbeschraenkung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('artikelnummer_',NULL,'transfrstrkwsvrschrift_artikelnr','ch.ehi.ili2db.foreignKey','transferstruktur_hinweisvorschrift');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisdefinitiondokument',NULL,'hinweisdefinition','ch.ehi.ili2db.foreignKey','transferstruktur_hinweisdefinition');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c1Max','870000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'atext','ch.ehi.ili2db.textKind','MTEXT');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualuri',NULL,'vorschriften_artikel_textimweb','ch.ehi.ili2db.foreignKey','vorschriften_artikel');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.geomType','LINESTRING');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualuri',NULL,'vorschriften_dokument_textimweb','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_legendeeintrag',NULL,'transfrstrkstllngsdnst_legende','ch.ehi.ili2db.foreignKey','transferstruktur_darstellungsdienst');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_localisedmtext","localisedmtext"]');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_hinweisweiteredokumente',NULL,'ursprung','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_hinweisweiteredokumente',NULL,'hinweis','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisvorschrift',NULL,'vorschrift_vorschriften_dokument','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedtext',NULL,'multilingualtext_localisedtext','ch.ehi.ili2db.foreignKey','multilingualtext');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c1Max','870000.000');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c2Max','310000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisvorschrift',NULL,'vorschrift_vorschriften_artikel','ch.ehi.ili2db.foreignKey','vorschriften_artikel');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c2Min','1045000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c1Min','460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedtext',NULL,'multilingualtext_localisedtext','ch.ehi.ili2db.foreignKey','multilingualtext');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('artikelnummer_',NULL,'transfrstrkwsvrschrift_artikelnr','ch.ehi.ili2db.foreignKey','transferstruktur_hinweisvorschrift');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c1Max','2870000.000');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.geomType','POINT');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_dokument',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.srid','2056');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localiseduri',NULL,'multilingualuri_localisedtext','ch.ehi.ili2db.foreignKey','multilingualuri');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_grundlageverfeinerung',NULL,'grundlage','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_hinweisweiteredokumente',NULL,'hinweis','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c1Min','2460000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.srid','21781');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('artikelnummer_',NULL,'vorschrftn_wswtrdkmnte_artikelnr','ch.ehi.ili2db.foreignKey','vorschriften_hinweisweiteredokumente');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisdefinition',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'eigentumsbeschraenkung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c2Max','1310000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c1Max','2870000.000');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.geomType','POLYGON');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.coordDimension','2');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.srid','2056');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_grundlageverfeinerung',NULL,'verfeinerung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c2Max','310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.srid','2056');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c1Max','870000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_artikel',NULL,'dokument','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_eigentumsbeschraenkung',NULL,'darstellungsdienst','ch.ehi.ili2db.foreignKey','transferstruktur_darstellungsdienst');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c2Max','310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c1Min','460000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.srid','2056');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'eigentumsbeschraenkung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.srid','21781');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_localisedmtext","localisedmtext"]');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c1Min','460000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.geomType','POINT');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisdefinitiondokument',NULL,'dokument','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.geomType','LINESTRING');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualmtext',NULL,'T_Type','ch.ehi.ili2db.types','["artikelinhaltmehrsprachig","localisationch_v1_multilingualmtext","multilingualmtext"]');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_eigentumsbeschraenkung',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.srid','21781');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localiseduri',NULL,'multilingualuri_localisedtext','ch.ehi.ili2db.foreignKey','multilingualuri');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualuri',NULL,'vorschriften_dokument_textimweb','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisvorschrift',NULL,'vorschrift_vorschriften_artikel','ch.ehi.ili2db.foreignKey','vorschriften_artikel');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_dokument',NULL,'T_Type','ch.ehi.ili2db.types','["vorschriften_dokument","vorschriften_rechtsvorschrift"]');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualuri',NULL,'vorschriften_artikel_textimweb','ch.ehi.ili2db.foreignKey','vorschriften_artikel');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.c2Min','45000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c2Max','310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('multilingualtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_multilingualtext","multilingualtext"]');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_grundlageverfeinerung',NULL,'verfeinerung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c2Max','1310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'multilingualmtext_localisedtext','ch.ehi.ili2db.foreignKey','multilingualmtext');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedtext',NULL,'T_Type','ch.ehi.ili2db.types','["localisationch_v1_localisedtext","localisedtext"]');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c1Min','460000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c2Max','310000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c2Min','45000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('artikelnummer_',NULL,'vorschrftn_wswtrdkmnte_artikelnr','ch.ehi.ili2db.foreignKey','vorschriften_hinweisweiteredokumente');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv95','ch.ehi.ili2db.c2Min','1045000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.srid','21781');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv03','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.c1Max','2870000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_legendeeintrag',NULL,'transfrstrkstllngsdnst_legende','ch.ehi.ili2db.foreignKey','transferstruktur_darstellungsdienst');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'zustaendigestelle','ch.ehi.ili2db.foreignKey','vorschriften_amt');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv03','ch.ehi.ili2db.c1Max','870000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.c1Min','2460000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_grundlageverfeinerung',NULL,'grundlage','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisdefinitiondokument',NULL,'hinweisdefinition','ch.ehi.ili2db.foreignKey','transferstruktur_hinweisdefinition');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.srid','2056');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.geomType','POLYGON');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('localisedmtext',NULL,'atext','ch.ehi.ili2db.textKind','MTEXT');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'punkt_lv95','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'flaeche_lv03','ch.ehi.ili2db.c2Min','45000.000');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_hinweisvorschrift',NULL,'eigentumsbeschraenkung','ch.ehi.ili2db.foreignKey','transferstruktur_eigentumsbeschraenkung');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('vorschriften_hinweisweiteredokumente',NULL,'ursprung','ch.ehi.ili2db.foreignKey','vorschriften_dokument');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.coordDimension','2');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_COLUMN_PROP (tablename,subtype,columnname,tag,setting) VALUES ('transferstruktur_geometrie',NULL,'linie_lv95','ch.ehi.ili2db.geomType','LINESTRING');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('multilingualmtext','ch.ehi.ili2db.tableKind','STRUCTURE');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('localiseduri','ch.ehi.ili2db.tableKind','STRUCTURE');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_TABLE_PROP (tablename,tag,setting) VALUES ('vorschriften_hinweisweiteredokumente','ch.ehi.ili2db.tableKind','ASSOCIATION');
@@ -4855,7 +4855,7 @@ MODEL AdministrativeUnitsCH_V1 (en)
 END AdministrativeUnitsCH_V1.
 
 !! ########################################################################
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part3_CATALOGUEOBJECTS_20110830.ili','2.3','CatalogueObjects_V1{ INTERLIS} CatalogueObjectTrees_V1{ INTERLIS CatalogueObjects_V1}','/* ########################################################################
    CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
    ======
@@ -4943,7 +4943,7 @@ MODEL CatalogueObjectTrees_V1 (en)
 END CatalogueObjectTrees_V1.
 
 !! ########################################################################
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('Units-20120220.ili','2.3','Units','!! File Units.ili Release 2012-02-20
 
 INTERLIS 2.3;
@@ -5041,7 +5041,7 @@ CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
 
 END Units.
 
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('OeREBKRMtrsfr_V1_1.ili','2.3','OeREBKRMtrsfr_V1_1{ GeometryCHLV95_V1 CHAdminCodes_V1 LocalisationCH_V1 GeometryCHLV03_V1 OeREBKRM_V1_1 OeREBKRMvs_V1_1}','INTERLIS 2.3;
 
 /** Schnittstelle zwischen zuständiger Stelle für die Geobasisdaten und Katasterorganisation des Kantons.
@@ -5225,7 +5225,7 @@ VERSION "2016-08-15"  =
   END Transferstruktur;
 
 END OeREBKRMtrsfr_V1_1.
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('OeREBKRM_V1_1.ili','2.3','OeREBKRM_V1_1{ InternationalCodes_V1 LocalisationCH_V1 CatalogueObjects_V1}','INTERLIS 2.3;
 
 /** Basisdefinitionen für das OEREB-Katasterrahmenmodell
@@ -5389,7 +5389,179 @@ VERSION "2016-08-15"  =
   END CodelistenText;
 
 END OeREBKRM_V1_1.
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part2_LOCALISATION_20110830.ili','2.3','InternationalCodes_V1 Localisation_V1{ InternationalCodes_V1} LocalisationCH_V1{ InternationalCodes_V1 Localisation_V1} Dictionaries_V1{ InternationalCodes_V1} DictionariesCH_V1{ InternationalCodes_V1 Dictionaries_V1}','/* ########################################################################
+   CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
+   ======
+   BASISMODULE DES BUNDES           MODULES DE BASE DE LA CONFEDERATION
+   FÜR MINIMALE GEODATENMODELLE     POUR LES MODELES DE GEODONNEES MINIMAUX
+   
+   PROVIDER: GKG/KOGIS - GCS/COSIG             CONTACT: models@geo.admin.ch
+   PUBLISHED: 2011-08-30
+   ########################################################################
+*/
+
+INTERLIS 2.3;
+
+/* ########################################################################
+   ########################################################################
+   PART II -- LOCALISATION
+   - Package InternationalCodes
+   - Packages Localisation, LocalisationCH
+   - Packages Dictionaries, DictionariesCH
+*/
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL InternationalCodes_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  DOMAIN
+    LanguageCode_ISO639_1 = (de,fr,it,rm,en,
+      aa,ab,af,am,ar,as,ay,az,ba,be,bg,bh,bi,bn,bo,br,ca,co,cs,cy,da,dz,el,
+      eo,es,et,eu,fa,fi,fj,fo,fy,ga,gd,gl,gn,gu,ha,he,hi,hr,hu,hy,ia,id,ie,
+      ik,is,iu,ja,jw,ka,kk,kl,km,kn,ko,ks,ku,ky,la,ln,lo,lt,lv,mg,mi,mk,ml,
+      mn,mo,mr,ms,mt,my,na,ne,nl,no,oc,om,or,pa,pl,ps,pt,qu,rn,ro,ru,rw,sa,
+      sd,sg,sh,si,sk,sl,sm,sn,so,sq,sr,ss,st,su,sv,sw,ta,te,tg,th,ti,tk,tl,
+      tn,to,tr,ts,tt,tw,ug,uk,ur,uz,vi,vo,wo,xh,yi,yo,za,zh,zu);
+
+    CountryCode_ISO3166_1 = (CHE,
+      ABW,AFG,AGO,AIA,ALA,ALB,AND_,ANT,ARE,ARG,ARM,ASM,ATA,ATF,ATG,AUS,
+      AUT,AZE,BDI,BEL,BEN,BFA,BGD,BGR,BHR,BHS,BIH,BLR,BLZ,BMU,BOL,BRA,
+      BRB,BRN,BTN,BVT,BWA,CAF,CAN,CCK,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
+      COM,CPV,CRI,CUB,CXR,CYM,CYP,CZE,DEU,DJI,DMA,DNK,DOM,DZA,ECU,EGY,
+      ERI,ESH,ESP,EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,GEO,GGY,GHA,
+      GIB,GIN,GLP,GMB,GNB,GNQ,GRC,GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,
+      HRV,HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,ISR,ITA,JAM,JEY,JOR,
+      JPN,KAZ,KEN,KGZ,KHM,KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,LKA,
+      LSO,LTU,LUX,LVA,MAC,MAR,MCO,MDA,MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,
+      MNE,MNG,MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,NCL,NER,NFK,NGA,
+      NIC,NIU,NLD,NOR,NPL,NRU,NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
+      PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,RWA,SAU,SDN,SEN,SGP,SGS,
+      SHN,SJM,SLB,SLE,SLV,SMR,SOM,SPM,SRB,STP,SUR,SVK,SVN,SWE,SWZ,SYC,
+      SYR,TCA,TCD,TGO,THA,TJK,TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
+      UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,VIR,VNM,VUT,WLF,WSM,YEM,
+      ZAF,ZMB,ZWE);
+
+END InternationalCodes_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL Localisation_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+
+  STRUCTURE LocalisedText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY TEXT;
+  END LocalisedText;
+  
+  STRUCTURE LocalisedMText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY MTEXT;
+  END LocalisedMText;
+
+  STRUCTURE MultilingualText =
+    LocalisedText : BAG {1..*} OF LocalisedText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualText;  
+  
+  STRUCTURE MultilingualMText =
+    LocalisedText : BAG {1..*} OF LocalisedMText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualMText;
+
+END Localisation_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+TYPE MODEL LocalisationCH_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+  IMPORTS Localisation_V1;
+
+  STRUCTURE LocalisedText EXTENDS Localisation_V1.LocalisedText =
+  MANDATORY CONSTRAINT
+    Language == #de OR
+    Language == #fr OR
+    Language == #it OR
+    Language == #rm OR
+    Language == #en;
+  END LocalisedText;
+  
+  STRUCTURE LocalisedMText EXTENDS Localisation_V1.LocalisedMText =
+  MANDATORY CONSTRAINT
+    Language == #de OR
+    Language == #fr OR
+    Language == #it OR
+    Language == #rm OR
+    Language == #en;
+  END LocalisedMText;
+
+  STRUCTURE MultilingualText EXTENDS Localisation_V1.MultilingualText =
+    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedText;
+  END MultilingualText;  
+  
+  STRUCTURE MultilingualMText EXTENDS Localisation_V1.MultilingualMText =
+    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedMText;
+  END MultilingualMText;
+
+END LocalisationCH_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+MODEL Dictionaries_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+
+  TOPIC Dictionaries (ABSTRACT) =
+
+    STRUCTURE Entry (ABSTRACT) =
+      Text: MANDATORY TEXT;
+    END Entry;
+      
+    CLASS Dictionary =
+      Language: MANDATORY LanguageCode_ISO639_1;
+      Entries: LIST OF Entry;
+    END Dictionary;
+
+  END Dictionaries;
+
+END Dictionaries_V1.
+
+!! ########################################################################
+!!@technicalContact=models@geo.admin.ch
+!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
+MODEL DictionariesCH_V1 (en)
+  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
+
+  IMPORTS UNQUALIFIED InternationalCodes_V1;
+  IMPORTS Dictionaries_V1;
+
+  TOPIC Dictionaries (ABSTRACT) EXTENDS Dictionaries_V1.Dictionaries =
+
+    CLASS Dictionary (EXTENDED) =
+    MANDATORY CONSTRAINT
+      Language == #de OR
+      Language == #fr OR
+      Language == #it OR
+      Language == #rm OR
+      Language == #en;
+    END Dictionary;
+
+  END Dictionaries;
+
+END DictionariesCH_V1.
+
+!! ########################################################################
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CoordSys-20151124.ili','2.3','CoordSys','!! File CoordSys.ili Release 2015-11-24
 
 INTERLIS 2.3;
@@ -5604,179 +5776,7 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
 
 END CoordSys.
 
-','2019-06-07 11:21:42.62');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part2_LOCALISATION_20110830.ili','2.3','InternationalCodes_V1 Localisation_V1{ InternationalCodes_V1} LocalisationCH_V1{ InternationalCodes_V1 Localisation_V1} Dictionaries_V1{ InternationalCodes_V1} DictionariesCH_V1{ InternationalCodes_V1 Dictionaries_V1}','/* ########################################################################
-   CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
-   ======
-   BASISMODULE DES BUNDES           MODULES DE BASE DE LA CONFEDERATION
-   FÜR MINIMALE GEODATENMODELLE     POUR LES MODELES DE GEODONNEES MINIMAUX
-   
-   PROVIDER: GKG/KOGIS - GCS/COSIG             CONTACT: models@geo.admin.ch
-   PUBLISHED: 2011-08-30
-   ########################################################################
-*/
-
-INTERLIS 2.3;
-
-/* ########################################################################
-   ########################################################################
-   PART II -- LOCALISATION
-   - Package InternationalCodes
-   - Packages Localisation, LocalisationCH
-   - Packages Dictionaries, DictionariesCH
-*/
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL InternationalCodes_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  DOMAIN
-    LanguageCode_ISO639_1 = (de,fr,it,rm,en,
-      aa,ab,af,am,ar,as,ay,az,ba,be,bg,bh,bi,bn,bo,br,ca,co,cs,cy,da,dz,el,
-      eo,es,et,eu,fa,fi,fj,fo,fy,ga,gd,gl,gn,gu,ha,he,hi,hr,hu,hy,ia,id,ie,
-      ik,is,iu,ja,jw,ka,kk,kl,km,kn,ko,ks,ku,ky,la,ln,lo,lt,lv,mg,mi,mk,ml,
-      mn,mo,mr,ms,mt,my,na,ne,nl,no,oc,om,or,pa,pl,ps,pt,qu,rn,ro,ru,rw,sa,
-      sd,sg,sh,si,sk,sl,sm,sn,so,sq,sr,ss,st,su,sv,sw,ta,te,tg,th,ti,tk,tl,
-      tn,to,tr,ts,tt,tw,ug,uk,ur,uz,vi,vo,wo,xh,yi,yo,za,zh,zu);
-
-    CountryCode_ISO3166_1 = (CHE,
-      ABW,AFG,AGO,AIA,ALA,ALB,AND_,ANT,ARE,ARG,ARM,ASM,ATA,ATF,ATG,AUS,
-      AUT,AZE,BDI,BEL,BEN,BFA,BGD,BGR,BHR,BHS,BIH,BLR,BLZ,BMU,BOL,BRA,
-      BRB,BRN,BTN,BVT,BWA,CAF,CAN,CCK,CHL,CHN,CIV,CMR,COD,COG,COK,COL,
-      COM,CPV,CRI,CUB,CXR,CYM,CYP,CZE,DEU,DJI,DMA,DNK,DOM,DZA,ECU,EGY,
-      ERI,ESH,ESP,EST,ETH,FIN,FJI,FLK,FRA,FRO,FSM,GAB,GBR,GEO,GGY,GHA,
-      GIB,GIN,GLP,GMB,GNB,GNQ,GRC,GRD,GRL,GTM,GUF,GUM,GUY,HKG,HMD,HND,
-      HRV,HTI,HUN,IDN,IMN,IND,IOT,IRL,IRN,IRQ,ISL,ISR,ITA,JAM,JEY,JOR,
-      JPN,KAZ,KEN,KGZ,KHM,KIR,KNA,KOR,KWT,LAO,LBN,LBR,LBY,LCA,LIE,LKA,
-      LSO,LTU,LUX,LVA,MAC,MAR,MCO,MDA,MDG,MDV,MEX,MHL,MKD,MLI,MLT,MMR,
-      MNE,MNG,MNP,MOZ,MRT,MSR,MTQ,MUS,MWI,MYS,MYT,NAM,NCL,NER,NFK,NGA,
-      NIC,NIU,NLD,NOR,NPL,NRU,NZL,OMN,PAK,PAN,PCN,PER,PHL,PLW,PNG,POL,
-      PRI,PRK,PRT,PRY,PSE,PYF,QAT,REU,ROU,RUS,RWA,SAU,SDN,SEN,SGP,SGS,
-      SHN,SJM,SLB,SLE,SLV,SMR,SOM,SPM,SRB,STP,SUR,SVK,SVN,SWE,SWZ,SYC,
-      SYR,TCA,TCD,TGO,THA,TJK,TKL,TKM,TLS,TON,TTO,TUN,TUR,TUV,TWN,TZA,
-      UGA,UKR,UMI,URY,USA,UZB,VAT,VCT,VEN,VGB,VIR,VNM,VUT,WLF,WSM,YEM,
-      ZAF,ZMB,ZWE);
-
-END InternationalCodes_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL Localisation_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-
-  STRUCTURE LocalisedText =
-    Language: LanguageCode_ISO639_1;
-    Text: MANDATORY TEXT;
-  END LocalisedText;
-  
-  STRUCTURE LocalisedMText =
-    Language: LanguageCode_ISO639_1;
-    Text: MANDATORY MTEXT;
-  END LocalisedMText;
-
-  STRUCTURE MultilingualText =
-    LocalisedText : BAG {1..*} OF LocalisedText;
-    UNIQUE (LOCAL) LocalisedText:Language;
-  END MultilingualText;  
-  
-  STRUCTURE MultilingualMText =
-    LocalisedText : BAG {1..*} OF LocalisedMText;
-    UNIQUE (LOCAL) LocalisedText:Language;
-  END MultilingualMText;
-
-END Localisation_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-TYPE MODEL LocalisationCH_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-  IMPORTS Localisation_V1;
-
-  STRUCTURE LocalisedText EXTENDS Localisation_V1.LocalisedText =
-  MANDATORY CONSTRAINT
-    Language == #de OR
-    Language == #fr OR
-    Language == #it OR
-    Language == #rm OR
-    Language == #en;
-  END LocalisedText;
-  
-  STRUCTURE LocalisedMText EXTENDS Localisation_V1.LocalisedMText =
-  MANDATORY CONSTRAINT
-    Language == #de OR
-    Language == #fr OR
-    Language == #it OR
-    Language == #rm OR
-    Language == #en;
-  END LocalisedMText;
-
-  STRUCTURE MultilingualText EXTENDS Localisation_V1.MultilingualText =
-    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedText;
-  END MultilingualText;  
-  
-  STRUCTURE MultilingualMText EXTENDS Localisation_V1.MultilingualMText =
-    LocalisedText(EXTENDED) : BAG {1..*} OF LocalisedMText;
-  END MultilingualMText;
-
-END LocalisationCH_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-MODEL Dictionaries_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-
-  TOPIC Dictionaries (ABSTRACT) =
-
-    STRUCTURE Entry (ABSTRACT) =
-      Text: MANDATORY TEXT;
-    END Entry;
-      
-    CLASS Dictionary =
-      Language: MANDATORY LanguageCode_ISO639_1;
-      Entries: LIST OF Entry;
-    END Dictionary;
-
-  END Dictionaries;
-
-END Dictionaries_V1.
-
-!! ########################################################################
-!!@technicalContact=models@geo.admin.ch
-!!@furtherInformation=http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html
-MODEL DictionariesCH_V1 (en)
-  AT "http://www.geo.admin.ch" VERSION "2011-08-30" =
-
-  IMPORTS UNQUALIFIED InternationalCodes_V1;
-  IMPORTS Dictionaries_V1;
-
-  TOPIC Dictionaries (ABSTRACT) EXTENDS Dictionaries_V1.Dictionaries =
-
-    CLASS Dictionary (EXTENDED) =
-    MANDATORY CONSTRAINT
-      Language == #de OR
-      Language == #fr OR
-      Language == #it OR
-      Language == #rm OR
-      Language == #en;
-    END Dictionary;
-
-  END Dictionaries;
-
-END DictionariesCH_V1.
-
-!! ########################################################################
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('OeREBKRMvs_V1_1.ili','2.3','OeREBKRMvs_V1_1{ CHAdminCodes_V1 LocalisationCH_V1 OeREBKRM_V1_1}','INTERLIS 2.3;
 
 /** Basisdefinition für Erlasse (Rechtsvorschriften, Hinweise auf Gesetzliche Grundlagen)
@@ -5898,7 +5898,7 @@ VERSION "2016-08-15"  =
   END HinweiseGesetzlicheGrundlagen;
 
 END OeREBKRMvs_V1_1.
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_MODEL (filename,iliversion,modelName,content,importDate) VALUES ('CHBase_Part1_GEOMETRY_20110830.ili','2.3','GeometryCHLV03_V1{ CoordSys Units INTERLIS} GeometryCHLV95_V1{ CoordSys Units INTERLIS}','/* ########################################################################
    CHBASE - BASE MODULES OF THE SWISS FEDERATION FOR MINIMAL GEODATA MODELS
    ======
@@ -6076,7 +6076,7 @@ TYPE MODEL GeometryCHLV95_V1 (en)
 END GeometryCHLV95_V1.
 
 !! ########################################################################
-','2019-06-07 11:21:42.62');
+','2019-06-09 17:29:22.964');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.createMetaInfo','True');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.beautifyEnumDispName','underscore');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.arrayTrafo','coalesce');
@@ -6104,14 +6104,14 @@ INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.eh
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.multiPointTrafo','coalesce');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.multiSurfaceTrafo','coalesce');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_SETTINGS (tag,setting) VALUES ('ch.ehi.ili2db.multilingualTrafo','expand');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjects_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjects_V1','technicalContact','models@geo.admin.ch');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjectTrees_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
-INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjectTrees_V1','technicalContact','models@geo.admin.ch');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('Dictionaries_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('Dictionaries_V1','technicalContact','models@geo.admin.ch');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('DictionariesCH_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('DictionariesCH_V1','technicalContact','models@geo.admin.ch');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjects_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjects_V1','technicalContact','models@geo.admin.ch');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjectTrees_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
+INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('CatalogueObjectTrees_V1','technicalContact','models@geo.admin.ch');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('AdministrativeUnits_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('AdministrativeUnits_V1','technicalContact','models@geo.admin.ch');
 INSERT INTO agi_oereb_npl_staging.T_ILI2DB_META_ATTRS (ilielement,attr_name,attr_value) VALUES ('AdministrativeUnitsCH_V1','furtherInformation','http://www.geo.admin.ch/internet/geoportal/de/home/topics/geobasedata/models.html');
