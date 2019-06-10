@@ -51,8 +51,21 @@ task insertToStaging(type: SqlExecutor, dependsOn: 'deleteFromStaging') {
     description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    sqlFiles = ["insert_oereb_landuseplans_staging_tables.sql"]
+    sqlFiles = ["wip-insert_oereb_landuseplans_staging_tables.sql"]
 }
+
+// Daten in eine INTERLIS-Datei exportieren.
+task exportLandUsePlans(type: Ili2pgExport) {
+    description = "Exportiert die umgebauten Daten aus dem Staging-Schema ($dbSchemaLandUsePlansOerebStaging) in die Transferstruktur."
+    group = GROUP
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = "OeREBKRMtrsfr_V1_1"
+    dbschema = "agi_oereb_npl_staging"
+    dataFile = "ch.so.arp.nutzungsplanung.oereb.xtf"
+    dataset = "ch.so.arp.nutzungsplanung"
+
+}
+
 
 // Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-Staging-Schema.
 task downloadCantonalLegalBasis(type: Download) {
