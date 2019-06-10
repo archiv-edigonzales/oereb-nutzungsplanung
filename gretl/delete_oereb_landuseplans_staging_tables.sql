@@ -21,6 +21,13 @@ DELETE FROM
 WHERE
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
+DELETE FROM 
+    agi_oereb_npl_staging.transferstruktur_geometrie
+WHERE 
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+
+
 
 -- DELETE FROM agi_oereb_npl_staging.transferstruktur_geometrie; -- WHERE t_datasetname = 'ch.so.arp.nutzungsplanung';  
 -- DELETE FROM agi_oereb_npl_staging.transferstruktur_hinweisvorschrift; -- WHERE t_datasetname = 'ch.so.arp.nutzungsplanung';

@@ -436,7 +436,7 @@ INSERT INTO
 
 /*
  * Datenumbau der Links auf die Dokumente, die im Rahmenmodell 'multilingual' sind und daher eher
- * mühsam normalisert.
+ * mühsam normalisert sind.
  * 
  * (1) Im NPL-Modell sind die URL nicht vollständig, sondern es werden nur Teile des Pfads verwaltet.
  * Beim Datenumbau in das Rahmenmodell wird daraus eine vollständige URL gemacht.
@@ -502,7 +502,6 @@ localiseduri AS
             WHERE
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung'                 
         ) AS basket_dataset
-        
 )
 INSERT INTO
     agi_oereb_npl_staging.localiseduri
@@ -525,4 +524,53 @@ INSERT INTO
         multilingualuri_localisedtext
     FROM 
         localiseduri
+;
+
+/*
+ * Umbau der Geometrien, die Inhalt des ÖREB-Katasters sind.
+ * 
+ * (1) Es werde nicht alle Geometrie der Grundnutzung kopiert, 
+ * sondern nur diejenigen, die Inhalt des ÖREB-Katasters sind.
+ * Dieser Filter wird bei Umbau des NPL-Typs gesetzt.
+ * 
+ * (2) Die zuständige Stelle ist identisch mit der zuständigen
+ * Stelle der Eigentumsbeschränkung.
+ */
+
+INSERT INTO
+    agi_oereb_npl_staging.transferstruktur_geometrie
+    (
+        t_id,
+        t_basket,
+        t_datasetname,
+        flaeche_lv95,
+        rechtsstatus,
+        publiziertab,
+        eigentumsbeschraenkung,
+        zustaendigestelle
+    )
+    SELECT
+        grundnutzung.t_id,
+        basket_dataset.basket_t_id AS t_basket,
+        basket_dataset.datasetname AS t_datasetname,
+        grundnutzung.geometrie AS flaeche_lv95,
+        grundnutzung.rechtsstatus AS rechtsstatus,
+        grundnutzung.publiziertab AS publiziertab,
+        eigentumsbeschraenkung.t_id AS eigentumsbeschraenkung,
+        eigentumsbeschraenkung.zustaendigestelle AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_grundnutzung AS grundnutzung
+        RIGHT JOIN agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+        ON grundnutzung.typ_grundnutzung = eigentumsbeschraenkung.t_id,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
+                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+        ) AS basket_dataset
 ;
