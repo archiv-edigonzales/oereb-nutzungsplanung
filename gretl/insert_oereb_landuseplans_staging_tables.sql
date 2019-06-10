@@ -433,3 +433,96 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset        
 ;
+
+/*
+ * Datenumbau der Links auf die Dokumente, die im Rahmenmodell 'multilingual' sind und daher eher
+ * mühsam normalisert.
+ * 
+ * (1) Im NPL-Modell sind die URL nicht vollständig, sondern es werden nur Teile des Pfads verwaltet.
+ * Beim Datenumbau in das Rahmenmodell wird daraus eine vollständige URL gemacht.
+ */
+
+WITH multilingualuri AS
+(
+    INSERT INTO
+        agi_oereb_npl_staging.multilingualuri
+        (
+            t_id,
+            t_basket,
+            t_datasetname,
+            t_seq,
+            vorschriften_dokument_textimweb
+        )
+    SELECT
+        nextval('agi_oereb_npl_staging.t_ili2db_seq'::regclass) AS t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        0 AS t_seq,
+        vorschriften_dokument.t_id AS vorschriften_dokument_textimweb
+    FROM
+        agi_oereb_npl_staging.vorschriften_dokument AS vorschriften_dokument,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
+                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+        ) AS basket_dataset
+    WHERE
+        vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
+    RETURNING *
+)
+,
+localiseduri AS 
+(
+    SELECT 
+        nextval('agi_oereb_npl_staging.t_ili2db_seq'::regclass) AS t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        0 AS t_seq,
+        'de' AS alanguage,
+        CAST('https://geo.so.ch/docs/ch.so.arp.zonenplaene/Zonenplaene_pdf/'||rechtsvorschrften_dokument.textimweb AS TEXT) AS atext,
+        multilingualuri.t_id AS multilingualuri_localisedtext
+    FROM
+        arp_npl.rechtsvorschrften_dokument AS rechtsvorschrften_dokument
+        RIGHT JOIN multilingualuri 
+        ON multilingualuri.vorschriften_dokument_textimweb = rechtsvorschrften_dokument.t_id,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
+                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'                 
+        ) AS basket_dataset
+        
+)
+INSERT INTO
+    agi_oereb_npl_staging.localiseduri
+    (
+        t_id,
+        t_basket,
+        t_datasetname,
+        t_seq,
+        alanguage,
+        atext,
+        multilingualuri_localisedtext
+    )
+    SELECT 
+        t_id,
+        basket_t_id,
+        datasetname,
+        t_seq,
+        alanguage,
+        atext,
+        multilingualuri_localisedtext
+    FROM 
+        localiseduri
+;

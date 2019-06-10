@@ -1,4 +1,14 @@
 DELETE FROM 
+    agi_oereb_npl_staging.localiseduri 
+WHERE 
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+DELETE FROM 
+    agi_oereb_npl_staging.multilingualuri
+WHERE 
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+DELETE FROM 
     agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
 ;
 DELETE FROM 
