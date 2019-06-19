@@ -1,5 +1,5 @@
 plugins {
-    id "com.bmuschko.docker-remote-api" version "4.9.0"
+    id "com.bmuschko.docker-remote-api" version "4.10.0"
 }
 
 apply from: "$rootDir/versioning.gradle"
@@ -32,6 +32,7 @@ task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreat
     description = "Create docker container."
     targetImageId buildDockerImage.getImageId()
     containerName = "oereb-edit-db"
+    hostName = "primary"
     portBindings = ['54321:5432']
     exposedPorts = [new ExposedPort("tcp", [5432])]
     envVars.set(["PG_DATABASE": "edit",
@@ -47,7 +48,7 @@ task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreat
                "PG_WRITE_PASSWORD": "gretl",
                "PG_READ_USER": "ogc_server",
                "PG_READ_PASSWORD": "ogc_server"])
-    volumes = ["/tmp:/pgdata"]
+    binds = ["/tmp":"/data"]
 }
 
 task removeDockerContainer(dependsOn: 'buildDockerImage', type: DockerRemoveContainer) {

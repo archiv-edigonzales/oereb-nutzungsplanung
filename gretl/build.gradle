@@ -10,6 +10,7 @@ buildscript {
 plugins {
     id "ch.so.agi.gretl" version "2.0.74"
     id "de.undercouch.download" version "3.4.3"
+    id "com.bmuschko.docker-remote-api" version "4.10.0"
 }
 
 import java.nio.file.Paths
@@ -51,7 +52,8 @@ task insertToStaging(type: SqlExecutor, dependsOn: 'deleteFromStaging') {
     description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    sqlFiles = ["wip-insert_oereb_landuseplans_staging_tables.sql"]
+    //sqlFiles = ["wip-insert_oereb_landuseplans_staging_tables.sql"]
+    sqlFiles = ["insert_oereb_landuseplans_staging_tables.sql"]
 }
 
 // Daten in eine INTERLIS-Datei exportieren.
@@ -65,7 +67,6 @@ task exportLandUsePlans(type: Ili2pgExport) {
     dataset = "ch.so.arp.nutzungsplanung"
 
 }
-
 
 // Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-Staging-Schema.
 task downloadCantonalLegalBasis(type: Download) {
@@ -114,4 +115,66 @@ task importResponsibleOfficesToStaging(type: Ili2pgReplace, dependsOn: 'download
     dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
     dataset = "ch.so.arp.nutzungsplanung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. TODO: Herausforderung pro Gemeinde in Verbindung mit der/den fehlenden zuständigen Stelle(n)
     disableValidation = true
+}
+
+// QGIS-Iconizer-Image erstellen und Container hochfahren
+import java.text.SimpleDateFormat
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer.ExposedPort
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerLogsContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
+
+task buildDockerImage(type: DockerBuildImage) {
+    description = "Build docker image."
+    inputDir = file("qgis-iconizer")
+    tags = ["edigonzales/oereb-qgis-iconizer:"+version.toString(), "edigonzales/oereb-qgis-iconizer:latest"]
+
+    doLast {
+        println projectDir
+    }    
+}
+
+task createDockerContainer(type: DockerCreateContainer) {
+    dependsOn 'buildDockerImage'
+    dependsOn 'removeDockerContainer'
+
+    description = "Create docker container."
+    targetImageId buildDockerImage.getImageId()
+    containerName = "oereb-qgis-iconizer"
+    portBindings = ['3000:80']
+    exposedPorts = [new ExposedPort("tcp", [80])]
+    binds = [(projectDir.toString()+"/qgis-iconizer/data"):"/data"]
+}
+
+task removeDockerContainer(dependsOn: 'buildDockerImage', type: DockerRemoveContainer) {
+    description = "Remove existing docker container."
+    removeVolumes = true
+    force = true
+    targetContainerId createDockerContainer.containerName 
+
+    onError { exception -> 
+        println exception.message
+    }
+}
+
+task startDockerContainer(dependsOn: 'createDockerContainer', type: DockerStartContainer) {	
+    description = "Start docker container."
+    targetContainerId createDockerContainer.getContainerId()
+
+    /*
+    finalizedBy {
+        logDockerContainer
+    }
+    */
+
+    // Since there is no proper healthcheck at the moment,
+    // we wait 10 seconds.
+    doLast {
+        println "Wait for QGIS-Server..."
+        sleep(10000)
+    }
 }
