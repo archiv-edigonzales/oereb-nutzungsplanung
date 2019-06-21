@@ -633,7 +633,7 @@ INSERT INTO
         eigentumsbeschraenkung.t_basket,
         eigentumsbeschraenkung.t_datasetname,
         0::int AS t_seq,        
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='::bytea AS symbol,
+        decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') AS symbol,
         eigentumsbeschraenkung.artcode,
         eigentumsbeschraenkung.artcodeliste,
         eigentumsbeschraenkung.thema,
