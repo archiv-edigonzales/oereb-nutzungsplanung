@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id "ch.so.agi.gretl" version "2.0.74"
+    id "ch.so.agi.gretl" version "2.0.77"
     id "de.undercouch.download" version "3.4.3"
 }
 

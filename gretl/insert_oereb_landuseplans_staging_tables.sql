@@ -574,3 +574,74 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
 ;
+
+/*
+ * Abfüllen der "WMS- und Legendentabellen".
+ * 
+ * (1) Achtung: nicht korrekte URL für GetMap und Legende!
+ * 
+ * (2) Query muss gut überprüft werden. Sicher sein, dass das robust ist hinsichtlich den WHERE-clauses
+ * und DISTINCTs.
+ * 
+ * (3) 1px-Dummy-PNG als Symbol damit Datenbank-Constraint nicht verletzt wird.
+ */ 
+
+WITH transferstruktur_darstellungsdienst AS
+(
+    INSERT INTO 
+        agi_oereb_npl_staging.transferstruktur_darstellungsdienst 
+        (
+            t_basket,
+            t_datasetname,
+            verweiswms,
+            legendeimweb
+        )
+        SELECT
+            basket_dataset.basket_t_id AS t_basket,
+            basket_dataset.datasetname AS t_datasetname,
+            'https://geo.so.ch/ows/somap?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.arp.nutzungsplanung.grundnutzung_inkl_digi_zone&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&TILED=false&DPI=96&OPACITIES=255&t=60&WIDTH=1375&HEIGHT=723&BBOX=2549048.75%2C1196604.5833333333%2C2694569.583333333%2C1273122.0833333333' AS verweiswms,
+            'https://geo.so.ch/api/v1/legend/somap?SERVICE=WMS&REQUEST=GetLegendGraphic&VERSION=1.3.0&FORMAT=image/png&LAYER=ch.so.arp.nutzungsplanung.grundnutzung_inkl_digi_zone&CRS=EPSG:2056&SCALE=400000&WIDTH=1375&HEIGHT=723&BBOX=2549053.187282798,1196569.9945746537,2694574.020616131,1273087.4945746537' AS legendeimweb
+        FROM
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
+                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+        ) AS basket_dataset
+    RETURNING *
+)
+INSERT INTO 
+    agi_oereb_npl_staging.transferstruktur_legendeeintrag
+    (
+        t_basket,
+        t_datasetname,
+        t_seq,
+        symbol,
+        artcode,
+        artcodeliste,
+        thema,
+        subthema,
+        transfrstrkstllngsdnst_legende
+    )
+    SELECT 
+        DISTINCT ON (artcode)
+        eigentumsbeschraenkung.t_basket,
+        eigentumsbeschraenkung.t_datasetname,
+        0::int AS t_seq,        
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='::bytea AS symbol,
+        eigentumsbeschraenkung.artcode,
+        eigentumsbeschraenkung.artcodeliste,
+        eigentumsbeschraenkung.thema,
+        eigentumsbeschraenkung.subthema,
+        transferstruktur_darstellungsdienst.t_id AS transfrstrkstllngsdnst_legende
+    FROM
+        agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
+        transferstruktur_darstellungsdienst
+    WHERE
+        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung'
+;

@@ -1,4 +1,14 @@
 DELETE FROM
+    agi_oereb_npl_staging.transferstruktur_legendeeintrag
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+DELETE FROM
+    agi_oereb_npl_staging.transferstruktur_darstellungsdienst
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+DELETE FROM
     agi_oereb_npl_staging.transferstruktur_darstellungsdienst
 WHERE
     t_datasetname = 'ch.so.arp.nutzungsplanung'

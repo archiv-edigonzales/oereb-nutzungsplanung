@@ -16,7 +16,7 @@ Die Symbole werden mit einem GRETL OerebIconizerQgis3-Task erzeugt und während 
 
 Datenumbau:
 ```
-gradle gretl:deleteFromStaging gretl:insertToStaging
+gradle gretl:startWMSDockerContainer gretl:deleteFromStaging gretl:insertToStaging gretl:updateSymbols
 ```
 
 Datenexport:

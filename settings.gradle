@@ -1,3 +1,9 @@
+pluginManagement {
+  repositories {
+    mavenLocal()  
+    gradlePluginPortal()
+  }
+}
 rootProject.name = 'oereb-datenumbau-npl'
 include 'gretl'
 include 'gretl-dev:db'
