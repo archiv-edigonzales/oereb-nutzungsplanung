@@ -32,6 +32,13 @@
  * (4) Momentan geht man von der Annahme aus, dass bei den diesen Eigentumsbeschränkungen
  * die Gemeinde die zuständige Stelle ist. Falls das nicht mehr zutrifft, muss man die
  * zuständigen Stellen eventuell in einem nachgelagerten Schritt abhandeln.
+ * 
+ * (5) Exportiert werden alle zuständigen Stellen, die vorgängig importiert wurden.
+ * 
+ * (6) Ein Artcode kann mehrfach vorkommen. Das sollte soweit richtig sein. Jedoch aufpassen, dass
+ * bei den nachfolgenden Queries nicht fälschlicherweise angenommen wird, dass der Artcode unique ist.
+ * Ausnahme: Bei den Symbolen ist diese Annahme materiell richtig (solange eine kantonale aggregierte
+ * Form präsentiert wird).
  */
 
 INSERT INTO 
@@ -104,6 +111,12 @@ INSERT INTO
  * Staging-Schemas der Parameter --idSeqMin. Damit kann der Startwert der
  * Sequenz gesetzt werden, um solche Kollisionen mit grösster Wahrscheinlichkeit
  * zu verhindern.
+ * 
+ * (3) Die t_ili_tid kann nicht einfach so aus der Quelltabelle übernommen werden,
+ * da sie keine valide OID ist (die gemäss Modell verlangt wird). Gemäss Kommentar
+ * sollte sie zudem wie eine Domain aufgebaut sein. Der Einfachheit halber (Referenzen
+ * gibt es ja in der DB darauf nicht, sondern auf den PK) mache ich aus der UUID eine
+ * valide OID mittels Substring, Replace und Concat.
  */
 
 
@@ -165,7 +178,7 @@ vorschriften_dokument AS
                 THEN 'vorschriften_rechtsvorschrift'
             ELSE 'vorschriften_dokument'
         END AS t_type,
-        dokument.t_ili_tid AS t_ili_tid,        
+        '_'||SUBSTRING(REPLACE(CAST(dokument.t_ili_tid AS text), '-', ''),1,15) AS t_ili_tid,        
         dokument.titel AS titel_de,
         dokument.offiziellertitel AS offizellertitel_de,
         dokument.abkuerzung AS abkuerzung_de,
@@ -249,6 +262,12 @@ FROM
  * (2) Umbau sehr gut validieren (wegen des Flachwalzens)!
  * 
  * (3) Die rekursive CTE muss am Anfang stehen.
+ * 
+ * (4) Achtung: Beim Einfügen der zusätzlichen Dokumente in die Dokumententabelle
+ * kann es Duplikate geben, da zwei verschiedene Top-Level-Dokumente auf das gleiche
+ * weitere Dokument verweisen. Das wirft einen Fehler (Primary Key Constraint). Aus
+ * diesem Grund muss beim Inserten noch ein DISTINCT auf die t_id gemacht werden. 
+ * Beim anschliessenden Herstellen der Verknüpfung aber nicht mehr.
  */
 
 
@@ -303,7 +322,7 @@ zusaetzliche_dokumente AS
                 THEN 'vorschriften_rechtsvorschrift'
             ELSE 'vorschriften_dokument'
         END AS t_type,
-        dokument.t_ili_tid AS t_ili_tid,        
+        '_'||SUBSTRING(REPLACE(CAST(dokument.t_ili_tid AS text), '-', ''),1,15) AS t_ili_tid,        
         dokument.titel AS titel_de,
         dokument.offiziellertitel AS offizellertitel_de,
         dokument.abkuerzung AS abkuerzung_de,
@@ -383,6 +402,7 @@ zusaetzliche_dokumente_insert AS
             zustaendigestelle
         )   
     SELECT
+        DISTINCT ON (t_id)    
         t_id,
         basket_t_id,
         datasetname,
@@ -399,12 +419,10 @@ zusaetzliche_dokumente_insert AS
         zustaendigestelle
     FROM
         zusaetzliche_dokumente
-        
 )
 INSERT INTO 
     agi_oereb_npl_staging.transferstruktur_hinweisvorschrift 
     (
-        t_id,
         t_basket,
         t_datasetname,
         eigentumsbeschraenkung,
@@ -412,7 +430,6 @@ INSERT INTO
     )
     SELECT 
         DISTINCT 
-        nextval('agi_oereb_npl_staging.t_ili2db_seq'::regclass) AS t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         hinweisvorschrift.eigentumsbeschraenkung,
@@ -553,7 +570,7 @@ INSERT INTO
         grundnutzung.t_id,
         basket_dataset.basket_t_id AS t_basket,
         basket_dataset.datasetname AS t_datasetname,
-        grundnutzung.geometrie AS flaeche_lv95,
+        ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid(grundnutzung.geometrie, 0.001))) AS flaeche_lv95,
         grundnutzung.rechtsstatus AS rechtsstatus,
         grundnutzung.publiziertab AS publiziertab,
         eigentumsbeschraenkung.t_id AS eigentumsbeschraenkung,
@@ -584,6 +601,9 @@ INSERT INTO
  * und DISTINCTs.
  * 
  * (3) 1px-Dummy-PNG als Symbol damit Datenbank-Constraint nicht verletzt wird.
+ *  
+ * (4) Query funktioniert nur, wenn nur ein Darstellungsdienst insertet wird. (-> Update-Query würde nicht
+ * mehr passen.)
  */ 
 
 WITH transferstruktur_darstellungsdienst AS
@@ -615,6 +635,9 @@ WITH transferstruktur_darstellungsdienst AS
         ) AS basket_dataset
     RETURNING *
 )
+,
+transferstruktur_legendeeintrag AS 
+(
 INSERT INTO 
     agi_oereb_npl_staging.transferstruktur_legendeeintrag
     (
@@ -644,4 +667,50 @@ INSERT INTO
         transferstruktur_darstellungsdienst
     WHERE
         transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung'
+    RETURNING *
+)
+UPDATE 
+    agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM transferstruktur_darstellungsdienst)
+WHERE
+    subthema = 'Grundnutzung_Zonenflaeche'
+;
+
+/*
+ * Hinweise auf die gesetzlichen Grundlagen.
+ * 
+ * (1) Momentan nur auf die kantonalen Gesetze und Verordnungen, da
+ * die die Bundesgesetze und -verordnungen nicht importiert wurden.
+ * 
+ * (2) Ebenfalls gut zu prüfen.
+ */
+
+WITH vorschriften_dokument_gesetze AS (
+  SELECT
+    t_id AS hinweis
+  FROM
+    agi_oereb_npl_staging.vorschriften_dokument
+  WHERE
+    t_ili_tid IN ('ch.so.sk.bgs.711.1', 'ch.so.sk.bgs.711.61') 
+)
+INSERT INTO agi_oereb_npl_staging.vorschriften_hinweisweiteredokumente (
+  t_basket,
+  t_datasetname,
+  ursprung,
+  hinweis
+)
+SELECT
+  vorschriften_dokument.t_basket,
+  vorschriften_dokument.t_datasetname,
+  vorschriften_dokument.t_id,  
+  vorschriften_dokument_gesetze.hinweis
+FROM 
+  agi_oereb_npl_staging.vorschriften_dokument AS vorschriften_dokument
+  LEFT JOIN vorschriften_dokument_gesetze
+  ON 1=1
+WHERE
+  t_type = 'vorschriften_rechtsvorschrift'
+AND
+  vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;

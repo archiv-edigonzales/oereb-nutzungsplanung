@@ -18,14 +18,23 @@ Datenumbau:
 ```
 gradle gretl:startWMSDockerContainer gretl:deleteFromStaging gretl:insertToStaging gretl:updateSymbols
 ```
+TODO: 
+- `updateSymbols` soll das Starten und Stoppen des WMS-Containers steuern. Warum manchmal der WMS-Server nicht mehr erreichbar ist, ist mir ein Rätsel. Im Browser geht der SLD-Aufruf auch nicht mehr. Container läuft aber noch.
 
 Datenexport:
 ```
 gradle gretl:exportLandUsePlans
 ```
-Achtung: Daten können momentan nicht exportiert werden [#290](https://github.com/claeis/ili2db/issues/290).
+Achtung: Daten können mit GRETL momentan nicht exportiert werden [#290](https://github.com/claeis/ili2db/issues/290).
 
+Export-Test mit Snapshot-Version:
+```
+java -jar /Users/stefan/apps/ili2pg-4.1.1-20190623.111504-8-bindist/ili2pg-4.1.1-SNAPSHOT.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema agi_oereb_npl_staging --models OeREBKRMtrsfr_V1_1 --disableValidation --export /Users/stefan/Downloads/data/test_export.xtf
 
+xmllint --format /Users/stefan/Downloads/data/test_export.xtf -o /Users/stefan/Downloads/data/test_export.xtf
+
+java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar 
+```
 
 ## Hinweise 
 Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor allem hinsichtlich Assoziationen vereinfacht, kann es zu Problemen mit Sequenzen resp. zu Primary Keys Kollisionen kommen. Weil neben den eigentlichen Nutzungsplanungsdaten vorgängig noch die Gesetze und die zuständigen Stellen importiert werden, wird für die Primary Keys (`t_id`) die Sequenz "angezapft". Falls jetzt durch den Datenumbau identische Primary Keys geliefert werden (was eben den Datenumbau massiv vereinfacht), kann es zu Kollisionen kommen. Das kann ziemlich robust umgangen werden, wenn der Startwert der Sequenz im Schema `arp_oereb_npl_staging` sehr hoch angesetzt wird (es handelt sich um einen int8-Datentyp). Dazu wird die `--idSeqMin` Option von ili2pg beim Erzeugen des Schemas verwendet.
@@ -36,7 +45,7 @@ Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor all
 * Definitiv Inbetriebnahme noch nicht geregelt.
 * Wie soll das Repo strukturiert werden? Ist so eine Trennung dev / nicht-dev i.O.?
 * Welches Docker-Image für Iconizer? Am ehesten zukünftig das offizielle ÖREB-WMS-Image. Achtung: das jetzt vorhandene ist eher quick 'n' dirty. Oder soll zukünftig der Live-WMS verwendet werden? Gut wäre wahrscheinlich schon ein Base-Image und/oder nur noch das Mounten der Daten und nicht das Dockerfile, das gebuildet werden muss. Sonst liegen plötzlich ein Haufen Dockerfile irgendwo rum in den Repos, die man ggf. auch wieder nachführen muss.
-
+* Lieber das Image builden (resp. den Code) nicht hier, sondern nur das Image verwenden. Dann versuche mit anderen Teilprojekten abzusprechen.
 
 ## LÖSCHEN
 

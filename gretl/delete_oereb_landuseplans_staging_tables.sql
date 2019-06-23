@@ -3,16 +3,6 @@ DELETE FROM
 WHERE
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
-DELETE FROM
-    agi_oereb_npl_staging.transferstruktur_darstellungsdienst
-WHERE
-    t_datasetname = 'ch.so.arp.nutzungsplanung'
-;
-DELETE FROM
-    agi_oereb_npl_staging.transferstruktur_darstellungsdienst
-WHERE
-    t_datasetname = 'ch.so.arp.nutzungsplanung'
-;
 DELETE FROM 
     agi_oereb_npl_staging.localiseduri 
 WHERE 
@@ -23,11 +13,8 @@ DELETE FROM
 WHERE 
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
-DELETE FROM 
-    agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
-;
-DELETE FROM 
-    agi_oereb_npl_staging.vorschriften_dokument
+DELETE FROM
+    agi_oereb_npl_staging.vorschriften_hinweisweiteredokumente
 WHERE
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
@@ -37,10 +24,26 @@ WHERE
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
 DELETE FROM 
+    agi_oereb_npl_staging.vorschriften_dokument
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+DELETE FROM 
     agi_oereb_npl_staging.transferstruktur_geometrie
 WHERE 
     t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
+DELETE FROM 
+    agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'    
+;
+DELETE FROM
+    agi_oereb_npl_staging.transferstruktur_darstellungsdienst
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+
 
 
 
