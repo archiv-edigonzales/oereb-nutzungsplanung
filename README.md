@@ -41,6 +41,7 @@ Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor all
 
 ## Fragen
 
+* Können die Queries (für GRETL) parametriesiert werden, damit für Grundnutzung und überlagernden Objekte die gleichen SQL-Dateien verwendet werden können?
 * Was sind die zuständigen Stellen in der Nutzungsplanung?
 * Definitiv Inbetriebnahme noch nicht geregelt.
 * Wie soll das Repo strukturiert werden? Ist so eine Trennung dev / nicht-dev i.O.?
