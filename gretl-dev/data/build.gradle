@@ -38,8 +38,8 @@ def pathToUnzipFolder = Paths.get(pathToTempFolder, 'unzip_data')
 def pathToExportFolder = Paths.get(pathToTempFolder, 'export_data')
 
 // Daten Nutzungsplanung
-//def landUsePlansDataSets = ["2405", "2457", "2474", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614","2615"]
-def landUsePlansDataSets = ["2405", "2498", "2502"]
+//def landUsePlansDataSets = ["2405", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614","2615"]
+def landUsePlansDataSets = ["2405", "2457", "2498", "2502"]
 //def landUsePlansDataSets = ["2498"]
 def landUsePlansBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung-dev/"
 
