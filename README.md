@@ -33,7 +33,7 @@ java -jar /Users/stefan/apps/ili2pg-4.1.1-20190623.111504-8-bindist/ili2pg-4.1.1
 
 xmllint --format /Users/stefan/Downloads/data/test_export.xtf -o /Users/stefan/Downloads/data/test_export.xtf
 
-java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar 
+java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar /Users/stefan/Downloads/data/test_export.xtf
 ```
 
 ## Hinweise 
@@ -41,12 +41,15 @@ Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor all
 
 ## Fragen
 
+* Umgang mit Fehlern in den Daten?
+* --allObjectsAccessible geht so nicht beim Prüfen, da die Gesetze nicht vorhanden sind im Transferfile. Andere Ideen? Warnung, ausschalten (geht das so feingranular).
 * Können die Queries (für GRETL) parametriesiert werden, damit für Grundnutzung und überlagernden Objekte die gleichen SQL-Dateien verwendet werden können?
 * Was sind die zuständigen Stellen in der Nutzungsplanung?
 * Definitiv Inbetriebnahme noch nicht geregelt.
 * Wie soll das Repo strukturiert werden? Ist so eine Trennung dev / nicht-dev i.O.?
 * Welches Docker-Image für Iconizer? Am ehesten zukünftig das offizielle ÖREB-WMS-Image. Achtung: das jetzt vorhandene ist eher quick 'n' dirty. Oder soll zukünftig der Live-WMS verwendet werden? Gut wäre wahrscheinlich schon ein Base-Image und/oder nur noch das Mounten der Daten und nicht das Dockerfile, das gebuildet werden muss. Sonst liegen plötzlich ein Haufen Dockerfile irgendwo rum in den Repos, die man ggf. auch wieder nachführen muss.
 * Lieber das Image builden (resp. den Code) nicht hier, sondern nur das Image verwenden. Dann versuche mit anderen Teilprojekten abzusprechen.
+
 
 ## LÖSCHEN
 

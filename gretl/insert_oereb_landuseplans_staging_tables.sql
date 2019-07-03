@@ -90,7 +90,25 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
     WHERE
-        typ_kt NOT IN ('N180_Verkehrszone_Strasse', 'N420_Verkehrsflaeche_Strasse', 'N421_Verkehrsflaeche_Bahnareal', 'N422_Verkehrsflaeche_Flugplatzareal', 'N429_weitere_Verkehrsflaechen', 'N440_Wald')
+        typ_kt NOT IN 
+        (
+            'N180_Verkehrszone_Strasse',
+            'N181_Verkehrszone_Bahnareal',
+            'N182_Verkehrszone_Flugplatzareal',
+            'N189_weitere_Verkehrszonen',
+            'N210_Landwirtschaftszone',
+            'N320_Gewaesser',
+            'N329_weitere_Zonen_fuer_Gewaesser_und_ihre_Ufer',
+            'N420_Verkehrsflaeche_Strasse', 
+            'N421_Verkehrsflaeche_Bahnareal', 
+            'N422_Verkehrsflaeche_Flugplatzareal', 
+            'N429_weitere_Verkehrsflaechen', 
+            'N430_Reservezone_Wohnzone_Mischzone_Kernzone_Zentrumszone',
+            'N431_Reservezone_Arbeiten',
+            'N432_Reservezone_OeBA',
+            'N439_Reservezone',
+            'N440_Wald'
+        )
 ;
 
 /*
@@ -117,6 +135,10 @@ INSERT INTO
  * sollte sie zudem wie eine Domain aufgebaut sein. Der Einfachheit halber (Referenzen
  * gibt es ja in der DB darauf nicht, sondern auf den PK) mache ich aus der UUID eine
  * valide OID mittels Substring, Replace und Concat.
+ * 
+ * (4) Es gibt Objekte (Typen), die in den Kataster aufgenommen werden müssen (gemäss
+ * Excelliste) aber keine Dokumente zugewiesen haben. -> Datenfehler. Aus diesem Grund
+ * wird eine Where-Clause verwendet (dokument.t_id IS NOT NULL).
  */
 
 
@@ -146,7 +168,9 @@ hinweisvorschrift AS
         RIGHT JOIN agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         ON typ_dokument.typ_grundnutzung = eigentumsbeschraenkung.t_id,
         basket_dataset
-) 
+    WHERE
+        typ_dokument.t_id IS NOT NULL        
+)
 ,
 vorschriften_dokument AS
 (
