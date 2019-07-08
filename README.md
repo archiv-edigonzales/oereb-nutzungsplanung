@@ -39,6 +39,14 @@ java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/iliva
 ## Hinweise 
 Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor allem hinsichtlich Assoziationen vereinfacht, kann es zu Problemen mit Sequenzen resp. zu Primary Keys Kollisionen kommen. Weil neben den eigentlichen Nutzungsplanungsdaten vorgängig noch die Gesetze und die zuständigen Stellen importiert werden, wird für die Primary Keys (`t_id`) die Sequenz "angezapft". Falls jetzt durch den Datenumbau identische Primary Keys geliefert werden (was eben den Datenumbau massiv vereinfacht), kann es zu Kollisionen kommen. Das kann ziemlich robust umgangen werden, wenn der Startwert der Sequenz im Schema `arp_oereb_npl_staging` sehr hoch angesetzt wird (es handelt sich um einen int8-Datentyp). Dazu wird die `--idSeqMin` Option von ili2pg beim Erzeugen des Schemas verwendet.
 
+## ilivalidator
+Damit die externen Objekte geprüft werden können, muss die Option `--allObjectsAccessible` verwendet werden. Damit die fehlenden gesetzlichen Grundlagen nicht als Fehler gemeldet werden, muss eine config-File (siehe Ordner `ilivalidator`) verwendet werden:
+
+```
+java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar --allObjectsAccessible --config config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
+```
+
+
 ## Fragen
 
 * Umgang mit Fehlern in den Daten?
