@@ -1,8 +1,7 @@
 # TODO
 * Import Bundesgesetze/-vorschriften und Verlinkung im Umbau.
-* offizielles QGIS-Server-Image verwenden.
 * Pro Subthema ein Umbau (Schema)?
-* **Achtung**: Staatskanzlei gibt es jetzt doppelt in der Amts-Tabelle (mit identischer t_ili_tid) -> Handlungsbedarf mindestens beim Datenumbau?? -> im SQL-Code bemerken.
+* `updateSymbols` soll das Starten und Stoppen des WMS-Containers steuern. Warum manchmal der WMS-Server nicht mehr erreichbar ist, ist mir ein Rätsel. Im Browser geht der SLD-Aufruf auch nicht mehr. Container läuft aber noch.
 
 # oereb-datenumbau-npl
 
@@ -24,8 +23,6 @@ Datenumbau:
 ```
 gradle gretl:startWMSDockerContainer gretl:deleteFromOereb gretl:insertToOereb gretl:updateSymbols
 ```
-TODO: 
-- `updateSymbols` soll das Starten und Stoppen des WMS-Containers steuern. Warum manchmal der WMS-Server nicht mehr erreichbar ist, ist mir ein Rätsel. Im Browser geht der SLD-Aufruf auch nicht mehr. Container läuft aber noch.
 
 Datenexport (beding GRETL mit ili2pg 4.1.1-Snapshot wegen [#290](https://github.com/claeis/ili2db/issues/290)):
 ```
@@ -46,41 +43,8 @@ java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --confi
 
 ## Fragen
 
-* Umgang mit Fehlern in den Daten?
-* --allObjectsAccessible geht so nicht beim Prüfen, da die Gesetze nicht vorhanden sind im Transferfile. Andere Ideen? Warnung, ausschalten (geht das so feingranular).
 * Können die Queries (für GRETL) parametriesiert werden, damit für Grundnutzung und überlagernden Objekte die gleichen SQL-Dateien verwendet werden können?
-* Was sind die zuständigen Stellen in der Nutzungsplanung?
 * Definitiv Inbetriebnahme noch nicht geregelt.
-* Wie soll das Repo strukturiert werden? Ist so eine Trennung dev / nicht-dev i.O.?
 * Welches Docker-Image für Iconizer? Am ehesten zukünftig das offizielle ÖREB-WMS-Image. Achtung: das jetzt vorhandene ist eher quick 'n' dirty. Oder soll zukünftig der Live-WMS verwendet werden? Gut wäre wahrscheinlich schon ein Base-Image und/oder nur noch das Mounten der Daten und nicht das Dockerfile, das gebuildet werden muss. Sonst liegen plötzlich ein Haufen Dockerfile irgendwo rum in den Repos, die man ggf. auch wieder nachführen muss.
-* Lieber das Image builden (resp. den Code) nicht hier, sondern nur das Image verwenden. Dann versuche mit anderen Teilprojekten abzusprechen.
 
 
-## LÖSCHEN
-
-Notwendige Tabellen löschen und Datenumbau ausführen:
-
-```
-gradle gretl:deleteFromStaging gretl:insertToStaging
-```
-
-Daten exportieren:
-
-```
-gradle gretl:exportLandUsePlans
-
-java -jar /Users/stefan/apps/ili2pg-4.1.0/ili2pg-4.1.0.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema agi_oereb_npl_staging --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" --disableValidation --trace --export fubar.xtf
-```
-
-```
-java -jar /Users/stefan/apps/ili2pg-4.1.0/ili2pg-4.1.0.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema test1 --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" --strokeArcs --nameByTopic --disableValidation --doSchemaImport --import /Users/stefan/Downloads/data/OeREBKRM_V1_1_Gesetze_20180501.xml
-
-java -jar /Users/stefan/apps/ili2pg-4.1.0/ili2pg-4.1.0.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema test1 --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" --strokeArcs --nameByTopic --disableValidation --doSchemaImport --import /Users/stefan/Downloads/data/ch.bazl.projektierungszonen-flughafenanlagen.oereb_20161128.xtf
-
-java -jar /Users/stefan/apps/ili2pg-4.1.0/ili2pg-4.1.0.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema test1 --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" --disableValidation --export /Users/stefan/Downloads/data/test_export.xtf
-```
-
-```
-http://localhost:3000/qgis/ch.so.arp.nutzungsplanung.oereb?SERVICE=WMS&REQUEST=GetCapabilities
-http://localhost:3000/qgis/ch.so.arp.nutzungsplanung.oereb?&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=grundnutzung&FORMAT=image/png&STYLE=default&SLD_VERSION=1.1.0
-http://localhost:3000/qgis/ch.so.arp.nutzungsplanung.oereb?SERVICE=WMS&REQUEST=GetStyles&LAYERS=grundnutzung&SLD_VERSION=1.1.0```
