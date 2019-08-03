@@ -1,11 +1,17 @@
+# TODO
+* Import Bundesgesetze/-vorschriften und Verlinkung im Umbau.
+* offizielles QGIS-Server-Image verwenden.
+* Pro Subthema ein Umbau (Schema)?
+* **Achtung**: Staatskanzlei gibt es jetzt doppelt in der Amts-Tabelle (mit identischer t_ili_tid) -> Handlungsbedarf mindestens beim Datenumbau?? -> im SQL-Code bemerken.
+
 # oereb-datenumbau-npl
 
 Prototyp für den Datenumbau der Nutzungsplanung im kantonalen Datenmodell in das ÖREB-Rahmenmodell mit GRETL. 
 
-Im `gretl-dev`-Ordner sind die Tasks für das Aufsetzen der Entwicklungsumgebung. Mit diesen Tasks wird mit Docker eine Datenbank erstellt mit den benötigten zwei Schemen: `arp_npl` (kantonales Datenmodell, Quellenschema) und `arp_oereb_npl_staging` (ÖREB-Rahmenmodell, Zielschema). Mit folgendem Befehl wird die das Docker-Image erstellt, der Container gestartet, Daten im kantonalen Modell importiert und zu guter Letzt die kantonalen Gesetze und die zuständigen Stellen importiert:
+Im `gretl-dev`-Ordner sind die Tasks für das Aufsetzen der Entwicklungsumgebung. Mit diesen Tasks wird mit Docker eine Datenbank erstellt mit den benötigten zwei Schemen: `arp_npl` (kantonales Datenmodell, Quellenschema) und `arp_npl_grundnutzung_oereb` (ÖREB-Rahmenmodell, Zielschema). Mit folgendem Befehl wird die das Docker-Image erstellt, der Container gestartet, Daten im kantonalen Modell importiert und zu guter Letzt die kantonalen Gesetze und die zuständigen Stellen importiert:
 
 ```
-gradle gretl-dev:db:startAndWaitOnHealthyContainer gretl-dev:data:replaceLandUsePlansData gretl:importCantonalLegalBasisToStaging gretl:importResponsibleOfficesToStaging
+gradle gretl-dev:db:startAndWaitOnHealthyContainer gretl-dev:data:replaceLandUsePlansData gretl:importCantonalLegalBasisToOereb gretl:importResponsibleOfficesToOereb
 ```
 
 Die kantonalen Gesetzen sind "externe" Assoziationen und werden **nicht** in die INTERLIS-Transferdatei exportiert. Sie sind in der ÖREB-Datenbank bereits vorhanden. Im Gegensatz dazu die zuständigen Stellen. Diese sind Bestandteil der exportierten Nutzungsplanungsdaten im ÖREB-Rahmenmodell. 
@@ -16,34 +22,25 @@ Die Symbole werden mit einem GRETL OerebIconizerQgis3-Task erzeugt und während 
 
 Datenumbau:
 ```
-gradle gretl:startWMSDockerContainer gretl:deleteFromStaging gretl:insertToStaging gretl:updateSymbols
+gradle gretl:startWMSDockerContainer gretl:deleteFromOereb gretl:insertToOereb gretl:updateSymbols
 ```
 TODO: 
 - `updateSymbols` soll das Starten und Stoppen des WMS-Containers steuern. Warum manchmal der WMS-Server nicht mehr erreichbar ist, ist mir ein Rätsel. Im Browser geht der SLD-Aufruf auch nicht mehr. Container läuft aber noch.
 
-Datenexport:
+Datenexport (beding GRETL mit ili2pg 4.1.1-Snapshot wegen [#290](https://github.com/claeis/ili2db/issues/290)):
 ```
-gradle gretl:exportLandUsePlans
-```
-Achtung: Daten können mit GRETL momentan nicht exportiert werden [#290](https://github.com/claeis/ili2db/issues/290).
-
-Export-Test mit Snapshot-Version:
-```
-java -jar /Users/stefan/apps/ili2pg-4.1.1-20190623.111504-8-bindist/ili2pg-4.1.1-SNAPSHOT.jar --dbhost localhost --dbport 54321 --dbdatabase edit --dbusr admin --dbpwd admin --dbschema agi_oereb_npl_staging --models OeREBKRMtrsfr_V1_1 --disableValidation --export /Users/stefan/Downloads/data/test_export.xtf
-
-xmllint --format /Users/stefan/Downloads/data/test_export.xtf -o /Users/stefan/Downloads/data/test_export.xtf
-
-java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar /Users/stefan/Downloads/data/test_export.xtf
+gradle gretl:exportLandUsePlansOereb
 ```
 
 ## Hinweise 
-Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor allem hinsichtlich Assoziationen vereinfacht, kann es zu Problemen mit Sequenzen resp. zu Primary Keys Kollisionen kommen. Weil neben den eigentlichen Nutzungsplanungsdaten vorgängig noch die Gesetze und die zuständigen Stellen importiert werden, wird für die Primary Keys (`t_id`) die Sequenz "angezapft". Falls jetzt durch den Datenumbau identische Primary Keys geliefert werden (was eben den Datenumbau massiv vereinfacht), kann es zu Kollisionen kommen. Das kann ziemlich robust umgangen werden, wenn der Startwert der Sequenz im Schema `arp_oereb_npl_staging` sehr hoch angesetzt wird (es handelt sich um einen int8-Datentyp). Dazu wird die `--idSeqMin` Option von ili2pg beim Erzeugen des Schemas verwendet.
+Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor allem hinsichtlich Assoziationen vereinfacht, kann es zu Problemen mit Sequenzen resp. zu Primary Keys Kollisionen kommen. Weil neben den eigentlichen Nutzungsplanungsdaten vorgängig noch die Gesetze und die zuständigen Stellen importiert werden, wird für die Primary Keys (`t_id`) die Sequenz "angezapft". Falls jetzt durch den Datenumbau identische Primary Keys geliefert werden (was eben den Datenumbau massiv vereinfacht), kann es zu Kollisionen kommen. Das kann ziemlich robust umgangen werden, wenn der Startwert der Sequenz im Schema `arp_npl_oereb` sehr hoch angesetzt wird (es handelt sich um einen int8-Datentyp). Dazu wird die `--idSeqMin` Option von ili2pg beim Erzeugen des Schemas verwendet.
 
 ## ilivalidator
 Damit die externen Objekte geprüft werden können, muss die Option `--allObjectsAccessible` verwendet werden. Damit die fehlenden gesetzlichen Grundlagen nicht als Fehler gemeldet werden, muss eine config-File (siehe Ordner `ilivalidator`) verwendet werden:
 
 ```
-java -jar /Users/stefan/apps/ilivalidator-1.11.1-20190403.093800-1-bindist/ilivalidator-1.11.1-SNAPSHOT.jar --allObjectsAccessible --config config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
+java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --config ilivalidator/config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
+
 ```
 
 

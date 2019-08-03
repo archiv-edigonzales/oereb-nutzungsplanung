@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    id "ch.so.agi.gretl" version "2.0.80"
+    id "ch.so.agi.gretl" version "2.0.117"
     id "de.undercouch.download" version "3.4.3"
     id "com.bmuschko.docker-remote-api" version "4.10.0"
 }
@@ -34,44 +34,44 @@ ext {
 
     iliModelVorschriften = "OeREBKRMvs_V1_1"
     iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
-    dbSchemaLandUsePlansOerebStaging = "agi_oereb_npl_staging"
+    dbSchemaLandUsePlansOereb = "arp_npl_grundnutzung_oereb"
 }
 
 def pathToTempFolder = System.getProperty("java.io.tmpdir")
 
-def cantonalLegalBasisBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.sk.oereb/"
-def cantonalLegalBaseDataSet = "ch.so.sk.gesetze.oereb"
+def cantonalLegalBasisBaseUrl = "https://geo.so.ch/geodata/ch.so.sk.gesetze.oereb//"
+def cantonalLegalBaseDataSet = "ch.so.sk.gesetze"
 
-def responsibleOfficesBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung.oereb-dev/"
-def responsibleOfficesDataSet = "ch.so.arp.nutzungsplanung.zustaendigestelle"
+def responsibleOfficesBaseUrl = "https://geo.so.ch/geodata/ch.so.agi.zustaendigestellen.oereb/"
+def responsibleOfficesDataSet = "ch.so.agi.zustaendigestellen"
 
-def GROUP = "Datenumbau NPLSO -> Transferstruktur (Staging)"
+def GROUP = "Datenumbau NPLSO -> Transferstruktur (Oereb-Schema)"
 
-// Löscht sämtliche Daten aus dem ÖREB-NPL-Staging-Schema in der Edit-DB.
-task deleteFromStaging(type: SqlExecutor) {
-    description = "Löscht die Daten aus dem Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
+// Löscht sämtliche Daten aus dem ÖREB-NPL-Schema in der Edit-DB.
+task deleteFromOereb(type: SqlExecutor) {
+    description = "Löscht die Daten aus dem OEREB-Schema ($dbSchemaLandUsePlansOereb)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    sqlFiles = ["delete_oereb_landuseplans_staging_tables.sql"]
+    sqlFiles = ["delete_oereb_landuseplans_tables.sql"]
 }
 
-// Macht den Datenumbau aus dem kantonalen Modell der NPL in die Transferstruktur im ÖREB-NPL-Staging-Schema.
-task insertToStaging(type: SqlExecutor, dependsOn: 'deleteFromStaging') {
-    description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im Staging-Schema ($dbSchemaLandUsePlansOerebStaging)."
+// Macht den Datenumbau aus dem kantonalen Modell der NPL in die Transferstruktur im ÖREB-NPL-OEREB-Schema.
+task insertToOereb(type: SqlExecutor, dependsOn: 'deleteFromOereb') {
+    description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell um und speichert sie im OEREB-Schema ($dbSchemaLandUsePlansOereb)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    //sqlFiles = ["wip-insert_oereb_landuseplans_staging_tables.sql"]
-    sqlFiles = ["insert_oereb_landuseplans_staging_tables.sql"]
+    //sqlFiles = ["wip-insert_oereb_landuseplans_tables.sql"]
+    sqlFiles = ["insert_oereb_landuseplans_tables.sql"]
 }
 
 // TODO: host, port, wms name and layer name as variable
 // Erzeugen der Symbole und Update der Daten in der Datenbank. Es wird ein WMS-Server benötigt.
 task updateSymbols(type: OerebIconizerQgis3) {
     description = "Erzeugt die Symbole und den Text für die einzelnen Legendeneinträge."
-    sldUrl = "http://localhost:3000/qgis/ch.so.arp.nutzungsplanung.oereb?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=grundnutzung&SLD_VERSION=1.1.0"
-    legendGraphicUrl = "http://localhost:3000/qgis/ch.so.arp.nutzungsplanung.oereb?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=grundnutzung&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
+    sldUrl = "http://localhost:8083/qgis/oereb-wms-gpkg?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=ch.so.arp.nutzungsplanung.grundnutzung&SLD_VERSION=1.1.0"
+    legendGraphicUrl = "http://localhost:8083/qgis/oereb-wms-gpkg?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=ch.so.arp.nutzungsplanung.grundnutzung&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    dbQTable = "agi_oereb_npl_staging.transferstruktur_legendeeintrag"
+    dbQTable = "arp_npl_grundnutzung_oereb.transferstruktur_legendeeintrag"
     typeCodeAttrName = "artcode"
     symbolAttrName = "symbol"
     legendTextAttrName = "legendetext_de"
@@ -84,22 +84,22 @@ task updateSymbols(type: OerebIconizerQgis3) {
 }
 
 // Daten in eine INTERLIS-Datei exportieren.
-task exportLandUsePlans(type: Ili2pgExport) {
-    description = "Exportiert die umgebauten Daten aus dem Staging-Schema ($dbSchemaLandUsePlansOerebStaging) in die Transferstruktur."
+task exportLandUsePlansOereb(type: Ili2pgExport) {
+    description = "Exportiert die umgebauten Daten aus dem OEREB-Schema ($dbSchemaLandUsePlansOereb) in die Transferstruktur."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
     models = "OeREBKRMtrsfr_V1_1"
-    dbschema = "agi_oereb_npl_staging"
-    dataFile = "ch.so.arp.nutzungsplanung.oereb.xtf"
-    dataset = "ch.so.arp.nutzungsplanung"
-
+    dbschema = "arp_npl_grundnutzung_oereb"
+    dataFile = "$rootDir/" + "ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf"
+    dataset = "ch.so.arp.nutzungsplanung.grundnutzung"
+    disableValidation = true
 }
 
-// Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-Staging-Schema.
+// Lädt die kantonalen Gesetze herunter und importiert sie in das ÖREB-NPL-OEREB-Schema.
 task downloadCantonalLegalBasis(type: Download) {
     description = "Download kantonale Gesetze ($cantonalLegalBaseDataSet)."
     group = GROUP
-    src cantonalLegalBasisBaseUrl + cantonalLegalBaseDataSet + ".xml"
+    src cantonalLegalBasisBaseUrl + cantonalLegalBaseDataSet + ".xtf"
     dest pathToTempFolder
     overwrite true
 
@@ -108,19 +108,19 @@ task downloadCantonalLegalBasis(type: Download) {
     }        
 }
 
-task importCantonalLegalBasisToStaging(type: Ili2pgReplace, dependsOn: 'downloadCantonalLegalBasis') {
+task importCantonalLegalBasisToOereb(type: Ili2pgReplace, dependsOn: 'downloadCantonalLegalBasis') {
     description = "Import kantonale Gesetze ($cantonalLegalBaseDataSet)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
     models = iliModelVorschriften
-    dbschema = dbSchemaLandUsePlansOerebStaging
-    dataFile = file(Paths.get(pathToTempFolder.toString(), cantonalLegalBaseDataSet + ".xml"))
-    dataset = "ch.so.sk.legal_basis" // Anderes (in diesem Fall beliebig) Dataset, da die dazugehörigen Daten nicht Bestandteil des Transfers (des exportierten Files) sein dürfen.
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), cantonalLegalBaseDataSet + ".xtf"))
+    dataset = cantonalLegalBaseDataSet // Anderes (in diesem Fall beliebig) Dataset, da die dazugehörigen Daten nicht Bestandteil des Transfers (des exportierten Files) sein dürfen.
     disableValidation = true
 }
 
 // Lädt die Daten der zuständigen Stellen der Nutzungsplanung herunter und importiert diese in das
-// ÖREB-NPL-Staging-Schema.
+// ÖREB-Rahmenmodell-NPL-Schema.
 task downloadResponsibleOffices(type: Download) {
     description = "Download zuständige Stellen ($responsibleOfficesDataSet)."
     group = GROUP
@@ -133,14 +133,14 @@ task downloadResponsibleOffices(type: Download) {
     }        
 }
 
-task importResponsibleOfficesToStaging(type: Ili2pgReplace, dependsOn: 'downloadResponsibleOffices') {
+task importResponsibleOfficesToOereb(type: Ili2pgReplace, dependsOn: 'downloadResponsibleOffices') {
     description = "Import zuständige Stellen ($responsibleOfficesDataSet)."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
     models = iliModelTransferstruktur
-    dbschema = dbSchemaLandUsePlansOerebStaging
+    dbschema = dbSchemaLandUsePlansOereb
     dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
-    dataset = "ch.so.arp.nutzungsplanung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. TODO: Herausforderung pro Gemeinde in Verbindung mit der/den fehlenden zuständigen Stelle(n)
+    dataset = "ch.so.arp.nutzungsplanung.grundnutzung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. TODO: Herausforderung pro Gemeinde in Verbindung mit der/den fehlenden zuständigen Stelle(n)
     disableValidation = true
 }
 
@@ -156,29 +156,26 @@ import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
 import com.bmuschko.gradle.docker.tasks.container.DockerLogsContainer
 import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
 
-task buildWMSDockerImage(type: DockerBuildImage) {
-    description = "Build docker image."
-    inputDir = file("qgis-iconizer")
-    tags = ["edigonzales/oereb-qgis-iconizer:"+version.toString(), "edigonzales/oereb-qgis-iconizer:latest"]
-
-    doLast {
-        println projectDir
-    }    
-}
-
 task createWMSDockerContainer(type: DockerCreateContainer) {
-    dependsOn 'buildWMSDockerImage'
+    //dependsOn 'buildWMSDockerImage'
     dependsOn 'removeWMSDockerContainer'
 
     description = "Create docker container."
-    targetImageId buildWMSDockerImage.getImageId()
+    image = "sogis/qgis-server-base:3.4"
+    imageId = "oereb-qgis-iconizer"
     containerName = "oereb-qgis-iconizer"
-    portBindings = ['3000:80']
+    portBindings = ['8083:80']
     exposedPorts = [new ExposedPort("tcp", [80])]
-    binds = [(projectDir.toString()+"/qgis-iconizer/data"):"/data"]
+    envVars.set(["QGIS_SERVER_PARALLEL_RENDERING": "true",
+               "QGIS_SERVER_MAX_THREADS": "2",
+               "QGIS_FCGI_MIN_PROCESSES": "1",
+               "QGIS_FCGI_MAX_PROCESSES": "1",
+               "QGIS_SERVER_LOG_LEVEL": "0"])
+    binds = [(projectDir.toString()+"/qgis-iconizer/qgis"):"/data"]
 }
 
-task removeWMSDockerContainer(dependsOn: 'buildWMSDockerImage', type: DockerRemoveContainer) {
+//task removeWMSDockerContainer(dependsOn: 'buildWMSDockerImage', type: DockerRemoveContainer) {
+task removeWMSDockerContainer(type: DockerRemoveContainer) {
     description = "Remove existing docker container."
     removeVolumes = true
     force = true

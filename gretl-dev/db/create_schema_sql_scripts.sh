@@ -8,7 +8,7 @@ java -jar $ILI2PG_PATH/ili2pg-4.1.0.jar \
 
 java -jar $ILI2PG_PATH/ili2pg-4.1.0.jar \
 --idSeqMin 1000000000000 \
---dbschema agi_oereb_npl_staging --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" \
+--dbschema arp_npl_grundnutzung_oereb --models "OeREBKRMvs_V1_1;OeREBKRMtrsfr_V1_1" \
 --defaultSrsCode 2056 --strokeArcs --createGeomIdx --createFk --createFkIdx --createEnumTabs --beautifyEnumDispName --createMetaInfo --createUnique --createNumChecks --nameByTopic \
 --createBasketCol --createDatasetCol \
---createImportTabs --createscript sql/agi_oereb_npl_staging.sql
+--createImportTabs --createscript sql/arp_npl_grundnutzung_oereb.sql

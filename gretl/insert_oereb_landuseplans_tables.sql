@@ -18,31 +18,37 @@
  * 
  * (1) basket und dataset müssen eruiert und als FK gespeichert werden. Beide werden
  * werden in einer Subquery ermittelt. Dies ist möglich, da bereits die zuständigen Stellen
- * vorhanden sein müssen. Die zuständigen Stellen werden mitexportiert und teilen sich daher
- * das gleiche Dataset wie die übrigen Daten (im Gegensatz dazu die Gesetze).
+ * vorhanden sein müssen, weil sie mitexportiert werden und daher den gleichen Dataset-Identifier
+ * aufweisen (im Gegensatz dazu die Gesetze).
  * 
  * (2) Die Grundnutzung wird nicht flächendeckend in den ÖREB-Kataster überführt, d.h. es
  * gibt Grundnutzungen, die nicht Bestandteil des Katasters sind. Dieser Filter ist eine
  * einfache WHERE-Clause.
  * 
  * (3) Die Attribute 'publiziertab' und 'rechtsstatus' sind im kantonalen Modell nicht in
- * der Typ-Klasse vorhanden, sondern werden hier ebenfalls von der Geometrie-Klasse 
- * verwendet. Der Join führt dazu, dass ein unschönes Distinct notwendig wird.
+ * der Typ-Klasse vorhanden und werden aus diesem Grund für den ÖREB-Kataster
+ * ebenfalls von der Geometrie-Klasse verwendet. Der Join führt dazu, dass ein unschönes 
+ * Distinct notwendig wird.
  * 
  * (4) Momentan geht man von der Annahme aus, dass bei den diesen Eigentumsbeschränkungen
  * die Gemeinde die zuständige Stelle ist. Falls das nicht mehr zutrifft, muss man die
  * zuständigen Stellen eventuell in einem nachgelagerten Schritt abhandeln.
  * 
- * (5) Exportiert werden alle zuständigen Stellen, die vorgängig importiert wurden.
+ * (5) Unschönheit: Exportiert werden alle zuständigen Stellen, die vorgängig importiert wurden. 
+ * Will man das nicht, müssen die nicht verwendeten zuständigen Stellen (des gleichen Datasets)
+ * mit einer Query gelöscht werden.
  * 
  * (6) Ein Artcode kann mehrfach vorkommen. Das sollte soweit richtig sein. Jedoch aufpassen, dass
  * bei den nachfolgenden Queries nicht fälschlicherweise angenommen wird, dass der Artcode unique ist.
  * Ausnahme: Bei den Symbolen ist diese Annahme materiell richtig (solange eine kantonale aggregierte
- * Form präsentiert wird).
+ * Form präsentiert wird) und führt zu keinen falschen Resultaten.
+ * 
+ * (7) 'typ_grundnutzung IN' filtern Eigentumsbeschränkungen weg, die mit keinem Dokument verknüpft sind.
+ * Sind solche Objekte vorhanden, handelt es sich in der Regel um einen Datenfehler in den Ursprungsdaten.
  */
 
 INSERT INTO 
-    agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
+    arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung
     (
         t_id,
         t_basket,
@@ -63,8 +69,8 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_grundnutzung.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'Grundnutzung_Zonenflaeche' AS subthema,
-        substring(typ_grundnutzung.typ_kt FROM 1 FOR 4) AS artcode,
+        'NutzungsplanungGrundnutzung' AS subthema,
+        substring(typ_grundnutzung.typ_kt FROM 2 FOR 3) AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung' AS artcodeliste,
         CASE 
             WHEN grundnutzung.rechtsstatus IS NULL THEN 'inKraft' /* TODO: tbd */
@@ -74,7 +80,7 @@ INSERT INTO
         amt.t_id AS zustaendigestelle
     FROM
         arp_npl.nutzungsplanung_typ_grundnutzung AS typ_grundnutzung
-        LEFT JOIN agi_oereb_npl_staging.vorschriften_amt AS amt
+        LEFT JOIN arp_npl_grundnutzung_oereb.vorschriften_amt AS amt
         ON typ_grundnutzung.t_datasetname = RIGHT(amt.t_ili_tid, 4)
         LEFT JOIN arp_npl.nutzungsplanung_grundnutzung AS grundnutzung
         ON typ_grundnutzung.t_id = grundnutzung.typ_grundnutzung,
@@ -83,11 +89,11 @@ INSERT INTO
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset
     WHERE
         typ_kt NOT IN 
@@ -109,15 +115,24 @@ INSERT INTO
             'N439_Reservezone',
             'N440_Wald'
         )
+        AND
+        typ_grundnutzung IN 
+        (
+            SELECT
+                DISTINCT ON (typ_grundnutzung) 
+                typ_grundnutzung
+            FROM
+                arp_npl.nutzungsplanung_typ_grundnutzung_dokument
+        )        
 ;
 
 /*
- * Es werden die Dokumente der ersten Hierarchie-Ebene abgehandelt, d.h.
- * "HinweisWeitere" wird in einem weiteren Schritt bearbeitet. Um die Dokumente
+ * Es werden die Dokumente der ersten Hierarchie-Ebene ("direkt verlinkt") abgehandelt, d.h.
+ * "HinweisWeitere"-Dokumente werden in einem weiteren Schritt bearbeitet. Um die Dokumente
  * zu kopieren, muss auch die n-m-Zwischentabelle bearbeitet werden, wegen der
  * Foreign Keys Constraints. Bemerkungen:
  * 
- * (1) Das Abfüllen der zuständigen Stellen muss ggf. nochmals überarbeit
+ * (1) Das Abfüllen der zuständigen Stellen muss ggf. nochmals überarbeitet
  * werden. Kommt darauf an, ob das hier reicht. In den Ausgangsdaten müssen
  * die Attribute Abkuerzung und Rechtsvorschrift zwingend gesetzt sein, sonst
  * kann nicht korrekt umgebaut werden. 
@@ -138,9 +153,10 @@ INSERT INTO
  * 
  * (4) Es gibt Objekte (Typen), die in den Kataster aufgenommen werden müssen (gemäss
  * Excelliste) aber keine Dokumente zugewiesen haben. -> Datenfehler. Aus diesem Grund
- * wird eine Where-Clause verwendet (dokument.t_id IS NOT NULL).
+ * wird eine Where-Clause verwendet (dokument.t_id IS NOT NULL). 
+ * 2019-08-03 / sz: Wieder entfernt, da man diese Daten bereits ganz zu Beginn (erste 
+ * Query) rausfiltern muss.
  */
-
 
 WITH basket_dataset AS 
 (
@@ -148,11 +164,11 @@ WITH basket_dataset AS
         basket.t_id AS basket_t_id,
         dataset.datasetname AS datasetname               
     FROM
-        agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-        LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+        arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+        LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
         ON basket.dataset = dataset.t_id
     WHERE
-        dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+        dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
 )
 ,
 hinweisvorschrift AS 
@@ -165,17 +181,15 @@ hinweisvorschrift AS
         typ_dokument.dokument AS vorschrift_vorschriften_dokument
     FROM
         arp_npl.nutzungsplanung_typ_grundnutzung_dokument AS typ_dokument
-        RIGHT JOIN agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+        RIGHT JOIN arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         ON typ_dokument.typ_grundnutzung = eigentumsbeschraenkung.t_id,
         basket_dataset
-    WHERE
-        typ_dokument.t_id IS NOT NULL        
 )
 ,
 vorschriften_dokument AS
 (
     INSERT INTO 
-        agi_oereb_npl_staging.vorschriften_dokument
+        arp_npl_grundnutzung_oereb.vorschriften_dokument
         (
             t_id,
             t_basket,
@@ -218,9 +232,9 @@ vorschriften_dokument AS
                     SELECT 
                         t_id
                     FROM
-                        agi_oereb_npl_staging.vorschriften_amt
+                        arp_npl_grundnutzung_oereb.vorschriften_amt
                     WHERE
-                        t_datasetname = 'ch.so.arp.nutzungsplanung' -- TODO: tbd
+                        t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' -- TODO: tbd
                     AND
                         t_ili_tid = 'ch.so.sk' -- TODO: tbd
                 )
@@ -229,7 +243,7 @@ vorschriften_dokument AS
                     SELECT 
                         t_id
                     FROM
-                        agi_oereb_npl_staging.vorschriften_amt
+                        arp_npl_grundnutzung_oereb.vorschriften_amt
                     WHERE
                         RIGHT(t_ili_tid, 4) = CAST(gemeinde AS TEXT)
                 )
@@ -243,16 +257,16 @@ vorschriften_dokument AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset   
    RETURNING *
 )
 INSERT INTO
-    agi_oereb_npl_staging.transferstruktur_hinweisvorschrift
+    arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift
     (
         t_id,
         t_basket,
@@ -294,7 +308,6 @@ FROM
  * Beim anschliessenden Herstellen der Verknüpfung aber nicht mehr.
  */
 
-
 WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS 
 (
     SELECT 
@@ -312,9 +325,9 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
         SELECT
             t_id
         FROM
-            agi_oereb_npl_staging.vorschriften_dokument
+            arp_npl_grundnutzung_oereb.vorschriften_dokument
         WHERE
-            t_datasetname = 'ch.so.arp.nutzungsplanung'
+            t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
     )
 
     UNION ALL
@@ -362,9 +375,9 @@ zusaetzliche_dokumente AS
                     SELECT 
                         t_id
                     FROM
-                        agi_oereb_npl_staging.vorschriften_amt
+                        arp_npl_grundnutzung_oereb.vorschriften_amt
                     WHERE
-                        t_datasetname = 'ch.so.arp.nutzungsplanung' -- TODO: tbd
+                        t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' -- TODO: tbd
                     AND
                         t_ili_tid = 'ch.so.sk' -- TODO: tbd
                 )
@@ -373,7 +386,7 @@ zusaetzliche_dokumente AS
                     SELECT 
                         t_id
                     FROM
-                        agi_oereb_npl_staging.vorschriften_amt
+                        arp_npl_grundnutzung_oereb.vorschriften_amt
                     WHERE
                         RIGHT(t_ili_tid, 4) = CAST(gemeinde AS TEXT)
                 )
@@ -387,11 +400,11 @@ zusaetzliche_dokumente AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset        
     WHERE
         last_ursprung NOT IN
@@ -399,16 +412,16 @@ zusaetzliche_dokumente AS
             SELECT
                 t_id
             FROM
-                agi_oereb_npl_staging.vorschriften_dokument
+                arp_npl_grundnutzung_oereb.vorschriften_dokument
             WHERE
-                t_datasetname = 'ch.so.arp.nutzungsplanung'
+                t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
         )
 )
 ,
 zusaetzliche_dokumente_insert AS 
 (
     INSERT INTO 
-        agi_oereb_npl_staging.vorschriften_dokument
+        arp_npl_grundnutzung_oereb.vorschriften_dokument
         (
             t_id,
             t_basket,
@@ -445,7 +458,7 @@ zusaetzliche_dokumente_insert AS
         zusaetzliche_dokumente
 )
 INSERT INTO 
-    agi_oereb_npl_staging.transferstruktur_hinweisvorschrift 
+    arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift 
     (
         t_basket,
         t_datasetname,
@@ -460,18 +473,18 @@ INSERT INTO
         zusaetzliche_dokumente.t_id AS vorschrift_vorschriften_dokument
     FROM 
         zusaetzliche_dokumente
-        LEFT JOIN agi_oereb_npl_staging.transferstruktur_hinweisvorschrift AS hinweisvorschrift
+        LEFT JOIN arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift AS hinweisvorschrift
         ON hinweisvorschrift.vorschrift_vorschriften_dokument = zusaetzliche_dokumente.top_level_dokument,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset        
 ;
 
@@ -486,7 +499,7 @@ INSERT INTO
 WITH multilingualuri AS
 (
     INSERT INTO
-        agi_oereb_npl_staging.multilingualuri
+        arp_npl_grundnutzung_oereb.multilingualuri
         (
             t_id,
             t_basket,
@@ -495,33 +508,33 @@ WITH multilingualuri AS
             vorschriften_dokument_textimweb
         )
     SELECT
-        nextval('agi_oereb_npl_staging.t_ili2db_seq'::regclass) AS t_id,
+        nextval('arp_npl_grundnutzung_oereb.t_ili2db_seq'::regclass) AS t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         0 AS t_seq,
         vorschriften_dokument.t_id AS vorschriften_dokument_textimweb
     FROM
-        agi_oereb_npl_staging.vorschriften_dokument AS vorschriften_dokument,
+        arp_npl_grundnutzung_oereb.vorschriften_dokument AS vorschriften_dokument,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset
     WHERE
-        vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
+        vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
     RETURNING *
 )
 ,
 localiseduri AS 
 (
     SELECT 
-        nextval('agi_oereb_npl_staging.t_ili2db_seq'::regclass) AS t_id,
+        nextval('arp_npl_grundnutzung_oereb.t_ili2db_seq'::regclass) AS t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         0 AS t_seq,
@@ -537,15 +550,15 @@ localiseduri AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung'                 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'                 
         ) AS basket_dataset
 )
 INSERT INTO
-    agi_oereb_npl_staging.localiseduri
+    arp_npl_grundnutzung_oereb.localiseduri
     (
         t_id,
         t_basket,
@@ -570,16 +583,19 @@ INSERT INTO
 /*
  * Umbau der Geometrien, die Inhalt des ÖREB-Katasters sind.
  * 
- * (1) Es werde nicht alle Geometrie der Grundnutzung kopiert, 
+ * (1) Es werde nicht alle Geometrien der Grundnutzung kopiert, 
  * sondern nur diejenigen, die Inhalt des ÖREB-Katasters sind.
  * Dieser Filter wird bei Umbau des NPL-Typs gesetzt.
  * 
  * (2) Die zuständige Stelle ist identisch mit der zuständigen
  * Stelle der Eigentumsbeschränkung.
+ * 
+ * (3) Die Geometrien werden mit ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid()))
+ * bereinigt. 
  */
 
 INSERT INTO
-    agi_oereb_npl_staging.transferstruktur_geometrie
+    arp_npl_grundnutzung_oereb.transferstruktur_geometrie
     (
         t_id,
         t_basket,
@@ -601,18 +617,18 @@ INSERT INTO
         eigentumsbeschraenkung.zustaendigestelle AS zustaendigestelle
     FROM
         arp_npl.nutzungsplanung_grundnutzung AS grundnutzung
-        RIGHT JOIN agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+        RIGHT JOIN arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         ON grundnutzung.typ_grundnutzung = eigentumsbeschraenkung.t_id,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset
 ;
 
@@ -626,14 +642,15 @@ INSERT INTO
  * 
  * (3) 1px-Dummy-PNG als Symbol damit Datenbank-Constraint nicht verletzt wird.
  *  
- * (4) Query funktioniert nur, wenn nur ein Darstellungsdienst insertet wird. (-> Update-Query würde nicht
- * mehr passen.)
+ * (4) Query funktioniert nur, wenn nur ein Darstellungsdienst pro Schema insertet wird. (-> Update-Query würde nicht
+ * mehr passen.) Man müssten dann 'irgendwie' im Select der Update-Query filtern mit Layernamen/Subthema. Hat aber 
+ * wohl auch Auswirkungen auf das Symbolupdate (?).
  */ 
 
 WITH transferstruktur_darstellungsdienst AS
 (
     INSERT INTO 
-        agi_oereb_npl_staging.transferstruktur_darstellungsdienst 
+        arp_npl_grundnutzung_oereb.transferstruktur_darstellungsdienst 
         (
             t_basket,
             t_datasetname,
@@ -643,19 +660,19 @@ WITH transferstruktur_darstellungsdienst AS
         SELECT
             basket_dataset.basket_t_id AS t_basket,
             basket_dataset.datasetname AS t_datasetname,
-            'https://geo.so.ch/ows/somap?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.arp.nutzungsplanung.grundnutzung_inkl_digi_zone&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&TILED=false&DPI=96&OPACITIES=255&t=60&WIDTH=1375&HEIGHT=723&BBOX=2549048.75%2C1196604.5833333333%2C2694569.583333333%2C1273122.0833333333' AS verweiswms,
-            'https://geo.so.ch/api/v1/legend/somap?SERVICE=WMS&REQUEST=GetLegendGraphic&VERSION=1.3.0&FORMAT=image/png&LAYER=ch.so.arp.nutzungsplanung.grundnutzung_inkl_digi_zone&CRS=EPSG:2056&SCALE=400000&WIDTH=1375&HEIGHT=723&BBOX=2549053.187282798,1196569.9945746537,2694574.020616131,1273087.4945746537' AS legendeimweb
+            'https://geo.so.ch/api/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.arp.nutzungsplanung.grundnutzung&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            'https://geo.so.ch/api/v1/legend/somap?SERVICE=WMS&REQUEST=GetLegendGraphics&VERSION=1.3.0&FORMAT=image/png&LAYER=ch.so.arp.nutzungsplanung.grundnutzung' AS legendeimweb
         FROM
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                agi_oereb_npl_staging.t_ili2db_dataset AS dataset
-                LEFT JOIN agi_oereb_npl_staging.t_ili2db_basket AS basket
+                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
         ) AS basket_dataset
     RETURNING *
 )
@@ -663,7 +680,7 @@ WITH transferstruktur_darstellungsdienst AS
 transferstruktur_legendeeintrag AS 
 (
 INSERT INTO 
-    agi_oereb_npl_staging.transferstruktur_legendeeintrag
+    arp_npl_grundnutzung_oereb.transferstruktur_legendeeintrag
     (
         t_basket,
         t_datasetname,
@@ -687,38 +704,38 @@ INSERT INTO
         eigentumsbeschraenkung.subthema,
         transferstruktur_darstellungsdienst.t_id AS transfrstrkstllngsdnst_legende
     FROM
-        agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
+        arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
         transferstruktur_darstellungsdienst
     WHERE
-        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung'
+        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
     RETURNING *
 )
 UPDATE 
-    agi_oereb_npl_staging.transferstruktur_eigentumsbeschraenkung
+    arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung
 SET 
     darstellungsdienst = (SELECT t_id FROM transferstruktur_darstellungsdienst)
 WHERE
-    subthema = 'Grundnutzung_Zonenflaeche'
+    subthema = 'NutzungsplanungGrundnutzung'
 ;
 
 /*
  * Hinweise auf die gesetzlichen Grundlagen.
  * 
  * (1) Momentan nur auf die kantonalen Gesetze und Verordnungen, da
- * die die Bundesgesetze und -verordnungen nicht importiert wurden.
+ * die Bundesgesetze und -verordnungen nicht importiert wurden.
  * 
- * (2) Ebenfalls gut zu prüfen.
+ * (2) Ebenfalls gut prüfen.
  */
 
 WITH vorschriften_dokument_gesetze AS (
   SELECT
     t_id AS hinweis
   FROM
-    agi_oereb_npl_staging.vorschriften_dokument
+    arp_npl_grundnutzung_oereb.vorschriften_dokument
   WHERE
     t_ili_tid IN ('ch.so.sk.bgs.711.1', 'ch.so.sk.bgs.711.61') 
 )
-INSERT INTO agi_oereb_npl_staging.vorschriften_hinweisweiteredokumente (
+INSERT INTO arp_npl_grundnutzung_oereb.vorschriften_hinweisweiteredokumente (
   t_basket,
   t_datasetname,
   ursprung,
@@ -730,11 +747,11 @@ SELECT
   vorschriften_dokument.t_id,  
   vorschriften_dokument_gesetze.hinweis
 FROM 
-  agi_oereb_npl_staging.vorschriften_dokument AS vorschriften_dokument
+  arp_npl_grundnutzung_oereb.vorschriften_dokument AS vorschriften_dokument
   LEFT JOIN vorschriften_dokument_gesetze
   ON 1=1
 WHERE
   t_type = 'vorschriften_rechtsvorschrift'
 AND
-  vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
+  vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
 ;
