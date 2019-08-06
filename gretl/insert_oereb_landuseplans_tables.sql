@@ -70,8 +70,9 @@ INSERT INTO
         typ_grundnutzung.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
         'NutzungsplanungGrundnutzung' AS subthema,
-        substring(typ_grundnutzung.typ_kt FROM 2 FOR 3) AS artcode,
-        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung' AS artcodeliste,
+        --substring(typ_grundnutzung.typ_kt FROM 1 FOR 3) AS artcode,
+        typ_grundnutzung.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung.'||typ_grundnutzung.t_datasetname AS artcodeliste,
         CASE 
             WHEN grundnutzung.rechtsstatus IS NULL THEN 'inKraft' /* TODO: tbd */
             ELSE grundnutzung.rechtsstatus
@@ -686,6 +687,7 @@ INSERT INTO
         t_datasetname,
         t_seq,
         symbol,
+        legendetext_de,
         artcode,
         artcodeliste,
         thema,
@@ -693,11 +695,12 @@ INSERT INTO
         transfrstrkstllngsdnst_legende
     )
     SELECT 
-        DISTINCT ON (artcode)
+        DISTINCT ON (artcode, artcodeliste)
         eigentumsbeschraenkung.t_basket,
         eigentumsbeschraenkung.t_datasetname,
         0::int AS t_seq,        
         decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') AS symbol,
+        eigentumsbeschraenkung.aussage_de AS legendetext_de,
         eigentumsbeschraenkung.artcode,
         eigentumsbeschraenkung.artcodeliste,
         eigentumsbeschraenkung.thema,
@@ -718,6 +721,7 @@ WHERE
     subthema = 'NutzungsplanungGrundnutzung'
 ;
 
+
 /*
  * Hinweise auf die gesetzlichen Grundlagen.
  * 
@@ -733,7 +737,7 @@ WITH vorschriften_dokument_gesetze AS (
   FROM
     arp_npl_grundnutzung_oereb.vorschriften_dokument
   WHERE
-    t_ili_tid IN ('ch.so.sk.bgs.711.1', 'ch.so.sk.bgs.711.61') 
+    t_ili_tid IN ('ch.admin.bk.sr.700', 'ch.so.sk.bgs.711.1', 'ch.so.sk.bgs.711.61') 
 )
 INSERT INTO arp_npl_grundnutzung_oereb.vorschriften_hinweisweiteredokumente (
   t_basket,

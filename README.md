@@ -10,7 +10,7 @@ Prototyp für den Datenumbau der Nutzungsplanung im kantonalen Datenmodell in da
 Im `gretl-dev`-Ordner sind die Tasks für das Aufsetzen der Entwicklungsumgebung. Mit diesen Tasks wird mit Docker eine Datenbank erstellt mit den benötigten zwei Schemen: `arp_npl` (kantonales Datenmodell, Quellenschema) und `arp_npl_grundnutzung_oereb` (ÖREB-Rahmenmodell, Zielschema). Mit folgendem Befehl wird die das Docker-Image erstellt, der Container gestartet, Daten im kantonalen Modell importiert und zu guter Letzt die kantonalen Gesetze und die zuständigen Stellen importiert:
 
 ```
-gradle gretl-dev:db:startAndWaitOnHealthyContainer gretl-dev:data:replaceLandUsePlansData gretl:importCantonalLegalBasisToOereb gretl:importResponsibleOfficesToOereb
+gradle gretl-dev:db:startAndWaitOnHealthyContainer gretl-dev:data:replaceLandUsePlansData gretl:importFederalLegalBasisToOereb gretl:importCantonalLegalBasisToOereb gretl:importResponsibleOfficesToOereb
 ```
 
 Die kantonalen Gesetzen sind "externe" Assoziationen und werden **nicht** in die INTERLIS-Transferdatei exportiert. Sie sind in der ÖREB-Datenbank bereits vorhanden. Im Gegensatz dazu die zuständigen Stellen. Diese sind Bestandteil der exportierten Nutzungsplanungsdaten im ÖREB-Rahmenmodell. 
@@ -36,8 +36,7 @@ Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor all
 Damit die externen Objekte geprüft werden können, muss die Option `--allObjectsAccessible` verwendet werden. Damit die fehlenden gesetzlichen Grundlagen nicht als Fehler gemeldet werden, muss eine config-File (siehe Ordner `ilivalidator`) verwendet werden:
 
 ```
-java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --config ilivalidator/config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
-
+java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --allObjectsAccessible --config ilivalidator/config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
 ```
 
 
