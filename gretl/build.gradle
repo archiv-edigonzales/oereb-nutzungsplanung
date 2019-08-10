@@ -25,7 +25,7 @@ import java.nio.file.Paths
 import ch.so.agi.gretl.tasks.*
 
 ext {
-    dbUriEdit = "jdbc:postgresql://localhost:54321/edit"
+    dbUriEdit = "jdbc:postgresql://localhost:54322/edit"
     dbUserEdit = "gretl"
     dbPwdEdit = "gretl"
 
@@ -34,7 +34,10 @@ ext {
 
     iliModelVorschriften = "OeREBKRMvs_V1_1"
     iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
-    dbSchemaLandUsePlansOereb = "arp_npl_grundnutzung_oereb"
+    dbSchemaLandUsePlansOereb = "arp_npl_oereb"
+
+    bintrayUser = System.getenv('bintrayUser')
+    bintrayKey = System.getenv('bintrayKey')
 }
 
 def pathToTempFolder = System.getProperty("java.io.tmpdir")
@@ -67,14 +70,15 @@ task insertToOereb(type: SqlExecutor, dependsOn: 'deleteFromOereb') {
     sqlFiles = ["insert_oereb_landuseplans_tables.sql"]
 }
 
+// TODO: für jeden Nutzungstyp ("Layer").
 // TODO: host, port, wms name and layer name as variable
 // Erzeugen der Symbole und Update der Daten in der Datenbank. Es wird ein WMS-Server benötigt.
-task updateSymbols(type: OerebIconizerQgis3) {
+task updateSymbolsGrundnutzung(type: OerebIconizerQgis3) {
     description = "Erzeugt die Symbole und den Text für die einzelnen Legendeneinträge."
-    sldUrl = "http://localhost:8083/wms/oereb-dummy?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&SLD_VERSION=1.1.0"
-    legendGraphicUrl = "http://localhost:8083/wms/oereb-dummy?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
+    sldUrl = "http://localhost:8083/wms/oereb-symbols?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&SLD_VERSION=1.1.0"
+    legendGraphicUrl = "http://localhost:8083/wms/oereb-symbols?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    dbQTable = "arp_npl_grundnutzung_oereb.transferstruktur_legendeeintrag"
+    dbQTable = "arp_npl_oereb.transferstruktur_legendeeintrag"
     typeCodeAttrName = "artcode"
     symbolAttrName = "symbol"
     useCommunalTypeCodes = true
@@ -92,10 +96,25 @@ task exportLandUsePlansOereb(type: Ili2pgExport) {
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
     models = "OeREBKRMtrsfr_V1_1"
-    dbschema = "arp_npl_grundnutzung_oereb"
-    dataFile = "$rootDir/" + "ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf"
-    dataset = "ch.so.arp.nutzungsplanung.grundnutzung"
+    dbschema = "arp_npl_oereb"
+    dataFile = "$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf"
+    dataset = "ch.so.arp.nutzungsplanung"
     disableValidation = true
+}
+
+task uploadToBintray() {
+    description = "Lädt die Daten auf Bintray hoch und publiziert sie."
+    doLast {
+        def bintrayLogin = bintrayUser + ":" + bintrayKey
+        def fileName = "$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf"
+        def responseUpload = ["curl", "-u", bintrayLogin, "-T", fileName,
+                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf?override=1"].execute().text
+        println(responseUpload)
+
+        def responsePublish = ["curl", "-u", bintrayLogin, "-X", "POST",
+                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/publish"].execute().text
+        println(responsePublish)
+    }
 }
 
 // Lädt die Bundesgesetze herunter und importiert sie in das ÖREB-NPL-OEREB-Schema.
@@ -167,7 +186,7 @@ task importResponsibleOfficesToOereb(type: Ili2pgReplace, dependsOn: 'downloadRe
     models = iliModelTransferstruktur
     dbschema = dbSchemaLandUsePlansOereb
     dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
-    dataset = "ch.so.arp.nutzungsplanung.grundnutzung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. TODO: Herausforderung pro Gemeinde in Verbindung mit der/den fehlenden zuständigen Stelle(n)
+    dataset = "ch.so.arp.nutzungsplanung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. 
     disableValidation = true
 }
 

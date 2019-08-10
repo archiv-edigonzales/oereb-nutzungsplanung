@@ -36,7 +36,7 @@ Trotz der ili2db-Erweiterungen in der Version 4.1, welche den Datenumbau vor all
 Damit die externen Objekte geprüft werden können, muss die Option `--allObjectsAccessible` verwendet werden. Damit die fehlenden gesetzlichen Grundlagen nicht als Fehler gemeldet werden, muss eine config-File (siehe Ordner `ilivalidator`) verwendet werden:
 
 ```
-java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --allObjectsAccessible --config ilivalidator/config.toml ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf
+java -jar /Users/stefan/apps/ilivalidator-1.11.0/ilivalidator-1.11.0.jar --allObjectsAccessible --config ilivalidator/config.toml ch.so.arp.nutzungsplanung.oereb.xtf
 ```
 
 

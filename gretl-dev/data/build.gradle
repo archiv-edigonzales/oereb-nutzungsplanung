@@ -24,7 +24,7 @@ import ch.so.agi.gretl.tasks.*
 import java.nio.file.Paths
 
 ext {
-    dbUriEdit = "jdbc:postgresql://localhost:54321/edit"
+    dbUriEdit = "jdbc:postgresql://localhost:54322/edit"
     dbUserEdit = "gretl"
     dbPwdEdit = "gretl"
 
@@ -38,8 +38,7 @@ def pathToExportFolder = Paths.get(pathToTempFolder, 'export_data')
 
 // Daten Nutzungsplanung
 //def landUsePlansDataSets = ["2405", "2408", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614", "2615"]
-//def landUsePlansDataSets = ["2473"]
-def landUsePlansDataSets = ["2405", "2408", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614", "2615"]
+def landUsePlansDataSets = ["2405", "2408", "2457", "2474", "2476", "2498", "2501", "2502", "2580"]
 def landUsePlansBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung/"
 
 def GROUP = "Datenimport"

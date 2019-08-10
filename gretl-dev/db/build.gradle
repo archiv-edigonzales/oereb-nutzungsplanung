@@ -33,7 +33,7 @@ task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreat
     targetImageId buildDockerImage.getImageId()
     containerName = "oereb-edit-db"
     hostName = "primary"
-    portBindings = ['54321:5432']
+    portBindings = ['54322:5432']
     exposedPorts = [new ExposedPort("tcp", [5432])]
     envVars.set(["PG_DATABASE": "edit",
                "PG_LOCALE": "de_CH.UTF-8",

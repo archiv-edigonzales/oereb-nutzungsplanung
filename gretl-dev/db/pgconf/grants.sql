@@ -8,18 +8,18 @@ REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 
 -- Grant privileges on schemas
 GRANT USAGE
-ON SCHEMA arp_npl, arp_npl_grundnutzung_oereb
+ON SCHEMA arp_npl, arp_npl_oereb
 TO public, :PG_WRITE_USER, :PG_READ_USER;
 
 -- Grant read privileges
 GRANT SELECT
-ON ALL TABLES IN SCHEMA arp_npl, arp_npl_grundnutzung_oereb
+ON ALL TABLES IN SCHEMA arp_npl, arp_npl_oereb
 TO public, :PG_READ_USER;
 
 -- Grant write privileges
 GRANT SELECT, INSERT, UPDATE, DELETE
-ON ALL TABLES IN SCHEMA arp_npl, arp_npl_grundnutzung_oereb
+ON ALL TABLES IN SCHEMA arp_npl, arp_npl_oereb
 TO :PG_WRITE_USER;
 GRANT USAGE
-ON ALL SEQUENCES IN SCHEMA arp_npl, arp_npl_grundnutzung_oereb
+ON ALL SEQUENCES IN SCHEMA arp_npl, arp_npl_oereb
 TO :PG_WRITE_USER;

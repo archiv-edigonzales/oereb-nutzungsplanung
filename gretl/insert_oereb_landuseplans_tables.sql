@@ -38,17 +38,19 @@
  * Will man das nicht, müssen die nicht verwendeten zuständigen Stellen (des gleichen Datasets)
  * mit einer Query gelöscht werden.
  * 
- * (6) Ein Artcode kann mehrfach vorkommen. Das sollte soweit richtig sein. Jedoch aufpassen, dass
- * bei den nachfolgenden Queries nicht fälschlicherweise angenommen wird, dass der Artcode unique ist.
+ * (6) Ein Artcode kann mehrfach vorkommen. Die Kombination Artcode und Artcodeliste (=Namespace) ist
+ * eindeutig.  Aufpassen, dass bei den nachfolgenden Queries nicht fälschlicherweise angenommen wird, 
+ * dass der Artcode unique ist.
  * Ausnahme: Bei den Symbolen ist diese Annahme materiell richtig (solange eine kantonale aggregierte
  * Form präsentiert wird) und führt zu keinen falschen Resultaten.
  * 
- * (7) 'typ_grundnutzung IN' filtern Eigentumsbeschränkungen weg, die mit keinem Dokument verknüpft sind.
+ * (7) 'typ_grundnutzung IN' (etc.) filtern Eigentumsbeschränkungen weg, die mit keinem Dokument verknüpft sind.
  * Sind solche Objekte vorhanden, handelt es sich in der Regel um einen Datenfehler in den Ursprungsdaten.
+ * 'publiziertab IS NOT NULL' ist filtert Objekte raus, die kein Publikationsdatum haben (Mandatory im Rahmenmodell.)
  */
 
 INSERT INTO 
-    arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
     (
         t_id,
         t_basket,
@@ -62,6 +64,7 @@ INSERT INTO
         publiziertab,
         zustaendigestelle
     )
+    -- Grundnutzung
     SELECT
         DISTINCT ON (typ_grundnutzung.t_ili_tid)
         typ_grundnutzung.t_id,
@@ -70,18 +73,17 @@ INSERT INTO
         typ_grundnutzung.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
         'NutzungsplanungGrundnutzung' AS subthema,
-        --substring(typ_grundnutzung.typ_kt FROM 1 FOR 3) AS artcode,
         typ_grundnutzung.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung.'||typ_grundnutzung.t_datasetname AS artcodeliste,
         CASE 
-            WHEN grundnutzung.rechtsstatus IS NULL THEN 'inKraft' /* TODO: tbd */
+            WHEN grundnutzung.rechtsstatus IS NULL THEN 'inKraft' 
             ELSE grundnutzung.rechtsstatus
         END AS rechtsstatus,
-        grundnutzung.publiziertab, /* TODO: tbd */
+        grundnutzung.publiziertab, 
         amt.t_id AS zustaendigestelle
     FROM
         arp_npl.nutzungsplanung_typ_grundnutzung AS typ_grundnutzung
-        LEFT JOIN arp_npl_grundnutzung_oereb.vorschriften_amt AS amt
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
         ON typ_grundnutzung.t_datasetname = RIGHT(amt.t_ili_tid, 4)
         LEFT JOIN arp_npl.nutzungsplanung_grundnutzung AS grundnutzung
         ON typ_grundnutzung.t_id = grundnutzung.typ_grundnutzung,
@@ -90,11 +92,11 @@ INSERT INTO
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
     WHERE
         typ_kt NOT IN 
@@ -117,14 +119,376 @@ INSERT INTO
             'N440_Wald'
         )
         AND
-        typ_grundnutzung IN 
+        typ_grundnutzung.t_id IN 
         (
             SELECT
                 DISTINCT ON (typ_grundnutzung) 
                 typ_grundnutzung
             FROM
                 arp_npl.nutzungsplanung_typ_grundnutzung_dokument
-        )        
+        )  
+        AND
+        grundnutzung.publiziertab IS NOT NULL
+        
+    UNION ALL
+    
+    -- Überlagernd (Fläche)
+    SELECT
+        DISTINCT ON (typ_ueberlagernd_flaeche.t_ili_tid)
+        typ_ueberlagernd_flaeche.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_ueberlagernd_flaeche.bezeichnung AS aussage_de,
+        'Nutzungsplanung' AS thema,
+        'NutzungsplanungUeberlagernd' AS subthema,
+        typ_ueberlagernd_flaeche.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Flaeche.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft'
+            ELSE ueberlagernd_flaeche.rechtsstatus
+        END AS rechtsstatus,
+        ueberlagernd_flaeche.publiziertab,
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche AS typ_ueberlagernd_flaeche
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_ueberlagernd_flaeche.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.nutzungsplanung_ueberlagernd_flaeche AS ueberlagernd_flaeche
+        ON typ_ueberlagernd_flaeche.t_id = ueberlagernd_flaeche.typ_ueberlagernd_flaeche,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+            'N510_ueberlagernde_Ortsbildschutzzone',
+            'N523_Landschaftsschutzzone',
+            'N526_kantonale_Landwirtschafts_und_Schutzzone_Witi',
+            'N527_kantonale_Uferschutzzone',
+            'N528_kommunale_Uferschutzzone_ausserhalb_Bauzonen',
+            'N529_weitere_Schutzzonen_fuer_Lebensraeume_und_Landschaften',
+            'N590_Hofstattzone_Freihaltezone',
+            'N591_Bauliche_Einschraenkungen',
+            'N599_weitere_ueberlagernde_Nutzungszonen',
+            'N690_kantonales_Vorranggebiet_Natur_und_Landschaft',
+            'N691_kommunales_Vorranggebiet_Natur_und_Landschaft',
+            'N692_Planungszone',
+            'N699_weitere_flaechenbezogene_Festlegungen_NP',
+            'N812_geologisches_Objekt',
+            'N813_Naturobjekt',
+            'N822_schuetzenswertes_Kulturobjekt',
+            'N823_erhaltenswertes_Kulturobjekt'
+        )
+        AND
+        typ_ueberlagernd_flaeche.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_ueberlagernd_flaeche) 
+                typ_ueberlagernd_flaeche
+            FROM
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+        )  
+        AND 
+        ueberlagernd_flaeche.publiziertab IS NOT NULL
+        
+    UNION ALL
+
+    -- Überlagernd (Linie) 
+    SELECT
+        DISTINCT ON (typ_ueberlagernd_linie.t_ili_tid)
+        typ_ueberlagernd_linie.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_ueberlagernd_linie.bezeichnung AS aussage_de,
+        'Nutzungsplanung' AS thema,
+        'NutzungsplanungUeberlagernd' AS subthema,
+        typ_ueberlagernd_linie.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Linie.'||typ_ueberlagernd_linie.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN ueberlagernd_linie.rechtsstatus IS NULL THEN 'inKraft'
+            ELSE ueberlagernd_linie.rechtsstatus
+        END AS rechtsstatus,
+        ueberlagernd_linie.publiziertab,
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_typ_ueberlagernd_linie AS typ_ueberlagernd_linie
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_ueberlagernd_linie.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.nutzungsplanung_ueberlagernd_linie AS ueberlagernd_linie
+        ON typ_ueberlagernd_linie.t_id = ueberlagernd_linie.typ_ueberlagernd_linie,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+            'N799_weitere_linienbezogene_Festlegungen_NP'
+        )
+        AND
+        typ_ueberlagernd_linie.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_ueberlagernd_linie) 
+                typ_ueberlagernd_linie
+            FROM
+                arp_npl.nutzungsplanung_typ_ueberlagernd_linie_dokument
+        )  
+        AND 
+        ueberlagernd_linie.publiziertab IS NOT NULL
+
+    UNION ALL
+
+    -- Überlagernd (Punkt)    
+    SELECT
+        DISTINCT ON (typ_ueberlagernd_punkt.t_ili_tid)
+        typ_ueberlagernd_punkt.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_ueberlagernd_punkt.bezeichnung AS aussage_de,
+        'Nutzungsplanung' AS thema,
+        'NutzungsplanungUeberlagernd' AS subthema,
+        typ_ueberlagernd_punkt.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Punkt.'||typ_ueberlagernd_punkt.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN ueberlagernd_punkt.rechtsstatus IS NULL THEN 'inKraft'  
+            ELSE ueberlagernd_punkt.rechtsstatus
+        END AS rechtsstatus,
+        ueberlagernd_punkt.publiziertab,  
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_typ_ueberlagernd_punkt AS typ_ueberlagernd_punkt
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_ueberlagernd_punkt.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.nutzungsplanung_ueberlagernd_punkt AS ueberlagernd_punkt
+        ON typ_ueberlagernd_punkt.t_id = ueberlagernd_punkt.typ_ueberlagernd_punkt,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+        'N811_erhaltenswerter_Einzelbaum',
+        'N820_kantonal_geschuetztes_Kulturobjekt',
+        'N821_kommunal_geschuetztes_Kulturobjekt',
+        'N822_schuetzenswertes_Kulturobjekt',
+        'N823_erhaltenswertes_Kulturobjekt',
+        'N899_weitere_punktbezogene_Festlegungen_NP'
+        )
+        AND
+        typ_ueberlagernd_punkt.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_ueberlagernd_punkt) 
+                typ_ueberlagernd_punkt
+            FROM
+                arp_npl.nutzungsplanung_typ_ueberlagernd_punkt_dokument
+        )  
+        AND 
+        ueberlagernd_punkt.publiziertab IS NOT NULL
+
+    UNION ALL
+
+    -- Sondernutzungspläne
+    SELECT
+        DISTINCT ON (typ_ueberlagernd_flaeche.t_ili_tid)
+        typ_ueberlagernd_flaeche.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_ueberlagernd_flaeche.bezeichnung AS aussage_de,
+        'Nutzungsplanung' AS thema,
+        'NutzungsplanungSondernutzungsplaene' AS subthema,
+        typ_ueberlagernd_flaeche.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Flaechenobjekt.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft' 
+            ELSE ueberlagernd_flaeche.rechtsstatus
+        END AS rechtsstatus,
+        ueberlagernd_flaeche.publiziertab,
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche AS typ_ueberlagernd_flaeche
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_ueberlagernd_flaeche.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.nutzungsplanung_ueberlagernd_flaeche AS ueberlagernd_flaeche
+        ON typ_ueberlagernd_flaeche.t_id = ueberlagernd_flaeche.typ_ueberlagernd_flaeche,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+            'N610_Perimeter_kantonaler_Nutzungsplan',
+            'N611_Perimeter_kommunaler_Gestaltungsplan',
+            'N620_Perimeter_Gestaltungsplanpflicht'
+        )
+        AND
+        typ_ueberlagernd_flaeche.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_ueberlagernd_flaeche) 
+                typ_ueberlagernd_flaeche
+            FROM
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+        )  
+        AND 
+        ueberlagernd_flaeche.publiziertab IS NOT NULL    
+
+    UNION ALL
+
+    -- Baulinien
+    SELECT
+        DISTINCT ON (typ_erschliessung_linienobjekt.t_ili_tid)
+        typ_erschliessung_linienobjekt.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_erschliessung_linienobjekt.bezeichnung AS aussage_de,
+        'Nutzungsplanung' AS thema,
+        'Baulinien' AS subthema,
+        typ_erschliessung_linienobjekt.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Linienobjekt.'||typ_erschliessung_linienobjekt.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN erschliessung_linienobjekt.rechtsstatus IS NULL THEN 'inKraft' 
+            ELSE erschliessung_linienobjekt.rechtsstatus
+        END AS rechtsstatus,
+        erschliessung_linienobjekt.publiziertab,
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt AS typ_erschliessung_linienobjekt
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_erschliessung_linienobjekt.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.erschlssngsplnung_erschliessung_linienobjekt AS erschliessung_linienobjekt
+        ON typ_erschliessung_linienobjekt.t_id = erschliessung_linienobjekt.typ_erschliessung_linienobjekt,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+            'E711_Baulinie_Strasse_kantonal',
+            'E712_Vorbaulinie_kantonal',
+            'E713_Gestaltungsbaulinie_kantonal',
+            'E714_Rueckwaertige_Baulinie_kantonal',
+            'E715_Baulinie_Infrastruktur_kantonal',
+            'E719_weitere_nationale_und_kantonale_Baulinien',
+            'E720_Baulinie_Strasse',
+            'E721_Vorbaulinie',
+            'E722_Gestaltungsbaulinie',
+            'E723_Rueckwaertige_Baulinie',
+            'E724_Baulinie_Infrastruktur',
+            'E726_Baulinie_Hecke',
+            'E727_Baulinie_Gewaesser',
+            'E728_Immissionsstreifen',
+            'E729_weitere_kommunale_Baulinien'
+        )
+        AND
+        typ_erschliessung_linienobjekt.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_erschliessung_linienobjekt) 
+                typ_erschliessung_linienobjekt
+            FROM
+                arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt_dokument
+        )  
+        AND
+        erschliessung_linienobjekt.publiziertab IS NOT NULL 
+
+    UNION ALL
+
+    SELECT
+        DISTINCT ON (typ_ueberlagernd_flaeche.t_ili_tid)
+        typ_ueberlagernd_flaeche.t_id,
+        basket_dataset.basket_t_id,
+        basket_dataset.datasetname,
+        typ_ueberlagernd_flaeche.bezeichnung AS aussage_de,
+        'Laermemfindlichkeitsstufen' AS thema,
+        ''::text AS subthema, -- Wegen Darstellungsdienst-Query (kann man aber besser machen, Funktion fällt mir auf die Schnelle nicht ein).
+        typ_ueberlagernd_flaeche.code_kommunal AS artcode,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Flaechenobjekt.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
+        CASE 
+            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft' 
+            ELSE ueberlagernd_flaeche.rechtsstatus
+        END AS rechtsstatus,
+        ueberlagernd_flaeche.publiziertab, 
+        amt.t_id AS zustaendigestelle
+    FROM
+        arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche AS typ_ueberlagernd_flaeche
+        LEFT JOIN arp_npl_oereb.vorschriften_amt AS amt
+        ON typ_ueberlagernd_flaeche.t_datasetname = RIGHT(amt.t_ili_tid, 4)
+        LEFT JOIN arp_npl.nutzungsplanung_ueberlagernd_flaeche AS ueberlagernd_flaeche
+        ON typ_ueberlagernd_flaeche.t_id = ueberlagernd_flaeche.typ_ueberlagernd_flaeche,
+        (
+            SELECT
+                basket.t_id AS basket_t_id,
+                dataset.datasetname AS datasetname               
+            FROM
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+                ON basket.dataset = dataset.t_id
+            WHERE
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'
+        ) AS basket_dataset
+    WHERE
+        typ_kt IN 
+        (
+            'N680_Empfindlichkeitsstufe_I',
+            'N681_Empfindlichkeitsstufe_II',
+            'N682_Empfindlichkeitsstufe_II_aufgestuft',
+            'N683_Empfindlichkeitsstufe_III',
+            'N684_Empfindlichkeitsstufe_III_aufgestuft',
+            'N685_Empfindlichkeitsstufe_IV',
+            'N686_keine_Empfindlichkeitsstufe'
+        )
+        AND
+        typ_ueberlagernd_flaeche.t_id IN 
+        (
+            SELECT
+                DISTINCT ON (typ_ueberlagernd_flaeche) 
+                typ_ueberlagernd_flaeche
+            FROM
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+        )  
+        AND 
+        ueberlagernd_flaeche.publiziertab IS NOT NULL                  
 ;
 
 /*
@@ -165,32 +529,80 @@ WITH basket_dataset AS
         basket.t_id AS basket_t_id,
         dataset.datasetname AS datasetname               
     FROM
-        arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-        LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+        arp_npl_oereb.t_ili2db_dataset AS dataset
+        LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
         ON basket.dataset = dataset.t_id
     WHERE
-        dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+        dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
 )
 ,
 hinweisvorschrift AS 
 (
     SELECT
-        typ_dokument.t_id,
+        t_typ_dokument.t_id,
         basket_dataset.basket_t_id AS t_basket,
-        basket_dataset.datasetname AS t_datasetname,
-        typ_dokument.typ_grundnutzung AS eigentumsbeschraenkung,
-        typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        basket_dataset.datasetname AS t_datasetname,        
+        t_typ_dokument.eigentumsbeschraenkung,
+        t_typ_dokument.vorschrift_vorschriften_dokument
     FROM
-        arp_npl.nutzungsplanung_typ_grundnutzung_dokument AS typ_dokument
-        RIGHT JOIN arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-        ON typ_dokument.typ_grundnutzung = eigentumsbeschraenkung.t_id,
-        basket_dataset
+    (
+        -- Grundnutzung
+        SELECT
+            typ_dokument.t_id,
+            typ_dokument.typ_grundnutzung AS eigentumsbeschraenkung,
+            typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        FROM
+            arp_npl.nutzungsplanung_typ_grundnutzung_dokument AS typ_dokument
+            
+        UNION ALL
+        
+        -- Überlagernd (Fläche) + Sondernutzungspläne + Lärmempfindlichkeitsstufen 
+        SELECT
+            typ_dokument.t_id,
+            typ_dokument.typ_ueberlagernd_flaeche AS eigentumsbeschraenkung,
+            typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        FROM
+            arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument AS typ_dokument
+
+        UNION ALL
+        
+        -- Überlagernd (Linie)        
+        SELECT
+            typ_dokument.t_id,
+            typ_dokument.typ_ueberlagernd_linie AS eigentumsbeschraenkung,
+            typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        FROM
+            arp_npl.nutzungsplanung_typ_ueberlagernd_linie_dokument AS typ_dokument
+
+        UNION ALL
+
+        -- Überlagernd (Punkt)        
+        SELECT
+            typ_dokument.t_id,
+            typ_dokument.typ_ueberlagernd_punkt AS eigentumsbeschraenkung,
+            typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        FROM
+            arp_npl.nutzungsplanung_typ_ueberlagernd_punkt_dokument AS typ_dokument
+
+        UNION ALL
+
+        -- Baulinien
+        SELECT
+            typ_dokument.t_id,
+            typ_dokument.typ_erschliessung_linienobjekt AS eigentumsbeschraenkung,
+            typ_dokument.dokument AS vorschrift_vorschriften_dokument
+        FROM
+            arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt_dokument AS typ_dokument
+    ) AS t_typ_dokument
+    RIGHT JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+    ON t_typ_dokument.eigentumsbeschraenkung = eigentumsbeschraenkung.t_id,
+    basket_dataset
 )
 ,
 vorschriften_dokument AS
 (
     INSERT INTO 
-        arp_npl_grundnutzung_oereb.vorschriften_dokument
+        arp_npl_oereb.vorschriften_dokument
         (
             t_id,
             t_basket,
@@ -233,18 +645,18 @@ vorschriften_dokument AS
                     SELECT 
                         t_id
                     FROM
-                        arp_npl_grundnutzung_oereb.vorschriften_amt
+                        arp_npl_oereb.vorschriften_amt
                     WHERE
-                        t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' -- TODO: tbd
+                        t_datasetname = 'ch.so.arp.nutzungsplanung'
                     AND
-                        t_ili_tid = 'ch.so.sk' -- TODO: tbd
+                        t_ili_tid = 'ch.so.sk'
                 )
             ELSE
                 (
                     SELECT 
                         t_id
                     FROM
-                        arp_npl_grundnutzung_oereb.vorschriften_amt
+                        arp_npl_oereb.vorschriften_amt
                     WHERE
                         RIGHT(t_ili_tid, 4) = CAST(gemeinde AS TEXT)
                 )
@@ -258,16 +670,16 @@ vorschriften_dokument AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset   
    RETURNING *
 )
 INSERT INTO
-    arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift
+    arp_npl_oereb.transferstruktur_hinweisvorschrift
     (
         t_id,
         t_basket,
@@ -326,9 +738,9 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
         SELECT
             t_id
         FROM
-            arp_npl_grundnutzung_oereb.vorschriften_dokument
+            arp_npl_oereb.vorschriften_dokument
         WHERE
-            t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
+            t_datasetname = 'ch.so.arp.nutzungsplanung'
     )
 
     UNION ALL
@@ -376,18 +788,18 @@ zusaetzliche_dokumente AS
                     SELECT 
                         t_id
                     FROM
-                        arp_npl_grundnutzung_oereb.vorschriften_amt
+                        arp_npl_oereb.vorschriften_amt
                     WHERE
-                        t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' -- TODO: tbd
+                        t_datasetname = 'ch.so.arp.nutzungsplanung' 
                     AND
-                        t_ili_tid = 'ch.so.sk' -- TODO: tbd
+                        t_ili_tid = 'ch.so.sk' 
                 )
             ELSE
                 (
                     SELECT 
                         t_id
                     FROM
-                        arp_npl_grundnutzung_oereb.vorschriften_amt
+                        arp_npl_oereb.vorschriften_amt
                     WHERE
                         RIGHT(t_ili_tid, 4) = CAST(gemeinde AS TEXT)
                 )
@@ -401,11 +813,11 @@ zusaetzliche_dokumente AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset        
     WHERE
         last_ursprung NOT IN
@@ -413,16 +825,16 @@ zusaetzliche_dokumente AS
             SELECT
                 t_id
             FROM
-                arp_npl_grundnutzung_oereb.vorschriften_dokument
+                arp_npl_oereb.vorschriften_dokument
             WHERE
-                t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
+                t_datasetname = 'ch.so.arp.nutzungsplanung'
         )
 )
 ,
 zusaetzliche_dokumente_insert AS 
 (
     INSERT INTO 
-        arp_npl_grundnutzung_oereb.vorschriften_dokument
+        arp_npl_oereb.vorschriften_dokument
         (
             t_id,
             t_basket,
@@ -459,7 +871,7 @@ zusaetzliche_dokumente_insert AS
         zusaetzliche_dokumente
 )
 INSERT INTO 
-    arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift 
+    arp_npl_oereb.transferstruktur_hinweisvorschrift 
     (
         t_basket,
         t_datasetname,
@@ -474,18 +886,18 @@ INSERT INTO
         zusaetzliche_dokumente.t_id AS vorschrift_vorschriften_dokument
     FROM 
         zusaetzliche_dokumente
-        LEFT JOIN arp_npl_grundnutzung_oereb.transferstruktur_hinweisvorschrift AS hinweisvorschrift
+        LEFT JOIN arp_npl_oereb.transferstruktur_hinweisvorschrift AS hinweisvorschrift
         ON hinweisvorschrift.vorschrift_vorschriften_dokument = zusaetzliche_dokumente.top_level_dokument,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset        
 ;
 
@@ -500,7 +912,7 @@ INSERT INTO
 WITH multilingualuri AS
 (
     INSERT INTO
-        arp_npl_grundnutzung_oereb.multilingualuri
+        arp_npl_oereb.multilingualuri
         (
             t_id,
             t_basket,
@@ -509,33 +921,33 @@ WITH multilingualuri AS
             vorschriften_dokument_textimweb
         )
     SELECT
-        nextval('arp_npl_grundnutzung_oereb.t_ili2db_seq'::regclass) AS t_id,
+        nextval('arp_npl_oereb.t_ili2db_seq'::regclass) AS t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         0 AS t_seq,
         vorschriften_dokument.t_id AS vorschriften_dokument_textimweb
     FROM
-        arp_npl_grundnutzung_oereb.vorschriften_dokument AS vorschriften_dokument,
+        arp_npl_oereb.vorschriften_dokument AS vorschriften_dokument,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
     WHERE
-        vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
+        vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
     RETURNING *
 )
 ,
 localiseduri AS 
 (
     SELECT 
-        nextval('arp_npl_grundnutzung_oereb.t_ili2db_seq'::regclass) AS t_id,
+        nextval('arp_npl_oereb.t_ili2db_seq'::regclass) AS t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         0 AS t_seq,
@@ -551,15 +963,15 @@ localiseduri AS
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'                 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung'                 
         ) AS basket_dataset
 )
 INSERT INTO
-    arp_npl_grundnutzung_oereb.localiseduri
+    arp_npl_oereb.localiseduri
     (
         t_id,
         t_basket,
@@ -584,9 +996,10 @@ INSERT INTO
 /*
  * Umbau der Geometrien, die Inhalt des ÖREB-Katasters sind.
  * 
- * (1) Es werde nicht alle Geometrien der Grundnutzung kopiert, 
- * sondern nur diejenigen, die Inhalt des ÖREB-Katasters sind.
- * Dieser Filter wird bei Umbau des NPL-Typs gesetzt.
+ * (1) Es werde nicht alle Geometrien der jeweiligen
+ * Nutzungsebene kopiert, sondern nur diejenigen, die Inhalt 
+ * des ÖREB-Katasters sind. Dieser Filter wird bei Umbau 
+ * des NPL-Typs gesetzt.
  * 
  * (2) Die zuständige Stelle ist identisch mit der zuständigen
  * Stelle der Eigentumsbeschränkung.
@@ -596,7 +1009,7 @@ INSERT INTO
  */
 
 INSERT INTO
-    arp_npl_grundnutzung_oereb.transferstruktur_geometrie
+    arp_npl_oereb.transferstruktur_geometrie
     (
         t_id,
         t_basket,
@@ -607,51 +1020,186 @@ INSERT INTO
         eigentumsbeschraenkung,
         zustaendigestelle
     )
-    SELECT
-        grundnutzung.t_id,
+    SELECT 
+        nutzung.t_id,
         basket_dataset.basket_t_id AS t_basket,
         basket_dataset.datasetname AS t_datasetname,
-        ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid(grundnutzung.geometrie, 0.001))) AS flaeche_lv95,
-        grundnutzung.rechtsstatus AS rechtsstatus,
-        grundnutzung.publiziertab AS publiziertab,
+        ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid(nutzung.geometrie, 0.001))) AS flaeche_lv95,
+        nutzung.rechtsstatus AS rechtsstatus,
+        nutzung.publiziertab AS publiziertab,
         eigentumsbeschraenkung.t_id AS eigentumsbeschraenkung,
         eigentumsbeschraenkung.zustaendigestelle AS zustaendigestelle
     FROM
-        arp_npl.nutzungsplanung_grundnutzung AS grundnutzung
-        RIGHT JOIN arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-        ON grundnutzung.typ_grundnutzung = eigentumsbeschraenkung.t_id,
-        (
-            SELECT
-                basket.t_id AS basket_t_id,
-                dataset.datasetname AS datasetname               
-            FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
-                ON basket.dataset = dataset.t_id
-            WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
-        ) AS basket_dataset
+    (
+        -- Grundnutzung
+        SELECT
+            t_id,    
+            geometrie AS geometrie,
+            rechtsstatus AS rechtsstatus,
+            publiziertab AS publiziertab,
+            typ_grundnutzung AS typ_nutzung
+        FROM
+            arp_npl.nutzungsplanung_grundnutzung
+        
+        UNION ALL
+        
+        -- Überlagernd (Fläche) + Sondernutzungspläne + Lärmempfindlichkeitsstufen
+        SELECT
+            t_id,    
+            ST_Buffer(geometrie, 0) AS geometrie, -- TODO: fixme
+            rechtsstatus AS rechtsstatus,
+            publiziertab AS publiziertab,
+            typ_ueberlagernd_flaeche AS typ_nutzung            
+        FROM
+            arp_npl.nutzungsplanung_ueberlagernd_flaeche
+    ) AS nutzung
+    INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+    ON nutzung.typ_nutzung = eigentumsbeschraenkung.t_id,
+    (
+        SELECT
+            basket.t_id AS basket_t_id,
+            dataset.datasetname AS datasetname               
+        FROM
+            arp_npl_oereb.t_ili2db_dataset AS dataset
+            LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+            ON basket.dataset = dataset.t_id
+        WHERE
+            dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+    ) AS basket_dataset
+;
+
+INSERT INTO
+    arp_npl_oereb.transferstruktur_geometrie
+    (
+        t_id,
+        t_basket,
+        t_datasetname,
+        linie_lv95,
+        rechtsstatus,
+        publiziertab,
+        eigentumsbeschraenkung,
+        zustaendigestelle
+    )
+    SELECT 
+        nutzung.t_id,
+        basket_dataset.basket_t_id AS t_basket,
+        basket_dataset.datasetname AS t_datasetname,
+        ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid(nutzung.geometrie, 0.001))) AS linie_lv95,
+        nutzung.rechtsstatus AS rechtsstatus,
+        nutzung.publiziertab AS publiziertab,
+        eigentumsbeschraenkung.t_id AS eigentumsbeschraenkung,
+        eigentumsbeschraenkung.zustaendigestelle AS zustaendigestelle
+    FROM
+    (
+        -- Überlagernd (Linie)
+        SELECT
+            t_id,    
+            geometrie AS geometrie,
+            rechtsstatus AS rechtsstatus,
+            publiziertab AS publiziertab,
+            typ_ueberlagernd_linie AS typ_nutzung            
+        FROM
+            arp_npl.nutzungsplanung_ueberlagernd_linie
+
+        UNION ALL
+
+        -- Baulinien
+        SELECT
+            t_id,    
+            geometrie AS geometrie,
+            rechtsstatus AS rechtsstatus,
+            publiziertab AS publiziertab,
+            typ_erschliessung_linienobjekt AS typ_nutzung            
+        FROM
+            arp_npl.erschlssngsplnung_erschliessung_linienobjekt
+        WHERE 
+            ST_IsValid(geometrie)
+    ) AS nutzung
+    INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+    ON nutzung.typ_nutzung = eigentumsbeschraenkung.t_id,
+    (
+        SELECT
+            basket.t_id AS basket_t_id,
+            dataset.datasetname AS datasetname               
+        FROM
+            arp_npl_oereb.t_ili2db_dataset AS dataset
+            LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+            ON basket.dataset = dataset.t_id
+        WHERE
+            dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+    ) AS basket_dataset
+;
+
+INSERT INTO
+    arp_npl_oereb.transferstruktur_geometrie
+    (
+        t_id,
+        t_basket,
+        t_datasetname,
+        punkt_lv95,
+        rechtsstatus,
+        publiziertab,
+        eigentumsbeschraenkung,
+        zustaendigestelle
+    )
+    SELECT 
+        nutzung.t_id,
+        basket_dataset.basket_t_id AS t_basket,
+        basket_dataset.datasetname AS t_datasetname,
+        ST_MakeValid(ST_RemoveRepeatedPoints(ST_SnapToGrid(nutzung.geometrie, 0.001))) AS punkt_lv95,
+        nutzung.rechtsstatus AS rechtsstatus,
+        nutzung.publiziertab AS publiziertab,
+        eigentumsbeschraenkung.t_id AS eigentumsbeschraenkung,
+        eigentumsbeschraenkung.zustaendigestelle AS zustaendigestelle
+    FROM
+    (
+        -- Überlagernd (Punkt)
+        SELECT
+            t_id,    
+            geometrie AS geometrie,
+            rechtsstatus AS rechtsstatus,
+            publiziertab AS publiziertab,
+            typ_ueberlagernd_punkt AS typ_nutzung            
+        FROM
+            arp_npl.nutzungsplanung_ueberlagernd_punkt
+    ) AS nutzung
+    INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+    ON nutzung.typ_nutzung = eigentumsbeschraenkung.t_id,
+    (
+        SELECT
+            basket.t_id AS basket_t_id,
+            dataset.datasetname AS datasetname               
+        FROM
+            arp_npl_oereb.t_ili2db_dataset AS dataset
+            LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
+            ON basket.dataset = dataset.t_id
+        WHERE
+            dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
+    ) AS basket_dataset
 ;
 
 /*
  * Abfüllen der "WMS- und Legendentabellen".
  * 
- * (1) Achtung: nicht korrekte URL für GetMap und Legende!
- * 
- * (2) Query muss gut überprüft werden. Sicher sein, dass das robust ist hinsichtlich den WHERE-clauses
- * und DISTINCTs.
- * 
- * (3) 1px-Dummy-PNG als Symbol damit Datenbank-Constraint nicht verletzt wird.
+ * (1) Achtung: URL für GetMap und Legende überprüfen. 
  *  
- * (4) Query funktioniert nur, wenn nur ein Darstellungsdienst pro Schema insertet wird. (-> Update-Query würde nicht
- * mehr passen.) Man müssten dann 'irgendwie' im Select der Update-Query filtern mit Layernamen/Subthema. Hat aber 
- * wohl auch Auswirkungen auf das Symbolupdate (?).
+ * (2) Geht das Update schöner?
+ * 
+ * (3) Auffälliges Dummy-PNG als Symbol damit Datenbank-Constraint nicht verletzt wird.
+ *  
+ * (4) Query-Logik funktionert nur, falls die Layer im WMS aus den Namen des Themas und Subthemas 
+ * zusammengesetzt sind.
+ *
+ * (5) Join zwischen Legendeneintrag und Darstellungsdienst wird über das Subthema im WMS-Layername gemacht.
+ * 
+ * (6) Man kann nicht auf Vorrat für sämtliche Themen/Subthemen/Geometrietypen einen Darstellungsdienst
+ * einfügen. Das verletzt das Modell.
  */ 
 
 WITH transferstruktur_darstellungsdienst AS
 (
     INSERT INTO 
-        arp_npl_grundnutzung_oereb.transferstruktur_darstellungsdienst 
+        arp_npl_oereb.transferstruktur_darstellungsdienst 
         (
             t_basket,
             t_datasetname,
@@ -661,27 +1209,136 @@ WITH transferstruktur_darstellungsdienst AS
         SELECT
             basket_dataset.basket_t_id AS t_basket,
             basket_dataset.datasetname AS t_datasetname,
-            'https://geo.so.ch/api/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.arp.nutzungsplanung.grundnutzung&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
-            'https://geo.so.ch/api/v1/legend/somap?SERVICE=WMS&REQUEST=GetLegendGraphics&VERSION=1.3.0&FORMAT=image/png&LAYER=ch.so.arp.nutzungsplanung.grundnutzung' AS legendeimweb
+            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||thema||'.'||subthema||''||geometrietyp||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||thema||'.'||subthema||''||geometrietyp AS legendeimweb
         FROM
+        (
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                ''::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'NutzungsplanungGrundnutzung'
+                AND
+                geometrie.flaeche_lv95 IS NOT NULL
+                
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                'Flaeche'::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+                AND
+                geometrie.flaeche_lv95 IS NOT NULL
+
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                'Linie'::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+                AND
+                geometrie.linie_lv95 IS NOT NULL
+                
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                'Punkt'::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+                AND
+                geometrie.punkt_lv95 IS NOT NULL 
+
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                ''::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'NutzungsplanungSondernutzungsplaene'
+                AND
+                geometrie.flaeche_lv95 IS NOT NULL 
+
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                subthema,
+                ''::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.subthema = 'Baulinien'
+                AND
+                geometrie.linie_lv95 IS NOT NULL 
+
+            UNION ALL
+
+            SELECT
+                DISTINCT ON (thema, subthema)
+                thema,
+                ''::text AS subthema,
+                ''::text AS geometrietyp
+            FROM
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
+                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            WHERE
+                eigentumsbeschraenkung.thema = 'Laermemfindlichkeitsstufen'
+                AND
+                geometrie.flaeche_lv95 IS NOT NULL                            
+        ) AS eigentumsbeschraenkung,
         (
             SELECT
                 basket.t_id AS basket_t_id,
                 dataset.datasetname AS datasetname               
             FROM
-                arp_npl_grundnutzung_oereb.t_ili2db_dataset AS dataset
-                LEFT JOIN arp_npl_grundnutzung_oereb.t_ili2db_basket AS basket
+                arp_npl_oereb.t_ili2db_dataset AS dataset
+                LEFT JOIN arp_npl_oereb.t_ili2db_basket AS basket
                 ON basket.dataset = dataset.t_id
             WHERE
-                dataset.datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung' 
+                dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
+
     RETURNING *
 )
-,
-transferstruktur_legendeeintrag AS 
-(
 INSERT INTO 
-    arp_npl_grundnutzung_oereb.transferstruktur_legendeeintrag
+    arp_npl_oereb.transferstruktur_legendeeintrag
     (
         t_basket,
         t_datasetname,
@@ -699,7 +1356,7 @@ INSERT INTO
         eigentumsbeschraenkung.t_basket,
         eigentumsbeschraenkung.t_datasetname,
         0::int AS t_seq,        
-        decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') AS symbol,
+        decode('iVBORw0KGgoAAAANSUhEUgAAAEIAAAAjCAYAAAAg/NwXAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADgQAAA4EBLr/cFwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOiSURBVGiB7ZpPSBRRHMc/u6tZgligRcSqQVAI7cmUtCVdUEIiUDPLsksdLFHoUoJil5UKOu2lg4iHUDQEjboFpqAdJGI1CiKkEhQRDxKhKOZ0+M34ZtLZP/1xI+cDw/ze7/1m5jdf3nu/N+y6NNBwwJ3oBP4VHCF0kiyt48fh1KkEpbLNjI7C27cbTasQxcUQCm1zRgmiqckihDM1dBwhdBwhdBwhdBwhdBwhdOyF6OiAvDzr4ffDnTswM6PiwmHV39+v/BMTm/1tbdLOz4cPH6zPa21V8VNT4quulnYgAEtLKlbT4Px56SsqEl9vr7r++XMV++WLPC8vT3K3Q5PbytHYqG3Q1qZZ+szH3r2aNjkpccPDyh8KqetHRjb7a2uVr6JCxb57p2kej+oLh8V/9Kjytber+O5u5U9OFt/srNigaWfOqNhgUMUODip/Y6PlnWKbGrduwb17cO6ctBcXZUPyOwwMwKtXYjc3w/fvkeMfPICFBVhZgZaWzf0HD0JlpdgvXsDcnNiPH8s5OxvOnrW9fZJtj5nr1yE3V+yCAhgfly3q2lpMl9ty+za0t8OzZ9Fjv36FYBCysuDz561jGhqgr09E7emRzwVjCt64AR6P7e1jE8KMzydCrK1Jcr+K2w1jY3DhgrRdLhmkdrHr6/DoEaSm2sf7/ZLf5KSMhE+fxL97N1y7FjmduF8ggqpxYSQ2Pw/JyVBXZx+bmwsnT8LqqkxLrxdKS7eOvXlTzuEwdHaKffEiZGRETCdx5fPuXUhLE7u+Ho4csY91uWSNMAgGYc+erWPr6mDfPrGXl+Xc0BA1ncQJkZkpa4TXK6UzGn4/VFVBYSFcuWIfl5oKV6+qdkGBlM4oJHZD1doK09Owf39s8f39sq64o6RdUaFso5JEIX4hzBsbt1vmt4G5BJoryq5dcT/mtzDnZLYjEJ8Q8/NSo0Hmd3q61GeD4WG1kr98qfw5OXE9JhHEVj6rqyElBT5+hG/fxHf5sixihw7JFnhoCJ4+le1serq0QdaAQOAvpf/niE2I9++t7fJyePhQtbu6oKxMNi+vXyt/ZiY8eRLz8Ewk9kKUlMh21sDjgQMHpJ6fOGGNzcqCN2/kpcfHpd77fHDpkohhUFkpIyQpSQ4zxcXyUWSMMpA9weys3P9namrg2DHZLP3M4cNw/77Yp0/bv70Z24+u/51f+ujaAThC6DhC6DhC6DhC6LgsfwvYwb99WoXYwThTQ8cRQucHQTGF/rvy36kAAAAASUVORK5CYII=', 'base64') AS symbol,
         eigentumsbeschraenkung.aussage_de AS legendetext_de,
         eigentumsbeschraenkung.artcode,
         eigentumsbeschraenkung.artcodeliste,
@@ -707,21 +1364,108 @@ INSERT INTO
         eigentumsbeschraenkung.subthema,
         transferstruktur_darstellungsdienst.t_id AS transfrstrkstllngsdnst_legende
     FROM
-        arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
+        arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
         transferstruktur_darstellungsdienst
     WHERE
-        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
-    RETURNING *
-)
+        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung'
+    AND
+        transferstruktur_darstellungsdienst.verweiswms ILIKE '%'||eigentumsbeschraenkung.subthema||'%' 
+;
+
 UPDATE 
-    arp_npl_grundnutzung_oereb.transferstruktur_eigentumsbeschraenkung
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
 SET 
-    darstellungsdienst = (SELECT t_id FROM transferstruktur_darstellungsdienst)
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungGrundnutzung%')
 WHERE
     subthema = 'NutzungsplanungGrundnutzung'
 ;
 
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndFlaeche%')
+WHERE
+    t_id IN 
+    (
+        SELECT
+            DISTINCT ON (eigentumsbeschraenkung.t_id)
+            eigentumsbeschraenkung.t_id
+        FROM
+            arp_npl_oereb.transferstruktur_geometrie AS geometrie
+            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+        WHERE
+            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+        AND
+            flaeche_lv95 IS NOT NULL
+    )
+;
 
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndLinie%')
+WHERE
+    t_id IN 
+    (
+        SELECT
+            DISTINCT ON (eigentumsbeschraenkung.t_id)
+            eigentumsbeschraenkung.t_id
+        FROM
+            arp_npl_oereb.transferstruktur_geometrie AS geometrie
+            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+        WHERE
+            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+        AND
+            linie_lv95 IS NOT NULL
+    )
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndPunkt%')
+WHERE
+    t_id IN 
+    (
+        SELECT
+            DISTINCT ON (eigentumsbeschraenkung.t_id)
+            eigentumsbeschraenkung.t_id
+        FROM
+            arp_npl_oereb.transferstruktur_geometrie AS geometrie
+            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
+            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+        WHERE
+            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+        AND
+            punkt_lv95 IS NOT NULL
+    )
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungSondernutzungsplaene%')
+WHERE
+    subthema = 'NutzungsplanungSondernutzungsplaene'
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%Baulinien%')
+WHERE
+    subthema = 'Baulinien'
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%Laermemfindlichkeitsstufen%')
+WHERE
+    thema = 'Laermemfindlichkeitsstufen'
+;
 /*
  * Hinweise auf die gesetzlichen Grundlagen.
  * 
@@ -735,11 +1479,11 @@ WITH vorschriften_dokument_gesetze AS (
   SELECT
     t_id AS hinweis
   FROM
-    arp_npl_grundnutzung_oereb.vorschriften_dokument
+    arp_npl_oereb.vorschriften_dokument
   WHERE
     t_ili_tid IN ('ch.admin.bk.sr.700', 'ch.so.sk.bgs.711.1', 'ch.so.sk.bgs.711.61') 
 )
-INSERT INTO arp_npl_grundnutzung_oereb.vorschriften_hinweisweiteredokumente (
+INSERT INTO arp_npl_oereb.vorschriften_hinweisweiteredokumente (
   t_basket,
   t_datasetname,
   ursprung,
@@ -751,11 +1495,11 @@ SELECT
   vorschriften_dokument.t_id,  
   vorschriften_dokument_gesetze.hinweis
 FROM 
-  arp_npl_grundnutzung_oereb.vorschriften_dokument AS vorschriften_dokument
+  arp_npl_oereb.vorschriften_dokument AS vorschriften_dokument
   LEFT JOIN vorschriften_dokument_gesetze
   ON 1=1
 WHERE
   t_type = 'vorschriften_rechtsvorschrift'
 AND
-  vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung.grundnutzung'
+  vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
 ;
