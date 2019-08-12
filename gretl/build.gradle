@@ -108,7 +108,7 @@ task uploadToBintray() {
         def bintrayLogin = bintrayUser + ":" + bintrayKey
         def fileName = "$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf"
         def responseUpload = ["curl", "-u", bintrayLogin, "-T", fileName,
-                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/ch.so.arp.nutzungsplanung.grundnutzung.oereb.xtf?override=1"].execute().text
+                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/ch.so.arp.nutzungsplanung.oereb.xtf?override=1"].execute().text
         println(responseUpload)
 
         def responsePublish = ["curl", "-u", bintrayLogin, "-X", "POST",
