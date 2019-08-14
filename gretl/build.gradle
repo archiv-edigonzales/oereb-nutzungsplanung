@@ -17,9 +17,11 @@ plugins {
     id "ch.so.agi.gretl" version "2.0.121"
     id "de.undercouch.download" version "3.4.3"
     id "com.bmuschko.docker-remote-api" version "4.10.0"
+    id "jp.classmethod.aws" version "0.40"
 }
 
 //apply plugin: "ch.so.agi.gretl"
+apply plugin: "jp.classmethod.aws.s3"
 
 import java.nio.file.Paths
 import ch.so.agi.gretl.tasks.*
@@ -36,9 +38,15 @@ ext {
     iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
     dbSchemaLandUsePlansOereb = "arp_npl_oereb"
 
-    bintrayUser = System.getenv('bintrayUser')
-    bintrayKey = System.getenv('bintrayKey')
+    //bintrayUser = System.getenv('bintrayUser')
+    //bintrayKey = System.getenv('bintrayKey')
 }
+
+aws {
+	profileName = "default"
+	region = "eu-central-1"
+}
+
 
 def pathToTempFolder = System.getProperty("java.io.tmpdir")
 
@@ -102,6 +110,7 @@ task exportLandUsePlansOereb(type: Ili2pgExport) {
     disableValidation = true
 }
 
+/*
 task uploadToBintray() {
     description = "Lädt die Daten auf Bintray hoch und publiziert sie."
     doLast {
@@ -115,6 +124,20 @@ task uploadToBintray() {
                         "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/publish"].execute().text
         println(responsePublish)
     }
+}
+*/
+
+import com.amazonaws.services.s3.model.ObjectMetadata
+import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
+
+task uploadToS3(type: AmazonS3FileUploadTask) {
+	file file("$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf") // must be a file
+	bucketName "ch.so.arp.nutzungsplanung.oereb-dev"
+	key "ch.so.arp.nutzungsplanung.oereb.xtf"
+
+	def m = new ObjectMetadata()
+	m.setCacheControl("no-cache, no-store")
+	objectMetadata = m
 }
 
 // Lädt die Bundesgesetze herunter und importiert sie in das ÖREB-NPL-OEREB-Schema.
