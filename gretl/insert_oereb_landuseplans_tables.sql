@@ -707,12 +707,21 @@ FROM
  * 
  * (3) Die rekursive CTE muss am Anfang stehen.
  * 
- * (4) Achtung: Beim Einfügen der zusätzlichen Dokumente in die Dokumententabelle
+ * (4) STIMTT DAS NOCH? Achtung: Beim Einfügen der zusätzlichen Dokumente in die Dokumententabelle
  * kann es Duplikate geben, da zwei verschiedene Top-Level-Dokumente auf das gleiche
  * weitere Dokument verweisen. Das wirft einen Fehler (Primary Key Constraint). Aus
  * diesem Grund muss beim Inserten noch ein DISTINCT auf die t_id gemacht werden. 
  * Beim anschliessenden Herstellen der Verknüpfung aber nicht mehr.
+ * 
+ * (5)  Bei 'zusaetzliche_dokumente AS ..' können Dokumente vorkommen, die bereits aufgrund aus einer 
+ * direkten Verlinkung in einem anderen Thema/Subthemas in der Dokumenten-Tabelle vorhanden sind. 
+ * Diese Duplikaten werden erst beim Inserten gefiltert, da man die trotzdem eine weitere Beziehung
+ * in eines anderen Themas/Subthemas stammen. Das Filtern wird erst beim Insert gemacht, da
+ * man die Beziehung in 'transferstruktur_hinweisvorschrift' einfügen muss. Sonst geht dieses
+ * Wissen verloren. Braucht auch noch einen Filter beim Inserten dieser Beziehung, sonst kommen
+ * ebenfalls die bereits direkt verlinkten.
  */
+
 
 WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS 
 (
@@ -812,16 +821,19 @@ zusaetzliche_dokumente AS
             WHERE
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset        
-    WHERE
-        last_ursprung NOT IN
-        (
-            SELECT
-                t_id
-            FROM
-                arp_npl_oereb.vorschriften_dokument
-            WHERE
-                t_datasetname = 'ch.so.arp.nutzungsplanung'
-        )
+    -- WHERE
+    --     /* Dokumente, die bereits im Zielschema vorhanden sind. Dabei
+    --     * handelt es sich um die direkt verknüpften Dokumente.  Diese
+    --     * werden in der vorgängigen Query-Gruppe behandelt. */
+    --     last_ursprung NOT IN
+    --     (
+    --         SELECT
+    --             t_id
+    --         FROM
+    --             arp_npl_oereb.vorschriften_dokument
+    --         WHERE
+    --             t_datasetname = 'ch.so.arp.nutzungsplanung'
+    --     )
 )
 ,
 zusaetzliche_dokumente_insert AS 
@@ -862,6 +874,16 @@ zusaetzliche_dokumente_insert AS
         zustaendigestelle
     FROM
         zusaetzliche_dokumente
+    WHERE
+        t_id NOT IN 
+        (
+            SELECT
+                t_id
+            FROM
+                arp_npl_oereb.vorschriften_dokument
+            WHERE
+                t_datasetname = 'ch.so.arp.nutzungsplanung'
+        )
 )
 INSERT INTO 
     arp_npl_oereb.transferstruktur_hinweisvorschrift 
@@ -891,7 +913,19 @@ INSERT INTO
                 ON basket.dataset = dataset.t_id
             WHERE
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
-        ) AS basket_dataset        
+        ) AS basket_dataset
+    WHERE
+        NOT EXISTS 
+        (
+            SELECT 
+                eigentumsbeschraenkung, vorschrift_vorschriften_dokument 
+            FROM 
+                arp_npl_oereb.transferstruktur_hinweisvorschrift     
+            WHERE 
+                eigentumsbeschraenkung = hinweisvorschrift.eigentumsbeschraenkung
+                AND
+                vorschrift_vorschriften_dokument = zusaetzliche_dokumente.t_id
+        )
 ;
 
 /*
