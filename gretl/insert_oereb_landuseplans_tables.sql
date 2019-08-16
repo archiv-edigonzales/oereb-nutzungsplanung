@@ -129,7 +129,9 @@ INSERT INTO
         )  
         AND
         grundnutzung.publiziertab IS NOT NULL
-        
+        AND
+        grundnutzung.rechtsstatus = 'inKraft'
+
     UNION ALL
     
     -- Überlagernd (Fläche)
@@ -198,7 +200,9 @@ INSERT INTO
         )  
         AND 
         ueberlagernd_flaeche.publiziertab IS NOT NULL
-        
+        AND
+        ueberlagernd_flaeche.rechtsstatus = 'inKraft'
+
     UNION ALL
 
     -- Überlagernd (Linie) 
@@ -251,6 +255,8 @@ INSERT INTO
         )  
         AND 
         ueberlagernd_linie.publiziertab IS NOT NULL
+        AND
+        ueberlagernd_linie.rechtsstatus = 'inKraft'
 
     UNION ALL
 
@@ -309,6 +315,8 @@ INSERT INTO
         )  
         AND 
         ueberlagernd_punkt.publiziertab IS NOT NULL
+        AND
+        ueberlagernd_punkt.rechtsstatus = 'inKraft'
 
     UNION ALL
 
@@ -364,6 +372,8 @@ INSERT INTO
         )  
         AND 
         ueberlagernd_flaeche.publiziertab IS NOT NULL    
+        AND
+        ueberlagernd_flaeche.rechtsstatus = 'inKraft'
 
     UNION ALL
 
@@ -431,6 +441,8 @@ INSERT INTO
         )  
         AND
         erschliessung_linienobjekt.publiziertab IS NOT NULL 
+        AND
+        erschliessung_linienobjekt.rechtsstatus = 'inKraft'
 
     UNION ALL
 
@@ -488,7 +500,9 @@ INSERT INTO
                 arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
         )  
         AND 
-        ueberlagernd_flaeche.publiziertab IS NOT NULL                  
+        ueberlagernd_flaeche.publiziertab IS NOT NULL   
+        AND
+        ueberlagernd_flaeche.rechtsstatus = 'inKraft'
 ;
 
 /*
@@ -1209,8 +1223,8 @@ WITH transferstruktur_darstellungsdienst AS
         SELECT
             basket_dataset.basket_t_id AS t_basket,
             basket_dataset.datasetname AS t_datasetname,
-            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||thema||'.'||subthema||''||geometrietyp||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
-            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||thema||'.'||subthema||''||geometrietyp AS legendeimweb
+            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
         FROM
         (
             SELECT
@@ -1383,7 +1397,7 @@ WHERE
 UPDATE 
     arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
 SET 
-    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndFlaeche%')
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagernd.Flaeche%')
 WHERE
     t_id IN 
     (
@@ -1404,7 +1418,7 @@ WHERE
 UPDATE 
     arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
 SET 
-    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndLinie%')
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagernd.Linie%')
 WHERE
     t_id IN 
     (
@@ -1425,7 +1439,7 @@ WHERE
 UPDATE 
     arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
 SET 
-    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagerndPunkt%')
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungUeberlagernd.Punkt%')
 WHERE
     t_id IN 
     (

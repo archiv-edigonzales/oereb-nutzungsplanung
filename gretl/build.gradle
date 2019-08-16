@@ -25,6 +25,8 @@ apply plugin: "jp.classmethod.aws.s3"
 
 import java.nio.file.Paths
 import ch.so.agi.gretl.tasks.*
+import com.amazonaws.services.s3.model.ObjectMetadata
+import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
 
 ext {
     dbUriEdit = "jdbc:postgresql://localhost:54322/edit"
@@ -38,8 +40,7 @@ ext {
     iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
     dbSchemaLandUsePlansOereb = "arp_npl_oereb"
 
-    //bintrayUser = System.getenv('bintrayUser')
-    //bintrayKey = System.getenv('bintrayKey')
+    xtfFileName = "ch.so.arp.nutzungsplanung.oereb.xtf"
 }
 
 aws {
@@ -78,62 +79,55 @@ task insertToOereb(type: SqlExecutor, dependsOn: 'deleteFromOereb') {
     sqlFiles = ["insert_oereb_landuseplans_tables.sql"]
 }
 
-// TODO: für jeden Nutzungstyp ("Layer").
-// TODO: host, port, wms name and layer name as variable
-// Erzeugen der Symbole und Update der Daten in der Datenbank. Es wird ein WMS-Server benötigt.
-task updateSymbolsGrundnutzung(type: OerebIconizerQgis3) {
-    description = "Erzeugt die Symbole und den Text für die einzelnen Legendeneinträge."
-    sldUrl = "http://localhost:8083/wms/oereb-symbols?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&SLD_VERSION=1.1.0"
-    legendGraphicUrl = "http://localhost:8083/wms/oereb-symbols?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
-    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
-    dbQTable = "arp_npl_oereb.transferstruktur_legendeeintrag"
-    typeCodeAttrName = "artcode"
-    symbolAttrName = "symbol"
-    useCommunalTypeCodes = true
+// Erzeugt die Symbole für die Legendeinträge
+//http://localhost:8083/wms/oereb-symbols?
 
-/*
-    finalizedBy {
-        stopWMSDockerContainer
+def wmsLayerList = [
+    "ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Flaeche",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Linie",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Punkt",
+    "ch.so.Nutzungsplanung.Baulinien",
+    "ch.so.Nutzungsplanung.Sondernutzungsplaene"
+]
+
+wmsLayerList.each { wmsLayer ->
+    task "updateSymbols_$wmsLayer"(type: OerebIconizerQgis3) {
+        description = "Erzeugt die Symbole für die einzelnen Legendeneinträge für $wmsLayer."
+        sldUrl = "https://geo-t.so.ch/wms/oereb-symbols?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=$wmsLayer&SLD_VERSION=1.1.0"
+        legendGraphicUrl = "https://geo-t.so.ch/wms/oereb-symbols?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=$wmsLayer&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
+        database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+        dbQTable = "arp_npl_oereb.transferstruktur_legendeeintrag"
+        typeCodeAttrName = "artcode"
+        symbolAttrName = "symbol"
+        useCommunalTypeCodes = true
     }
-*/
 }
 
-// Daten in eine INTERLIS-Datei exportieren.
+task updateSymbols() {
+    description = "Aggregationstask für das Updaten der Symbole."
+}
+
+updateSymbols.dependsOn {
+    tasks.findAll { task -> task.name.startsWith('updateSymbols_') }
+}
+
 task exportLandUsePlansOereb(type: Ili2pgExport) {
     description = "Exportiert die umgebauten Daten aus dem OEREB-Schema ($dbSchemaLandUsePlansOereb) in die Transferstruktur."
     group = GROUP
     database = [dbUriEdit, dbUserEdit, dbPwdEdit]
     models = "OeREBKRMtrsfr_V1_1"
     dbschema = "arp_npl_oereb"
-    dataFile = "$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf"
+    dataFile = "$rootDir/" + xtfFileName
     dataset = "ch.so.arp.nutzungsplanung"
     disableValidation = true
 }
 
-/*
-task uploadToBintray() {
-    description = "Lädt die Daten auf Bintray hoch und publiziert sie."
-    doLast {
-        def bintrayLogin = bintrayUser + ":" + bintrayKey
-        def fileName = "$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf"
-        def responseUpload = ["curl", "-u", bintrayLogin, "-T", fileName,
-                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/ch.so.arp.nutzungsplanung.oereb.xtf?override=1"].execute().text
-        println(responseUpload)
-
-        def responsePublish = ["curl", "-u", bintrayLogin, "-X", "POST",
-                        "https://api.bintray.com/content/sogis/ch.so.agi.oereb-data/ch.so.arp.nutzungsplanung.oereb/latest/publish"].execute().text
-        println(responsePublish)
-    }
-}
-*/
-
-import com.amazonaws.services.s3.model.ObjectMetadata
-import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
-
 task uploadToS3(type: AmazonS3FileUploadTask) {
-	file file("$rootDir/" + "ch.so.arp.nutzungsplanung.oereb.xtf") // must be a file
+    description = "Hochladen der exportieren Datei auf S3."
+	file file("$rootDir/" + xtfFileName) 
 	bucketName "ch.so.arp.nutzungsplanung.oereb-dev"
-	key "ch.so.arp.nutzungsplanung.oereb.xtf"
+	key xtfFileName
 
 	def m = new ObjectMetadata()
 	m.setCacheControl("no-cache, no-store")
@@ -246,7 +240,6 @@ task createWMSDockerContainer(dependsOn: 'pullWMSDockerImage', type: DockerCreat
                "QGIS_FCGI_MIN_PROCESSES": "1",
                "QGIS_FCGI_MAX_PROCESSES": "1",
                "QGIS_SERVER_LOG_LEVEL": "0"])
-    //binds = [(projectDir.toString()+"/qgis-iconizer/qgis"):"/data"]
 }
 
 //task removeWMSDockerContainer(dependsOn: 'buildWMSDockerImage', type: DockerRemoveContainer) {
