@@ -75,10 +75,7 @@ INSERT INTO
         'NutzungsplanungGrundnutzung' AS subthema,
         typ_grundnutzung.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung.'||typ_grundnutzung.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN grundnutzung.rechtsstatus IS NULL THEN 'inKraft' 
-            ELSE grundnutzung.rechtsstatus
-        END AS rechtsstatus,
+        grundnutzung.rechtsstatus,
         grundnutzung.publiziertab, 
         amt.t_id AS zustaendigestelle
     FROM
@@ -145,10 +142,7 @@ INSERT INTO
         'NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_flaeche.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Flaeche.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft'
-            ELSE ueberlagernd_flaeche.rechtsstatus
-        END AS rechtsstatus,
+        ueberlagernd_flaeche.rechtsstatus,
         ueberlagernd_flaeche.publiziertab,
         amt.t_id AS zustaendigestelle
     FROM
@@ -216,10 +210,7 @@ INSERT INTO
         'NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_linie.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Linie.'||typ_ueberlagernd_linie.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN ueberlagernd_linie.rechtsstatus IS NULL THEN 'inKraft'
-            ELSE ueberlagernd_linie.rechtsstatus
-        END AS rechtsstatus,
+        ueberlagernd_linie.rechtsstatus,
         ueberlagernd_linie.publiziertab,
         amt.t_id AS zustaendigestelle
     FROM
@@ -271,10 +262,7 @@ INSERT INTO
         'NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_punkt.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Punkt.'||typ_ueberlagernd_punkt.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN ueberlagernd_punkt.rechtsstatus IS NULL THEN 'inKraft'  
-            ELSE ueberlagernd_punkt.rechtsstatus
-        END AS rechtsstatus,
+        ueberlagernd_punkt.rechtsstatus,
         ueberlagernd_punkt.publiziertab,  
         amt.t_id AS zustaendigestelle
     FROM
@@ -330,11 +318,8 @@ INSERT INTO
         'Nutzungsplanung' AS thema,
         'NutzungsplanungSondernutzungsplaene' AS subthema,
         typ_ueberlagernd_flaeche.code_kommunal AS artcode,
-        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Flaechenobjekt.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft' 
-            ELSE ueberlagernd_flaeche.rechtsstatus
-        END AS rechtsstatus,
+        'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Flaeche.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
+        ueberlagernd_flaeche.rechtsstatus,
         ueberlagernd_flaeche.publiziertab,
         amt.t_id AS zustaendigestelle
     FROM
@@ -388,10 +373,7 @@ INSERT INTO
         'Baulinien' AS subthema,
         typ_erschliessung_linienobjekt.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Linienobjekt.'||typ_erschliessung_linienobjekt.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN erschliessung_linienobjekt.rechtsstatus IS NULL THEN 'inKraft' 
-            ELSE erschliessung_linienobjekt.rechtsstatus
-        END AS rechtsstatus,
+        erschliessung_linienobjekt.rechtsstatus,
         erschliessung_linienobjekt.publiziertab,
         amt.t_id AS zustaendigestelle
     FROM
@@ -456,10 +438,7 @@ INSERT INTO
         ''::text AS subthema, -- Wegen Darstellungsdienst-Query (kann man aber besser machen, Funktion fällt mir auf die Schnelle nicht ein).
         typ_ueberlagernd_flaeche.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Flaechenobjekt.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
-        CASE 
-            WHEN ueberlagernd_flaeche.rechtsstatus IS NULL THEN 'inKraft' 
-            ELSE ueberlagernd_flaeche.rechtsstatus
-        END AS rechtsstatus,
+        ueberlagernd_flaeche.rechtsstatus,
         ueberlagernd_flaeche.publiziertab, 
         amt.t_id AS zustaendigestelle
     FROM
@@ -1227,115 +1206,21 @@ WITH transferstruktur_darstellungsdienst AS
             'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
         FROM
         (
-            SELECT
-                DISTINCT ON (thema, subthema)
+            SELECT 
+                DISTINCT ON (thema, subthema, geometrietyp)
                 thema,
                 subthema,
-                ''::text AS geometrietyp
+                CASE 
+                    WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Grundnutzung%' THEN ''
+                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungUeberlagernd') THEN 'Flaeche'
+                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungSondernutzungsplaene') THEN ''
+                    WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%' THEN 'Linie'
+                    WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%' THEN 'Punkt'
+                    WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Flaechenobjekt%' THEN ''
+                    WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Linienobjekt%' THEN ''
+                END AS geometrietyp
             FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'NutzungsplanungGrundnutzung'
-                AND
-                geometrie.flaeche_lv95 IS NOT NULL
-                
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                subthema,
-                'Flaeche'::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
-                AND
-                geometrie.flaeche_lv95 IS NOT NULL
-
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                subthema,
-                'Linie'::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
-                AND
-                geometrie.linie_lv95 IS NOT NULL
-                
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                subthema,
-                'Punkt'::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
-                AND
-                geometrie.punkt_lv95 IS NOT NULL 
-
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                subthema,
-                ''::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'NutzungsplanungSondernutzungsplaene'
-                AND
-                geometrie.flaeche_lv95 IS NOT NULL 
-
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                subthema,
-                ''::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.subthema = 'Baulinien'
-                AND
-                geometrie.linie_lv95 IS NOT NULL 
-
-            UNION ALL
-
-            SELECT
-                DISTINCT ON (thema, subthema)
-                thema,
-                ''::text AS subthema,
-                ''::text AS geometrietyp
-            FROM
-                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-                LEFT JOIN arp_npl_oereb.transferstruktur_geometrie AS geometrie 
-                ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
-            WHERE
-                eigentumsbeschraenkung.thema = 'Laermemfindlichkeitsstufen'
-                AND
-                geometrie.flaeche_lv95 IS NOT NULL                            
+                arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung 
         ) AS eigentumsbeschraenkung,
         (
             SELECT
@@ -1365,25 +1250,45 @@ INSERT INTO
         subthema,
         transfrstrkstllngsdnst_legende
     )
-    SELECT 
+    SELECT
         DISTINCT ON (artcode, artcodeliste)
         eigentumsbeschraenkung.t_basket,
         eigentumsbeschraenkung.t_datasetname,
-        0::int AS t_seq,        
-        decode('iVBORw0KGgoAAAANSUhEUgAAAEIAAAAjCAYAAAAg/NwXAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADgQAAA4EBLr/cFwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOiSURBVGiB7ZpPSBRRHMc/u6tZgligRcSqQVAI7cmUtCVdUEIiUDPLsksdLFHoUoJil5UKOu2lg4iHUDQEjboFpqAdJGI1CiKkEhQRDxKhKOZ0+M34ZtLZP/1xI+cDw/ze7/1m5jdf3nu/N+y6NNBwwJ3oBP4VHCF0kiyt48fh1KkEpbLNjI7C27cbTasQxcUQCm1zRgmiqckihDM1dBwhdBwhdBwhdBwhdBwhdOyF6OiAvDzr4ffDnTswM6PiwmHV39+v/BMTm/1tbdLOz4cPH6zPa21V8VNT4quulnYgAEtLKlbT4Px56SsqEl9vr7r++XMV++WLPC8vT3K3Q5PbytHYqG3Q1qZZ+szH3r2aNjkpccPDyh8KqetHRjb7a2uVr6JCxb57p2kej+oLh8V/9Kjytber+O5u5U9OFt/srNigaWfOqNhgUMUODip/Y6PlnWKbGrduwb17cO6ctBcXZUPyOwwMwKtXYjc3w/fvkeMfPICFBVhZgZaWzf0HD0JlpdgvXsDcnNiPH8s5OxvOnrW9fZJtj5nr1yE3V+yCAhgfly3q2lpMl9ty+za0t8OzZ9Fjv36FYBCysuDz561jGhqgr09E7emRzwVjCt64AR6P7e1jE8KMzydCrK1Jcr+K2w1jY3DhgrRdLhmkdrHr6/DoEaSm2sf7/ZLf5KSMhE+fxL97N1y7FjmduF8ggqpxYSQ2Pw/JyVBXZx+bmwsnT8LqqkxLrxdKS7eOvXlTzuEwdHaKffEiZGRETCdx5fPuXUhLE7u+Ho4csY91uWSNMAgGYc+erWPr6mDfPrGXl+Xc0BA1ncQJkZkpa4TXK6UzGn4/VFVBYSFcuWIfl5oKV6+qdkGBlM4oJHZD1doK09Owf39s8f39sq64o6RdUaFso5JEIX4hzBsbt1vmt4G5BJoryq5dcT/mtzDnZLYjEJ8Q8/NSo0Hmd3q61GeD4WG1kr98qfw5OXE9JhHEVj6rqyElBT5+hG/fxHf5sixihw7JFnhoCJ4+le1serq0QdaAQOAvpf/niE2I9++t7fJyePhQtbu6oKxMNi+vXyt/ZiY8eRLz8Ewk9kKUlMh21sDjgQMHpJ6fOGGNzcqCN2/kpcfHpd77fHDpkohhUFkpIyQpSQ4zxcXyUWSMMpA9weys3P9namrg2DHZLP3M4cNw/77Yp0/bv70Z24+u/51f+ujaAThC6DhC6DhC6DhC6LgsfwvYwb99WoXYwThTQ8cRQucHQTGF/rvy36kAAAAASUVORK5CYII=', 'base64') AS symbol,
-        eigentumsbeschraenkung.aussage_de AS legendetext_de,
+        eigentumsbeschraenkung.t_seq,        
+        eigentumsbeschraenkung.symbol,
+        eigentumsbeschraenkung.legendetext_de,
         eigentumsbeschraenkung.artcode,
         eigentumsbeschraenkung.artcodeliste,
         eigentumsbeschraenkung.thema,
         eigentumsbeschraenkung.subthema,
-        transferstruktur_darstellungsdienst.t_id AS transfrstrkstllngsdnst_legende
+        transferstruktur_darstellungsdienst.t_id
     FROM
-        arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung,
-        transferstruktur_darstellungsdienst
-    WHERE
-        transferstruktur_darstellungsdienst.t_datasetname = 'ch.so.arp.nutzungsplanung'
-    AND
-        transferstruktur_darstellungsdienst.verweiswms ILIKE '%'||eigentumsbeschraenkung.subthema||'%' 
+    (
+        SELECT
+            DISTINCT ON (artcode, artcodeliste)
+            eigentumsbeschraenkung.t_basket,
+            eigentumsbeschraenkung.t_datasetname,
+            0::int AS t_seq,        
+            decode('iVBORw0KGgoAAAANSUhEUgAAAEIAAAAjCAYAAAAg/NwXAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADgQAAA4EBLr/cFwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAOiSURBVGiB7ZpPSBRRHMc/u6tZgligRcSqQVAI7cmUtCVdUEIiUDPLsksdLFHoUoJil5UKOu2lg4iHUDQEjboFpqAdJGI1CiKkEhQRDxKhKOZ0+M34ZtLZP/1xI+cDw/ze7/1m5jdf3nu/N+y6NNBwwJ3oBP4VHCF0kiyt48fh1KkEpbLNjI7C27cbTasQxcUQCm1zRgmiqckihDM1dBwhdBwhdBwhdBwhdBwhdOyF6OiAvDzr4ffDnTswM6PiwmHV39+v/BMTm/1tbdLOz4cPH6zPa21V8VNT4quulnYgAEtLKlbT4Px56SsqEl9vr7r++XMV++WLPC8vT3K3Q5PbytHYqG3Q1qZZ+szH3r2aNjkpccPDyh8KqetHRjb7a2uVr6JCxb57p2kej+oLh8V/9Kjytber+O5u5U9OFt/srNigaWfOqNhgUMUODip/Y6PlnWKbGrduwb17cO6ctBcXZUPyOwwMwKtXYjc3w/fvkeMfPICFBVhZgZaWzf0HD0JlpdgvXsDcnNiPH8s5OxvOnrW9fZJtj5nr1yE3V+yCAhgfly3q2lpMl9ty+za0t8OzZ9Fjv36FYBCysuDz561jGhqgr09E7emRzwVjCt64AR6P7e1jE8KMzydCrK1Jcr+K2w1jY3DhgrRdLhmkdrHr6/DoEaSm2sf7/ZLf5KSMhE+fxL97N1y7FjmduF8ggqpxYSQ2Pw/JyVBXZx+bmwsnT8LqqkxLrxdKS7eOvXlTzuEwdHaKffEiZGRETCdx5fPuXUhLE7u+Ho4csY91uWSNMAgGYc+erWPr6mDfPrGXl+Xc0BA1ncQJkZkpa4TXK6UzGn4/VFVBYSFcuWIfl5oKV6+qdkGBlM4oJHZD1doK09Owf39s8f39sq64o6RdUaFso5JEIX4hzBsbt1vmt4G5BJoryq5dcT/mtzDnZLYjEJ8Q8/NSo0Hmd3q61GeD4WG1kr98qfw5OXE9JhHEVj6rqyElBT5+hG/fxHf5sixihw7JFnhoCJ4+le1serq0QdaAQOAvpf/niE2I9++t7fJyePhQtbu6oKxMNi+vXyt/ZiY8eRLz8Ewk9kKUlMh21sDjgQMHpJ6fOGGNzcqCN2/kpcfHpd77fHDpkohhUFkpIyQpSQ4zxcXyUWSMMpA9weys3P9namrg2DHZLP3M4cNw/77Yp0/bv70Z24+u/51f+ujaAThC6DhC6DhC6DhC6LgsfwvYwb99WoXYwThTQ8cRQucHQTGF/rvy36kAAAAASUVORK5CYII=', 'base64') AS symbol,
+            eigentumsbeschraenkung.aussage_de AS legendetext_de,
+            eigentumsbeschraenkung.artcode,
+            eigentumsbeschraenkung.artcodeliste,
+            eigentumsbeschraenkung.thema,
+            eigentumsbeschraenkung.subthema,
+            CASE 
+                WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Grundnutzung%' THEN ''
+                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungUeberlagernd') THEN 'Flaeche'
+                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungSondernutzungsplaene') THEN ''
+                WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%' THEN 'Linie'
+                WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%' THEN 'Punkt'
+                WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Flaechenobjekt%' THEN ''
+                WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Linienobjekt%' THEN ''
+            END AS geometrietyp
+        FROM
+            arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung 
+    ) AS eigentumsbeschraenkung
+    LEFT JOIN transferstruktur_darstellungsdienst
+    ON transferstruktur_darstellungsdienst.verweiswms ILIKE '%'||RTRIM(eigentumsbeschraenkung.thema||'.'||eigentumsbeschraenkung.subthema||'.'||eigentumsbeschraenkung.geometrietyp, '.')||'%'
 ;
 
 UPDATE 
@@ -1405,13 +1310,11 @@ WHERE
             DISTINCT ON (eigentumsbeschraenkung.t_id)
             eigentumsbeschraenkung.t_id
         FROM
-            arp_npl_oereb.transferstruktur_geometrie AS geometrie
-            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
             eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
         AND
-            flaeche_lv95 IS NOT NULL
+            artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%'
     )
 ;
 
@@ -1426,13 +1329,11 @@ WHERE
             DISTINCT ON (eigentumsbeschraenkung.t_id)
             eigentumsbeschraenkung.t_id
         FROM
-            arp_npl_oereb.transferstruktur_geometrie AS geometrie
-            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
             eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
         AND
-            linie_lv95 IS NOT NULL
+            artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%'
     )
 ;
 
@@ -1447,13 +1348,11 @@ WHERE
             DISTINCT ON (eigentumsbeschraenkung.t_id)
             eigentumsbeschraenkung.t_id
         FROM
-            arp_npl_oereb.transferstruktur_geometrie AS geometrie
-            INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
-            ON eigentumsbeschraenkung.t_id = geometrie.eigentumsbeschraenkung
+            arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
             eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
         AND
-            punkt_lv95 IS NOT NULL
+            artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%'
     )
 ;
 
