@@ -618,9 +618,9 @@ vorschriften_dokument AS
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         CASE
-            WHEN rechtsvorschrift IS TRUE
-                THEN 'vorschriften_rechtsvorschrift'
-            ELSE 'vorschriften_dokument'
+            WHEN rechtsvorschrift IS FALSE
+                THEN 'vorschriften_dokument'
+            ELSE 'vorschriften_rechtsvorschrift'
         END AS t_type,
         '_'||SUBSTRING(REPLACE(CAST(dokument.t_ili_tid AS text), '-', ''),1,15) AS t_ili_tid,        
         dokument.titel AS titel_de,
@@ -770,9 +770,9 @@ zusaetzliche_dokumente AS
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         CASE
-            WHEN rechtsvorschrift IS TRUE
-                THEN 'vorschriften_rechtsvorschrift'
-            ELSE 'vorschriften_dokument'
+            WHEN rechtsvorschrift IS FALSE
+                THEN 'vorschriften_dokument'
+            ELSE 'vorschriften_rechtsvorschrift'
         END AS t_type,
         '_'||SUBSTRING(REPLACE(CAST(dokument.t_ili_tid AS text), '-', ''),1,15) AS t_ili_tid,        
         dokument.titel AS titel_de,
@@ -1236,8 +1236,10 @@ WITH transferstruktur_darstellungsdienst AS
         SELECT
             basket_dataset.basket_t_id AS t_basket,
             basket_dataset.datasetname AS t_datasetname,
-            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
-            'https://geo.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
+            --'https://geo-t.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            --'https://geo-t.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
+            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
         FROM
         (
             SELECT 

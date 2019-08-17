@@ -48,7 +48,7 @@ task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreat
                "PG_WRITE_PASSWORD": "gretl",
                "PG_READ_USER": "ogc_server",
                "PG_READ_PASSWORD": "ogc_server"])
-    binds = ["/tmp":"/data"]
+    //binds = ["/tmp":"/data"]
 }
 
 task removeDockerContainer(dependsOn: 'buildDockerImage', type: DockerRemoveContainer) {

@@ -37,8 +37,8 @@ def pathToTempFolder = System.getProperty("java.io.tmpdir")
 def pathToExportFolder = Paths.get(pathToTempFolder, 'export_data')
 
 // Daten Nutzungsplanung
-//def landUsePlansDataSets = ["2405", "2408", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614", "2615"]
-def landUsePlansDataSets = ["2502"]
+def landUsePlansDataSets = ["2405", "2408", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614", "2615"]
+//def landUsePlansDataSets = ["2502", "2457", "2580"]
 //def landUsePlansDataSets = ["2405", "2408", "2457", "2474", "2476", "2498", "2501", "2502", "2580"]
 def landUsePlansBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung/"
 
