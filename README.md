@@ -51,11 +51,17 @@ Es wird auf Basis von sogis/oereb-db ein Docker-Container gestartet. Die DB-Date
 gradle -I $PWD/init.gradle -b dbimage/build.gradle importAllDataToOerebDb buildFatOerebDbDockerImage
 ```
 
-oder falls man nur die Nutzungsplanung ersetzen will und die Daten der temporären ÖREB-Datenbank noch vorhanden sind:
+oder falls man nur die Nutzungsplanung importieren will::
 
 ```
 gradle -I $PWD/init.gradle -b dbimage/build.gradle importLandUsePlansDataToOerebDb buildFatOerebDbDockerImage
 ```
+
+oder falls man nur die Nutzungplanung _ersetzen_ will:
+```
+gradle -I $PWD/init.gradle -b dbimage/build.gradle replaceLandUsePlansDataToOerebDb buildFatOerebDbDockerImage
+```
+Dies bedingt, dass das DB-Datenverzeichnis noch vorhanden ist auf dem Filesystem.
 
 
 

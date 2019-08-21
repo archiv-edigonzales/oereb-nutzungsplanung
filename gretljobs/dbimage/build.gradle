@@ -471,7 +471,6 @@ task importAllDataToOerebDb() {
     }    
 }
 
-// ??????
 task importLandUsePlansDataToOerebDb() {
     description = "Importiert die Nutzungsplanung (und notwendige Daten) in die (temporären) ÖREB-DB."
 
@@ -487,12 +486,27 @@ task importLandUsePlansDataToOerebDb() {
     replaceLandUsePlansData.mustRunAfter(replaceCantonalLegalBasis)
     refreshMaterializedViews.mustRunAfter(replaceLandUsePlansData)
 
-    stopOerebDbDockerContainer.mustRunAfter(replaceLandUsePlansData)
+    stopOerebDbDockerContainer.mustRunAfter(refreshMaterializedViews)
 
     finalizedBy {
         copyOerebDbDataDirectory
     }     
 }
+
+task replaceLandUsePlansDataToOerebDb() {
+    description = "Ersetzt die Nutzungsplanung in der (temporären) ÖREB-DB. Bedingt, dass das DB-Datenverzeichnis mit den notwendigen Daten noch vorhanden ist."
+
+    dependsOn startOerebDbDockerContainer
+    dependsOn replaceLandUsePlansData
+    dependsOn refreshMaterializedViews
+    dependsOn stopOerebDbDockerContainer
+
+    replaceLandUsePlansData.mustRunAfter(startOerebDbDockerContainer)
+    refreshMaterializedViews.mustRunAfter(replaceLandUsePlansData)
+
+    stopOerebDbDockerContainer.mustRunAfter(refreshMaterializedViews)
+}
+
 
 task copyOerebDbDataDirectory(type: Copy) {
     from '/tmp/primary'
