@@ -48,22 +48,11 @@ Es kann ein Docker-Image mit einer ÖREB-Datenbank erstellt werden, die sämtlic
 Es wird auf Basis von sogis/oereb-db ein Docker-Container gestartet. Die DB-Daten werden im Ordner `/tmp/primary/` gespeichert. Nach dem Import der gewünschten Dateien wird dieser Container heruntergefahren, das Verzeichnis `/tmp/primary/` in das Build-Verzeichnisses des Gretl-Jobs kopiert und anschliessend in das Docker-Image sogis/oereb-db-data gebrannt.
 
 ```
-gradle -I $PWD/init.gradle -b dbimage/build.gradle importAllDataToOerebDb buildFatOerebDbDockerImage
+gradle -I $PWD/init.gradle -b dbimage/build.gradle buildOerebDbDataDockerImage -Pflavor=full|plr|replace
 ```
-
-oder falls man nur die Nutzungsplanung importieren will::
-
-```
-gradle -I $PWD/init.gradle -b dbimage/build.gradle importLandUsePlansDataToOerebDb buildFatOerebDbDockerImage
-```
-
-oder falls man nur die Nutzungplanung _ersetzen_ will:
-```
-gradle -I $PWD/init.gradle -b dbimage/build.gradle replaceLandUsePlansDataToOerebDb buildFatOerebDbDockerImage
-```
-Dies bedingt, dass das DB-Datenverzeichnis noch vorhanden ist auf dem Filesystem.
-
-
+- `full`: Datenbank wird komplett mit allen Daten (AV, PLZ/Ortschaft, Annex, Bundedaten etc.) erstellt.
+- `plr`: Datenbank wird nur mit den kantonalen ÖREB-Daten (plus die Daten, die zwingend benötigt werden) erstellt.
+- `replace`: Kantonale ÖREB-Daten werden im ausgetauscht. Bedingt, dass das DB-Datenverzeichnis noch vorhanden ist auf dem Filesystem.
 
 ## Bemerkungen
 

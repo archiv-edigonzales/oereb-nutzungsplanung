@@ -23,6 +23,8 @@ import ch.so.agi.gretl.tasks.*
 import java.nio.file.Paths
 
 ext {
+    setNonExistingPropertyToUndefinedValue('flavor')
+
     pathToTempFolder = System.getProperty("java.io.tmpdir")
     pathToUnzipFolder = Paths.get(pathToTempFolder, 'unzip_data')
 
@@ -91,6 +93,10 @@ def getCheckedOutGitCommitHash() {
 task pullOerebDbDockerImage(type: DockerPullImage) {
     repository = "sogis/oereb-db"
     tag = "latest"
+
+    doLast {
+        println flavor
+    }
 }
 
 task createOerebDbDockerContainer(dependsOn: 'pullOerebDbDockerImage', type: DockerCreateContainer) {
@@ -436,7 +442,7 @@ task refreshMaterializedViews(type: SqlExecutor) {
 } 
 
 
-task importAllDataToOerebDb() {
+task importData_full() {
     description = "Import alle notwendigen Daten in die (temporäre) ÖREB-DB."
 
     dependsOn startOerebDbDockerContainer
@@ -471,7 +477,7 @@ task importAllDataToOerebDb() {
     }    
 }
 
-task importLandUsePlansDataToOerebDb() {
+task importData_plr() {
     description = "Importiert die Nutzungsplanung (und notwendige Daten) in die (temporären) ÖREB-DB."
 
     dependsOn startOerebDbDockerContainer
@@ -493,7 +499,7 @@ task importLandUsePlansDataToOerebDb() {
     }     
 }
 
-task replaceLandUsePlansDataToOerebDb() {
+task importData_replace() {
     description = "Ersetzt die Nutzungsplanung in der (temporären) ÖREB-DB. Bedingt, dass das DB-Datenverzeichnis mit den notwendigen Daten noch vorhanden ist."
 
     dependsOn startOerebDbDockerContainer
@@ -505,8 +511,11 @@ task replaceLandUsePlansDataToOerebDb() {
     refreshMaterializedViews.mustRunAfter(replaceLandUsePlansData)
 
     stopOerebDbDockerContainer.mustRunAfter(refreshMaterializedViews)
-}
 
+    finalizedBy {
+        copyOerebDbDataDirectory
+    }    
+}
 
 task copyOerebDbDataDirectory(type: Copy) {
     from '/tmp/primary'
@@ -519,11 +528,11 @@ task copyOerebDbDataDirectory(type: Copy) {
 // Damit das möglich ist, muss im setenv.sh File die ENV-Variable PGDATA
 // korrekt gesetzt werden.
 // TODO: fixme. Ist noch gefrickelt. start.sh braucht es nicht mehr?
-task buildFatOerebDbDockerImage(type: DockerBuildImage) {
+task buildOerebDbDataDockerImage(type: DockerBuildImage, dependsOn: "importData_$flavor") {
     description = "Build docker oereb database image containing data."
     //inputDir = project.rootDir
     inputDir = projectDir
-    tags = ["sogis/oereb-db-data:"+getCheckedOutGitCommitHash(), "sogis/oereb-db-data:latest"]
+    tags = ["sogis/oereb-db-data:"+flavor, "sogis/oereb-db-data:latest"]
     labels = ["oereb-db-data.created": new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), 
             "oereb-db-data.git_commit": getCheckedOutGitCommitHash(), 
             "oereb-db-data.travis_build": getCheckedOutGitCommitHash()]
@@ -542,12 +551,12 @@ docker {
 
 task pushDockerImage_Named(type: DockerPushImage) {
     description = "Push docker image to hub.docker.com."
-    imageName = buildFatOerebDbDockerImage.tags.get().toArray()[0]
+    imageName = buildOerebDbDataDockerImage.tags.get().toArray()[0]
 }
 
 task pushDockerImage_Latest(type: DockerPushImage) {
     description = "Push docker image to hub.docker.com."
-    imageName = buildFatOerebDbDockerImage.tags.get().toArray()[1]
+    imageName = buildOerebDbDataDockerImage.tags.get().toArray()[1]
 }
 
 task pushDockerImages() {
@@ -557,3 +566,12 @@ task pushDockerImages() {
     }    
 }
 
+def setNonExistingPropertyToUndefinedValue(propertyName) {
+    setNonExistingPropertyToDefaultValue(propertyName, 'UNDEFINED')
+}
+
+def setNonExistingPropertyToDefaultValue(propertyName, defaultValue) {
+    if (!project.hasProperty(propertyName)) {
+        ext[propertyName] = defaultValue
+    }
+}
