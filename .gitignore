@@ -1,3 +1,7 @@
+*.xtf
+
+primary/
+
 .vagrant/
 src/main/resources/templates/version.txt
 

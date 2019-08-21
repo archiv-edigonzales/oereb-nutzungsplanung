@@ -22,7 +22,7 @@ task buildDockerImage(type: DockerBuildImage) {
     description = "Build docker image."
     //inputDir = project.rootDir
     inputDir = projectDir
-    tags = ["edigonzales/oereb-edit-db:"+version.toString(), "edigonzales/oereb-edit-db:latest"]
+    tags = ["sogis/oereb-edit-db:"+version.toString(), "sogis/oereb-edit-db:latest"]
     labels = ["oereb-edit-db.created": new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), 
             "oereb-edit-db.git_commit": getCheckedOutGitCommitHash(), 
             "oereb-edit-db.travis_build": version.toString()]

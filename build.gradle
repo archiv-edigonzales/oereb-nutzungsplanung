@@ -1,5 +1,0 @@
-/* Idee: Zum (Weiter-)Entwickeln der GRETL-Jobs werden verschiedene Variablen hier definiert,
- * die in der Produktion als ENV-Variable gesetzt werden. Wichtig scheint mir, dass
- * die Jobs unabhängig sind. Vor allem weil es sich auch nur um Vorbereitungs-Jobs 
- * handelt, die nie in Produktion gehen.
- */

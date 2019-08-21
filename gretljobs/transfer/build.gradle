@@ -1,0 +1,108 @@
+description = """\n
+Umbau der Daten im kantonalen Nutzungsplanungsmodell in 
+die ÖREB-Rahmenmodell-Transferstruktur.
+
+Die Daten werden exportiert, mit ilivalidator geprüft 
+und nach S3 hochgeladen. Für den S3-Upload muss das
+.aws/credentials File vorhanden sein.
+"""
+
+apply plugin: "com.bmuschko.docker-remote-api"
+apply plugin: "de.undercouch.download"
+apply plugin: "ch.so.agi.gretl"
+apply plugin: "jp.classmethod.aws.s3"
+
+import ch.so.agi.gretl.tasks.*
+import java.nio.file.Paths
+import com.amazonaws.services.s3.model.ObjectMetadata
+import jp.classmethod.aws.gradle.s3.AmazonS3FileUploadTask
+
+ext {
+    dbPort = "54322"
+    dbUriEdit = "jdbc:postgresql://localhost:$dbPort/edit"
+    dbUserEdit = "gretl"
+    dbPwdEdit = "gretl"
+
+    iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
+    dbSchemaLandUsePlansOereb = "arp_npl_oereb"
+
+    symbolsWmsBaseUrl = "https://geo-t.so.ch"
+
+    xtfFileName = "ch.so.arp.nutzungsplanung.oereb.xtf"
+}
+
+aws {
+	profileName = "default"
+	region = "eu-central-1"
+}
+
+task deleteFromOereb(type: SqlExecutor) {
+    description = "Löscht die Daten aus dem OEREB-Schema ($dbSchemaLandUsePlansOereb)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    sqlFiles = ["delete_oereb_landuseplans_tables.sql"]
+}
+
+task insertToOereb(type: SqlExecutor, dependsOn: 'deleteFromOereb') {
+    description = "Baut die Daten aus dem kantonalen Modell in das Rahmenmodell (Transferstruktur) um und speichert sie im OEREB-Schema ($dbSchemaLandUsePlansOereb)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    sqlFiles = ["insert_oereb_landuseplans_tables.sql"]
+}
+
+def wmsLayerList = [
+    "ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Flaeche",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Linie",
+    "ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd.Punkt",
+    "ch.so.Nutzungsplanung.Baulinien",
+    "ch.so.Nutzungsplanung.Sondernutzungsplaene"
+]
+
+wmsLayerList.each { wmsLayer ->
+    task "updateSymbols_$wmsLayer"(type: OerebIconizerQgis3) {
+        description = "Erzeugt die Symbole für die einzelnen Legendeneinträge für $wmsLayer."
+        sldUrl = "$symbolsWmsBaseUrl/wms/oereb-symbols?&SERVICE=WMS&REQUEST=GetStyles&LAYERS=$wmsLayer&SLD_VERSION=1.1.0"
+        legendGraphicUrl = "$symbolsWmsBaseUrl/wms/oereb-symbols?SERVICE=WMS&REQUEST=GetLegendGraphic&LAYER=$wmsLayer&FORMAT=image/png&RULELABEL=false&LAYERTITLE=false&HEIGHT=35&WIDTH=70&SYMBOLHEIGHT=3&SYMBOLWIDTH=6&DPI=300"
+        database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+        dbQTable = "arp_npl_oereb.transferstruktur_legendeeintrag"
+        typeCodeAttrName = "artcode"
+        symbolAttrName = "symbol"
+        useCommunalTypeCodes = true
+    }
+}
+
+task updateSymbols() {
+    description = "Aggregationstask für das Updaten der Symbole."
+    dependsOn {
+        tasks.findAll { task -> task.name.startsWith('updateSymbols_') }
+    }
+}
+
+task exportLandUsePlansOereb(type: Ili2pgExport) {
+    description = "Exportiert die umgebauten Daten aus dem OEREB-Schema ($dbSchemaLandUsePlansOereb) in die Transferstruktur."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = "OeREBKRMtrsfr_V1_1"
+    dbschema = "arp_npl_oereb"
+    dataFile = "$rootDir/" + xtfFileName
+    dataset = "ch.so.arp.nutzungsplanung"
+    disableValidation = true
+}
+
+task validateLandUsePlansExport(type: IliValidator) {
+    description = "Validiert die exportieren Daten in der Transferstruktur."
+    dataFiles = ["$rootDir/" + xtfFileName]
+    logFile = "ilivalidator.log"
+    allObjectsAccessible = true
+    configFile = "config.toml"
+}
+
+task uploadToS3(type: AmazonS3FileUploadTask) {
+    description = "Hochladen der exportierten Datei auf S3."
+	file file("$rootDir/" + xtfFileName) 
+	bucketName "ch.so.arp.nutzungsplanung.oereb-dev"
+	key xtfFileName
+
+	def m = new ObjectMetadata()
+	m.setCacheControl("no-cache, no-store")
+	objectMetadata = m
+}
+

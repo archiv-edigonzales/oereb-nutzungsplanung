@@ -1,0 +1,246 @@
+description = """\n
+Startet einen Docker-Container mit einer Edit-DB, die
+für den Datenumbau der Solothurner Nutzungsplanung in
+das Rahmenmodell genutzt werden kann.
+
+Es werden zwei Schemen angelegt:
+- arp_npl: Nutzungsplanung im kantonalen Modell
+- arp_npl_oereb: Rahmenmodell (Transferstruktur)
+
+Das Image ist ähnlich aufgebaut wie das sogis/oereb-db 
+Image und basiert auf einem crunchy container. Im README.md
+stehen Information zum Herstellen der SQL-Befehle, die
+beim erstmaligen Starten ausgeführt werden sollen.
+
+Weitere Tasks dienen dazu die notwendigen Daten für 
+den Datenumbau und -export in das Rahmenmodell zu
+importieren.
+"""
+
+apply plugin: "com.bmuschko.docker-remote-api"
+apply plugin: "de.undercouch.download"
+apply plugin: "ch.so.agi.gretl"
+
+import java.text.SimpleDateFormat
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer.ExposedPort
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerLogsContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
+import ch.so.agi.gretl.tasks.*
+import java.nio.file.Paths
+
+ext {
+    pathToTempFolder = System.getProperty("java.io.tmpdir")
+
+    federalLegalBasisBaseUrl = "http://models.geo.admin.ch/V_D/OeREB/"
+    federalLegalBaseDataSet = "OeREBKRM_V1_1_Gesetze_20180501"
+
+    cantonalLegalBasisBaseUrl = "https://geo.so.ch/geodata/ch.so.sk.gesetze.oereb/"
+    cantonalLegalBaseDataSet = "ch.so.sk.gesetze"
+
+    responsibleOfficesBaseUrl = "https://geo.so.ch/geodata/ch.so.agi.zustaendigestellen.oereb/"
+    responsibleOfficesDataSet = "ch.so.agi.zustaendigestellen"
+
+    dbPort = "54322"
+    dbUriEdit = "jdbc:postgresql://localhost:$dbPort/edit"
+    dbUserEdit = "gretl"
+    dbPwdEdit = "gretl"
+
+    iliModelLandUsePlans = "SO_Nutzungsplanung_20171118"
+    dbSchemaLandUsePlans = "arp_npl"
+
+    iliModelVorschriften = "OeREBKRMvs_V1_1"
+    iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
+    dbSchemaLandUsePlansOereb = "arp_npl_oereb"
+
+    //landUsePlansDataSets = ["2502", "2457", "2580"]
+    landUsePlansDataSets = ["2405", "2408", "2457", "2473", "2474", "2476", "2498", "2501", "2502", "2580", "2613", "2614", "2615"]
+    landUsePlansBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.arp.nutzungsplanung/"
+}
+
+def getCheckedOutGitCommitHash() {
+    'git log -1 --pretty=%H'.execute().text.trim()
+}
+
+task buildDockerImage(type: DockerBuildImage) {
+    description = "Build docker edit database image."
+    //inputDir = project.rootDir
+    inputDir = projectDir
+    tags = ["sogis/oereb-edit-db:"+getCheckedOutGitCommitHash(), "sogis/oereb-edit-db:latest"]
+    labels = ["oereb-edit-db.created": new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), 
+            "oereb-edit-db.git_commit": getCheckedOutGitCommitHash(), 
+            "oereb-edit-db.travis_build": getCheckedOutGitCommitHash()]
+}
+
+task createDockerContainer(dependsOn: 'removeDockerContainer', type: DockerCreateContainer) {
+    description = "Create docker edit database container."
+    targetImageId buildDockerImage.getImageId()
+    containerName = "oereb-edit-db"
+    hostName = "primary"
+    portBindings = ["$dbPort:5432"]
+    exposedPorts = [new ExposedPort("tcp", [5432])]
+    envVars.set(["PG_DATABASE": "edit",
+               "PG_LOCALE": "de_CH.UTF-8",
+               "PG_PRIMARY_PORT": "5432",
+               "PG_MODE": "primary",
+               "PG_USER": "admin",
+               "PG_PASSWORD": "admin",
+               "PG_PRIMARY_USER": "repl",
+               "PG_PRIMARY_PASSWORD": "repl",
+               "PG_ROOT_PASSWORD": "secret",
+               "PG_WRITE_USER": "gretl",
+               "PG_WRITE_PASSWORD": "gretl",
+               "PG_READ_USER": "ogc_server",
+               "PG_READ_PASSWORD": "ogc_server"])
+    //binds = ["/tmp":"/data"]
+}
+
+task removeDockerContainer(dependsOn: 'buildDockerImage', type: DockerRemoveContainer) {
+    description = "Remove existing docker edit database container."
+    removeVolumes = true
+    force = true
+    targetContainerId createDockerContainer.containerName 
+
+    onError { exception -> 
+        println exception.message
+    }
+}
+
+task startDockerContainer(dependsOn: 'createDockerContainer', type: DockerStartContainer) {	
+    description = "Start docker edit database container."
+    targetContainerId createDockerContainer.getContainerId()
+
+    finalizedBy {
+        //logDockerContainer
+    }
+}
+
+task startAndWaitOnHealthyContainer(dependsOn: 'startDockerContainer', type: DockerWaitHealthyContainer) {
+    description = "Wait on healthy docker edit database container."
+    targetContainerId createDockerContainer.getContainerId()
+    awaitStatusTimeout = 120
+    checkInterval = 10000
+}
+
+
+task logDockerContainer(type: DockerLogsContainer) {
+    description = "Show docker edit database container logs on standard out."
+    targetContainerId  startDockerContainer.getContainerId()
+    follow = true
+    tailAll = true
+}
+
+task downloadFederalLegalBasis(type: Download) {
+    description = "Download Bundesgesetze ($federalLegalBaseDataSet)."
+    src federalLegalBasisBaseUrl + federalLegalBaseDataSet + ".xml"
+    dest pathToTempFolder
+    overwrite true
+
+    doLast {
+        println "File downloaded to: " + pathToTempFolder
+    }        
+}
+
+task importFederalLegalBasisToOereb(type: Ili2pgReplace, dependsOn: 'downloadFederalLegalBasis') {
+    description = "Import Bundesgesetze ($federalLegalBaseDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelVorschriften
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), federalLegalBaseDataSet + ".xml"))
+    dataset = "ch.admin.bk.gesetze" // Anderes (in diesem Fall beliebig) Dataset, da die dazugehörigen Daten nicht Bestandteil des Transfers (des exportierten Files) sein dürfen.
+    disableValidation = true
+}
+
+task downloadCantonalLegalBasis(type: Download) {
+    description = "Download kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    src cantonalLegalBasisBaseUrl + cantonalLegalBaseDataSet + ".xtf"
+    dest pathToTempFolder
+    overwrite true
+
+    doLast {
+        println "File downloaded to: " + pathToTempFolder
+    }        
+}
+
+task importCantonalLegalBasisToOereb(type: Ili2pgReplace, dependsOn: 'downloadCantonalLegalBasis') {
+    description = "Import kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelVorschriften
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), cantonalLegalBaseDataSet + ".xtf"))
+    dataset = cantonalLegalBaseDataSet // Anderes (in diesem Fall beliebig) Dataset, da die dazugehörigen Daten nicht Bestandteil des Transfers (des exportierten Files) sein dürfen.
+    disableValidation = true
+}
+
+task downloadResponsibleOffices(type: Download) {
+    description = "Download zuständige Stellen ($responsibleOfficesDataSet)."
+    src responsibleOfficesBaseUrl + responsibleOfficesDataSet + ".xtf"
+    dest pathToTempFolder
+    overwrite true
+
+    doLast {
+        println "File downloaded to: " + pathToTempFolder
+    }        
+}
+
+task importResponsibleOfficesToOereb(type: Ili2pgReplace, dependsOn: 'downloadResponsibleOffices') {
+    description = "Import zuständige Stellen ($responsibleOfficesDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelTransferstruktur
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
+    dataset = "ch.so.arp.nutzungsplanung" // Gleiches Dataset wie anschliessend die Daten des Datenumbaues, da Ämterinformationen Bestandteil des Transfers sein müssen. 
+    disableValidation = true
+}
+
+landUsePlansDataSets.each { landUsePlansDataSet ->
+    def dataSet = landUsePlansDataSet.toString()
+    task "downloadLandUsePlansData_$dataSet"(type: Download) {
+        src landUsePlansBaseUrl + dataSet + ".xtf"
+        dest pathToTempFolder
+        overwrite true
+
+        doLast {
+            println "File downloaded to: " + pathToTempFolder
+        }        
+    }
+
+    task "replaceLandUsePlansData_$dataSet"(type: Ili2pgReplace, dependsOn: "downloadLandUsePlansData_$dataSet") {
+        database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+        models = iliModelLandUsePlans
+        dbschema = dbSchemaLandUsePlans
+        dataFile = file(Paths.get(pathToTempFolder.toString(), dataSet + ".xtf"))
+        dataset = dataSet
+        disableValidation = true
+    }
+}
+
+// Aggregationstask
+task replaceLandUsePlansData() {
+    description = "Aggregationstask für Importieren/Ersetzen sämtlicher Nutzungsplanungsdatensätze (im kantonalen Modell)."
+
+    dependsOn {
+        tasks.findAll { task -> task.name.startsWith('replaceLandUsePlansData_') }
+    }
+
+    doLast {
+        println "All dynamic tasks were performed."
+    }
+}
+
+task importData() {
+    description = "Import alle notwendigen Daten."
+
+    dependsOn importFederalLegalBasisToOereb
+    dependsOn importCantonalLegalBasisToOereb
+    dependsOn importResponsibleOfficesToOereb
+    dependsOn replaceLandUsePlansData
+
+    importCantonalLegalBasisToOereb.mustRunAfter(importFederalLegalBasisToOereb)
+    importResponsibleOfficesToOereb.mustRunAfter(importCantonalLegalBasisToOereb)
+    replaceLandUsePlansData.mustRunAfter(importResponsibleOfficesToOereb)
+}
