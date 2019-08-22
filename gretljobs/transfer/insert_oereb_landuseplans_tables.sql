@@ -46,7 +46,10 @@
  * 
  * (7) 'typ_grundnutzung IN' (etc.) filtern Eigentumsbeschränkungen weg, die mit keinem Dokument verknüpft sind.
  * Sind solche Objekte vorhanden, handelt es sich in der Regel um einen Datenfehler in den Ursprungsdaten.
- * 'publiziertab IS NOT NULL' ist filtert Objekte raus, die kein Publikationsdatum haben (Mandatory im Rahmenmodell.)
+ * 'publiziertab IS NOT NULL' filtert Objekte raus, die kein Publikationsdatum haben (Mandatory im Rahmenmodell.)
+ * 
+ * (8) Waldabstandslinien unterscheiden sich nur im Thema/Subthema von den restlichen Linien-Erschliessungsobjekten. 
+ * Aus diesem Grund wird kein separates SELECT gemacht, sondern das Thema/Subthema mit CASE/WHEN behandelt.
  */
 
 INSERT INTO 
@@ -362,15 +365,23 @@ INSERT INTO
 
     UNION ALL
 
-    -- Baulinien
+    -- Baulinien + Waldabstandslinie 
     SELECT
         DISTINCT ON (typ_erschliessung_linienobjekt.t_ili_tid)
         typ_erschliessung_linienobjekt.t_id,
         basket_dataset.basket_t_id,
         basket_dataset.datasetname,
         typ_erschliessung_linienobjekt.bezeichnung AS aussage_de,
-        'Nutzungsplanung' AS thema,
-        'Baulinien' AS subthema,
+        CASE
+            WHEN typ_kt = 'E725_Waldabstandslinie'
+                THEN 'Waldabstandslinien'
+            ELSE 'Nutzungsplanung'
+        END AS thema,
+        CASE
+            WHEN typ_kt = 'E725_Waldabstandslinie'
+                THEN ''::text
+            ELSE 'Baulinien'
+        END AS subthema,
         typ_erschliessung_linienobjekt.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Linienobjekt.'||typ_erschliessung_linienobjekt.t_datasetname AS artcodeliste,
         erschliessung_linienobjekt.rechtsstatus,
@@ -407,6 +418,7 @@ INSERT INTO
             'E722_Gestaltungsbaulinie',
             'E723_Rueckwaertige_Baulinie',
             'E724_Baulinie_Infrastruktur',
+            'E725_Waldabstandslinie',
             'E726_Baulinie_Hecke',
             'E727_Baulinie_Gewaesser',
             'E728_Immissionsstreifen',
@@ -579,7 +591,7 @@ hinweisvorschrift AS
 
         UNION ALL
 
-        -- Baulinien
+        -- Baulinien + Waldabstandslinien
         SELECT
             typ_dokument.t_id,
             typ_dokument.typ_erschliessung_linienobjekt AS eigentumsbeschraenkung,
@@ -1406,6 +1418,14 @@ SET
     darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%Baulinien%')
 WHERE
     subthema = 'Baulinien'
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET 
+    darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%Waldabstandslinien%')
+WHERE
+    thema = 'Waldabstandslinien'
 ;
 
 UPDATE 
