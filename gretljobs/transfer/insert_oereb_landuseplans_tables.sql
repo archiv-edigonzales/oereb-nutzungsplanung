@@ -28,7 +28,8 @@
  * (3) Die Attribute 'publiziertab' und 'rechtsstatus' sind im kantonalen Modell nicht in
  * der Typ-Klasse vorhanden und werden aus diesem Grund für den ÖREB-Kataster
  * ebenfalls von der Geometrie-Klasse verwendet. Der Join führt dazu, dass ein unschönes 
- * Distinct notwendig wird.
+ * Distinct notwendig wird. Und dass für den Typ / für die Eigentumsbeschränkung ein 
+ * willkürliches Datum gewählt wird (falls es unterschiedliche Daten gibt).
  * 
  * (4) Momentan geht man von der Annahme aus, dass bei den diesen Eigentumsbeschränkungen
  * die Gemeinde die zuständige Stelle ist. Falls das nicht mehr zutrifft, muss man die
@@ -50,6 +51,11 @@
  * 
  * (8) Waldabstandslinien unterscheiden sich nur im Thema/Subthema von den restlichen Linien-Erschliessungsobjekten. 
  * Aus diesem Grund wird kein separates SELECT gemacht, sondern das Thema/Subthema mit CASE/WHEN behandelt.
+ *
+ * (9) rechtsstatus = 'inKraft': Die Bedingung hier reicht nicht, damit (später) auch nur die Geometrie verwendet
+ * werden, die 'inKraft' sind. Grund dafür ist, dass es nicht-'inKraft' Geometrien geben kann, die auf einen
+ * Typ zeigen, dem Geometrien zugewiesen sind, die 'inKraft' sind. Nur solche Typen, dem gar keine 'inKraft'
+ * Geometrien zugewiesen sind, werden hier rausgefiltert.
  */
 
 INSERT INTO 
@@ -440,6 +446,7 @@ INSERT INTO
 
     UNION ALL
 
+    -- Laermempfindlichkeit 
     SELECT
         DISTINCT ON (typ_ueberlagernd_flaeche.t_ili_tid)
         typ_ueberlagernd_flaeche.t_id,
@@ -1079,7 +1086,9 @@ INSERT INTO
             typ_grundnutzung AS typ_nutzung
         FROM
             arp_npl.nutzungsplanung_grundnutzung
-        
+        WHERE
+            rechtsstatus = 'inKraft'
+
         UNION ALL
         
         -- Überlagernd (Fläche) + Sondernutzungspläne + Lärmempfindlichkeitsstufen
@@ -1091,6 +1100,8 @@ INSERT INTO
             typ_ueberlagernd_flaeche AS typ_nutzung            
         FROM
             arp_npl.nutzungsplanung_ueberlagernd_flaeche
+        WHERE
+            rechtsstatus = 'inKraft'
     ) AS nutzung
     INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
     ON nutzung.typ_nutzung = eigentumsbeschraenkung.t_id,
@@ -1139,6 +1150,8 @@ INSERT INTO
             typ_ueberlagernd_linie AS typ_nutzung            
         FROM
             arp_npl.nutzungsplanung_ueberlagernd_linie
+        WHERE
+            rechtsstatus = 'inKraft'
 
         UNION ALL
 
@@ -1151,7 +1164,9 @@ INSERT INTO
             typ_erschliessung_linienobjekt AS typ_nutzung            
         FROM
             arp_npl.erschlssngsplnung_erschliessung_linienobjekt
-        WHERE 
+        WHERE
+            rechtsstatus = 'inKraft'
+        AND 
             ST_IsValid(geometrie)
     ) AS nutzung
     INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
@@ -1201,6 +1216,8 @@ INSERT INTO
             typ_ueberlagernd_punkt AS typ_nutzung            
         FROM
             arp_npl.nutzungsplanung_ueberlagernd_punkt
+        WHERE
+            rechtsstatus = 'inKraft'
     ) AS nutzung
     INNER JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
     ON nutzung.typ_nutzung = eigentumsbeschraenkung.t_id,
