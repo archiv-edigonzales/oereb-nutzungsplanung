@@ -88,11 +88,18 @@ task exportLandUsePlansOereb(type: Ili2pgExport) {
 }
 
 task validateLandUsePlansExport(type: IliValidator) {
-    description = "Validiert die exportieren Daten in der Transferstruktur."
+    description = "Validiert die exportieren Daten in der Transferstruktur ohne die externen Beziehungen."
     dataFiles = ["$rootDir/" + xtfFileName]
     logFile = "ilivalidator.log"
     allObjectsAccessible = true
     configFile = "config.toml"
+}
+
+task validateFullLandUsePlansExport(type: IliValidator) {
+    description = "Validiert die exportieren Daten in der Transferstruktur inkl. der externen Beziehungen."
+    dataFiles = ["$rootDir/data/OeREBKRM_V1_1_Gesetze_20180501.xml", "$rootDir/data/ch.so.sk.gesetze.xtf", "$rootDir/" + xtfFileName]
+    logFile = "ilivalidator_full.log"
+    allObjectsAccessible = true
 }
 
 task uploadToS3(type: AmazonS3FileUploadTask) {

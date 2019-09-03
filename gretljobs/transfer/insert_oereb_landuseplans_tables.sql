@@ -11,6 +11,19 @@
  * 'bestehen' und sind einfacher zu behandeln.
  */
 
+/*
+ * Zurücksetzen der Staatskanzlei-TID. Siehe Kommentar am Ende des Umbaues.
+ * 
+ */
+UPDATE 
+    arp_npl_oereb.vorschriften_amt
+SET
+    t_ili_tid = 'ch.so.sk'
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+AND
+    t_ili_tid LIKE 'ch.so.sk.%'
+;
 
 /*
  * Die Eigentumsbeschränkungen können als erstes persistiert werden. Der Umbau der anderen Objekte erfolgt anschliessend.
@@ -1488,4 +1501,31 @@ WHERE
   t_type = 'vorschriften_rechtsvorschrift'
 AND
   vorschriften_dokument.t_datasetname = 'ch.so.arp.nutzungsplanung'
+;
+
+/*
+ * Updaten der Staatskanzlei-TID.
+ * 
+ * Weil im Vorschriftenmodell die Rolle in der Dokumenten-Amt-Beziehung nicht
+ * EXTERNAL ist, taucht jetzt die Staatskanzlei mehrfach auf. Einmal bei den
+ * Gesetzen und dann wohl bei jedem Thema bei den RRB. Applikatorisch ist
+ * das soweit kein Beinbruch, schmerzt aber trotzdem, da man die Daten
+ * nicht mehr komplett auf Modellkonformität prüfen kann (Bundesgesetze + 
+ * kantonale Gesetze + Daten). In diesem Fall gibt es die TID "ch.so.sk" 
+ * mehrfach. Aus diesem Grund muss bei den Daten die TID der Staatskanzlei
+ * jeweils verändert werden. Erst jedoch ganz am Schluss, damit mit beim
+ * Datenumbau selber immer nur auf "ch.so.sk" verweisen kann.
+ * 
+ * Ganz zu Beginn des Umbaues muss aber die nachträglich veränderte TID
+ * wieder zurückgestellt werden.
+ */ 
+
+UPDATE 
+    arp_npl_oereb.vorschriften_amt
+SET
+    t_ili_tid = 'ch.so.sk.'||uuid_generate_v4()
+WHERE
+    t_datasetname = 'ch.so.arp.nutzungsplanung'
+AND
+    t_ili_tid = 'ch.so.sk'
 ;
