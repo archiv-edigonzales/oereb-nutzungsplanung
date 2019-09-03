@@ -65,7 +65,7 @@ AND
  * (8) Waldabstandslinien unterscheiden sich nur im Thema/Subthema von den restlichen Linien-Erschliessungsobjekten. 
  * Aus diesem Grund wird kein separates SELECT gemacht, sondern das Thema/Subthema mit CASE/WHEN behandelt.
  *
- * (9) rechtsstatus = 'inKraft': Die Bedingung hier reicht nicht, damit (später) auch nur die Geometrie verwendet
+ * (9) rechtsstatus = 'inKraft': Die Bedingung hier reicht nicht, damit (später) auch nur die Geometrien verwendet
  * werden, die 'inKraft' sind. Grund dafür ist, dass es nicht-'inKraft' Geometrien geben kann, die auf einen
  * Typ zeigen, dem Geometrien zugewiesen sind, die 'inKraft' sind. Nur solche Typen, dem gar keine 'inKraft'
  * Geometrien zugewiesen sind, werden hier rausgefiltert.
@@ -185,26 +185,32 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung'
         ) AS basket_dataset
     WHERE
-        typ_kt IN 
         (
-            'N510_ueberlagernde_Ortsbildschutzzone',
-            'N523_Landschaftsschutzzone',
-            'N526_kantonale_Landwirtschafts_und_Schutzzone_Witi',
-            'N527_kantonale_Uferschutzzone',
-            'N528_kommunale_Uferschutzzone_ausserhalb_Bauzonen',
-            'N529_weitere_Schutzzonen_fuer_Lebensraeume_und_Landschaften',
-            'N590_Hofstattzone_Freihaltezone',
-            'N591_Bauliche_Einschraenkungen',
-            'N599_weitere_ueberlagernde_Nutzungszonen',
-            'N690_kantonales_Vorranggebiet_Natur_und_Landschaft',
-            'N691_kommunales_Vorranggebiet_Natur_und_Landschaft',
-            'N692_Planungszone',
-            'N699_weitere_flaechenbezogene_Festlegungen_NP',
-            'N812_geologisches_Objekt',
-            'N813_Naturobjekt',
-            'N822_schuetzenswertes_Kulturobjekt',
-            'N823_erhaltenswertes_Kulturobjekt'
-        )
+            typ_kt IN 
+            (
+                'N510_ueberlagernde_Ortsbildschutzzone',
+                'N523_Landschaftsschutzzone',
+                'N526_kantonale_Landwirtschafts_und_Schutzzone_Witi',
+                'N527_kantonale_Uferschutzzone',
+                'N528_kommunale_Uferschutzzone_ausserhalb_Bauzonen',
+                'N529_weitere_Schutzzonen_fuer_Lebensraeume_und_Landschaften',
+                'N590_Hofstattzone_Freihaltezone',
+                'N591_Bauliche_Einschraenkungen',
+                'N690_kantonales_Vorranggebiet_Natur_und_Landschaft',
+                'N691_kommunales_Vorranggebiet_Natur_und_Landschaft',
+                'N692_Planungszone',
+                'N699_weitere_flaechenbezogene_Festlegungen_NP',
+                'N812_geologisches_Objekt',
+                'N813_Naturobjekt',
+                'N822_schuetzenswertes_Kulturobjekt',
+                'N823_erhaltenswertes_Kulturobjekt'
+            )
+            OR
+            (
+                typ_kt = 'N599_weitere_ueberlagernde_Nutzungszonen' AND verbindlichkeit = 'Nutzungsplanfestlegung'
+    
+            ) 
+       )     
         AND
         typ_ueberlagernd_flaeche.t_id IN 
         (
@@ -253,9 +259,8 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung'
         ) AS basket_dataset
     WHERE
-        typ_kt IN 
         (
-            'N799_weitere_linienbezogene_Festlegungen_NP'
+            typ_kt = 'N799_weitere_linienbezogene_Festlegungen_NP' AND verbindlichkeit = 'Nutzungsplanfestlegung'
         )
         AND
         typ_ueberlagernd_linie.t_id IN 
@@ -305,14 +310,19 @@ INSERT INTO
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung'
         ) AS basket_dataset
     WHERE
-        typ_kt IN 
         (
-        'N811_erhaltenswerter_Einzelbaum',
-        'N820_kantonal_geschuetztes_Kulturobjekt',
-        'N821_kommunal_geschuetztes_Kulturobjekt',
-        'N822_schuetzenswertes_Kulturobjekt',
-        'N823_erhaltenswertes_Kulturobjekt',
-        'N899_weitere_punktbezogene_Festlegungen_NP'
+            typ_kt IN 
+            (
+                'N811_erhaltenswerter_Einzelbaum',
+                'N820_kantonal_geschuetztes_Kulturobjekt',
+                'N822_schuetzenswertes_Kulturobjekt',
+                'N823_erhaltenswertes_Kulturobjekt'
+            )
+            OR
+            (
+                typ_kt = 'N899_weitere_punktbezogene_Festlegungen_NP' AND verbindlichkeit = 'Nutzungsplanfestlegung'
+    
+            )   
         )
         AND
         typ_ueberlagernd_punkt.t_id IN 
@@ -514,6 +524,49 @@ INSERT INTO
         ueberlagernd_flaeche.publiziertab IS NOT NULL   
         AND
         ueberlagernd_flaeche.rechtsstatus = 'inKraft'
+;
+
+/*
+ * Update (Korrektur) der zuständigen Stellen.
+ * 
+ * Die zuständige Stelle einiger Typen ist nicht die Gemeinden, sondern ein
+ * kantonales Amt (ARP oder AVT). Der Einfachheithalber wird zuerst alles
+ * der Gemeinde zugewissen (obere Query). Mit einem Update werden den 
+ * einzelnen Typen die korrekte zuständige Stelle zugewiesen.
+ */
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET
+    zustaendigestelle = subquery.t_id
+FROM
+(
+    SELECT 
+        t_id 
+    FROM 
+        arp_npl_oereb.vorschriften_amt
+    WHERE
+        t_ili_tid = 'ch.so.arp'
+) AS subquery
+WHERE
+    substring(artcode, 1, 3) IN ('526', '527', '610', '690')
+;
+
+UPDATE 
+    arp_npl_oereb.transferstruktur_eigentumsbeschraenkung
+SET
+    zustaendigestelle = subquery.t_id
+FROM
+(
+    SELECT 
+        t_id 
+    FROM 
+        arp_npl_oereb.vorschriften_amt
+    WHERE
+        t_ili_tid = 'ch.so.avt'
+) AS subquery
+WHERE
+    substring(artcode, 1, 3) IN ('711', '712', '713', '714', '715', '719')
 ;
 
 /*

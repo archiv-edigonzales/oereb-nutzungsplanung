@@ -43,6 +43,7 @@ ext {
     cantonalLegalBaseDataSet = "ch.so.sk.gesetze"
 
     responsibleOfficesBaseUrl = "https://geo.so.ch/geodata/ch.so.agi.zustaendigestellen.oereb/"
+    //responsibleOfficesBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.agi.zustaendigestellen.oereb/"
     responsibleOfficesDataSet = "ch.so.agi.zustaendigestellen"
 
     dbPort = "54322"
