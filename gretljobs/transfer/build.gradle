@@ -105,7 +105,7 @@ task validateFullLandUsePlansExport(type: IliValidator) {
 task uploadToS3(type: AmazonS3FileUploadTask) {
     description = "Hochladen der exportierten Datei auf S3."
 	file file("$rootDir/" + xtfFileName) 
-	bucketName "ch.so.arp.nutzungsplanung.oereb-dev"
+	bucketName "ch.so.arp.nutzungsplanung.oereb"
 	key xtfFileName
 
 	def m = new ObjectMetadata()
