@@ -69,6 +69,11 @@ AND
  * werden, die 'inKraft' sind. Grund dafür ist, dass es nicht-'inKraft' Geometrien geben kann, die auf einen
  * Typ zeigen, dem Geometrien zugewiesen sind, die 'inKraft' sind. Nur solche Typen, dem gar keine 'inKraft'
  * Geometrien zugewiesen sind, werden hier rausgefiltert.
+ *
+ * (10) Ebenfalls reicht die Bedingung 'inKraft' bei den Dokumenten nicht. Hier werden nur Typen rausgefiltert, die 
+ * nur Dokumente angehängt haben, die NICHT inKraft sind. Sind bei einem Typ aber sowohl inKraft wie auch nicht-
+ * inKraft-Dokumente angehängt, wird korrekterweise der Typ trotzdem verwendet. Bei den Dokumenten muss der
+ * Filter nochmals gesetzt werden.
  */
 
 INSERT INTO 
@@ -94,7 +99,7 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_grundnutzung.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'NutzungsplanungGrundnutzung' AS subthema,
+        'ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung' AS subthema,
         typ_grundnutzung.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Grundnutzung.'||typ_grundnutzung.t_datasetname AS artcodeliste,
         grundnutzung.rechtsstatus,
@@ -144,7 +149,11 @@ INSERT INTO
                 DISTINCT ON (typ_grundnutzung) 
                 typ_grundnutzung
             FROM
-                arp_npl.nutzungsplanung_typ_grundnutzung_dokument
+                arp_npl.nutzungsplanung_typ_grundnutzung_dokument AS typ_grundnutzung_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_grundnutzung_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'        
         )  
         AND
         grundnutzung.publiziertab IS NOT NULL
@@ -161,7 +170,7 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_ueberlagernd_flaeche.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'NutzungsplanungUeberlagernd' AS subthema,
+        'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_flaeche.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Flaeche.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
         ueberlagernd_flaeche.rechtsstatus,
@@ -218,7 +227,11 @@ INSERT INTO
                 DISTINCT ON (typ_ueberlagernd_flaeche) 
                 typ_ueberlagernd_flaeche
             FROM
-                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument AS typ_ueberlagernd_flaeche_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_ueberlagernd_flaeche_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND 
         ueberlagernd_flaeche.publiziertab IS NOT NULL
@@ -235,7 +248,7 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_ueberlagernd_linie.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'NutzungsplanungUeberlagernd' AS subthema,
+        'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_linie.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Linie.'||typ_ueberlagernd_linie.t_datasetname AS artcodeliste,
         ueberlagernd_linie.rechtsstatus,
@@ -269,7 +282,11 @@ INSERT INTO
                 DISTINCT ON (typ_ueberlagernd_linie) 
                 typ_ueberlagernd_linie
             FROM
-                arp_npl.nutzungsplanung_typ_ueberlagernd_linie_dokument
+                arp_npl.nutzungsplanung_typ_ueberlagernd_linie_dokument AS typ_ueberlagernd_linie_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_ueberlagernd_linie_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND 
         ueberlagernd_linie.publiziertab IS NOT NULL
@@ -286,7 +303,7 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_ueberlagernd_punkt.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'NutzungsplanungUeberlagernd' AS subthema,
+        'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd' AS subthema,
         typ_ueberlagernd_punkt.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Punkt.'||typ_ueberlagernd_punkt.t_datasetname AS artcodeliste,
         ueberlagernd_punkt.rechtsstatus,
@@ -331,7 +348,11 @@ INSERT INTO
                 DISTINCT ON (typ_ueberlagernd_punkt) 
                 typ_ueberlagernd_punkt
             FROM
-                arp_npl.nutzungsplanung_typ_ueberlagernd_punkt_dokument
+                arp_npl.nutzungsplanung_typ_ueberlagernd_punkt_dokument AS typ_ueberlagernd_punkt_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_ueberlagernd_punkt_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND 
         ueberlagernd_punkt.publiziertab IS NOT NULL
@@ -348,7 +369,7 @@ INSERT INTO
         basket_dataset.datasetname,
         typ_ueberlagernd_flaeche.bezeichnung AS aussage_de,
         'Nutzungsplanung' AS thema,
-        'NutzungsplanungSondernutzungsplaene' AS subthema,
+        'ch.so.Nutzungsplanung.NutzungsplanungSondernutzungsplaene' AS subthema,
         typ_ueberlagernd_flaeche.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Ueberlagernd_Flaeche.'||typ_ueberlagernd_flaeche.t_datasetname AS artcodeliste,
         ueberlagernd_flaeche.rechtsstatus,
@@ -385,7 +406,11 @@ INSERT INTO
                 DISTINCT ON (typ_ueberlagernd_flaeche) 
                 typ_ueberlagernd_flaeche
             FROM
-                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument AS typ_ueberlagernd_flaeche_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_ueberlagernd_flaeche_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND 
         ueberlagernd_flaeche.publiziertab IS NOT NULL    
@@ -409,7 +434,7 @@ INSERT INTO
         CASE
             WHEN typ_kt = 'E725_Waldabstandslinie'
                 THEN ''::text
-            ELSE 'Baulinien'
+            ELSE 'ch.so.Nutzungsplanung.Baulinien'
         END AS subthema,
         typ_erschliessung_linienobjekt.code_kommunal AS artcode,
         'urn:fdc:ilismeta.interlis.ch:2017:NP_Typ_Kanton_Erschliessung_Linienobjekt.'||typ_erschliessung_linienobjekt.t_datasetname AS artcodeliste,
@@ -460,7 +485,11 @@ INSERT INTO
                 DISTINCT ON (typ_erschliessung_linienobjekt) 
                 typ_erschliessung_linienobjekt
             FROM
-                arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt_dokument
+                arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt_dokument AS typ_erschliessung_linienobjekt_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_erschliessung_linienobjekt_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND
         erschliessung_linienobjekt.publiziertab IS NOT NULL 
@@ -518,7 +547,11 @@ INSERT INTO
                 DISTINCT ON (typ_ueberlagernd_flaeche) 
                 typ_ueberlagernd_flaeche
             FROM
-                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument
+                arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument AS typ_ueberlagernd_flaeche_dokument
+                LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+                ON dokument.t_id = typ_ueberlagernd_flaeche_dokument.dokument
+            WHERE
+                dokument.rechtsstatus = 'inKraft'
         )  
         AND 
         ueberlagernd_flaeche.publiziertab IS NOT NULL   
@@ -599,6 +632,11 @@ WHERE
  * wird eine Where-Clause verwendet (dokument.t_id IS NOT NULL). 
  * 2019-08-03 / sz: Wieder entfernt, da man diese Daten bereits ganz zu Beginn (erste 
  * Query) rausfiltern muss.
+ * 
+ * (5) In der 'hinweisvorschrift'-Query werden nur diejenigen Dokumente verwendet, die
+ * inKraft sind. Durch den RIGHT JOIN in der Query 'vorschriften_dokument' werden
+ * dann ebenfalls nur die Dokumente selektiert, die inKraft sind. Ein weiterer Filter
+ * ist hier unnötig.
  */
 
 WITH basket_dataset AS 
@@ -631,6 +669,10 @@ hinweisvorschrift AS
             typ_dokument.dokument AS vorschrift_vorschriften_dokument
         FROM
             arp_npl.nutzungsplanung_typ_grundnutzung_dokument AS typ_dokument
+            LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+            ON dokument.t_id = typ_dokument.dokument
+        WHERE
+            dokument.rechtsstatus = 'inKraft'
             
         UNION ALL
         
@@ -641,6 +683,10 @@ hinweisvorschrift AS
             typ_dokument.dokument AS vorschrift_vorschriften_dokument
         FROM
             arp_npl.nutzungsplanung_typ_ueberlagernd_flaeche_dokument AS typ_dokument
+            LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+            ON dokument.t_id = typ_dokument.dokument
+        WHERE
+            dokument.rechtsstatus = 'inKraft'
 
         UNION ALL
         
@@ -651,6 +697,10 @@ hinweisvorschrift AS
             typ_dokument.dokument AS vorschrift_vorschriften_dokument
         FROM
             arp_npl.nutzungsplanung_typ_ueberlagernd_linie_dokument AS typ_dokument
+            LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+            ON dokument.t_id = typ_dokument.dokument
+        WHERE
+            dokument.rechtsstatus = 'inKraft'
 
         UNION ALL
 
@@ -661,6 +711,10 @@ hinweisvorschrift AS
             typ_dokument.dokument AS vorschrift_vorschriften_dokument
         FROM
             arp_npl.nutzungsplanung_typ_ueberlagernd_punkt_dokument AS typ_dokument
+            LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+            ON dokument.t_id = typ_dokument.dokument
+        WHERE
+            dokument.rechtsstatus = 'inKraft'
 
         UNION ALL
 
@@ -671,6 +725,10 @@ hinweisvorschrift AS
             typ_dokument.dokument AS vorschrift_vorschriften_dokument
         FROM
             arp_npl.erschlssngsplnung_typ_erschliessung_linienobjekt_dokument AS typ_dokument
+            LEFT JOIN arp_npl.rechtsvorschrften_dokument AS dokument
+            ON dokument.t_id = typ_dokument.dokument
+        WHERE
+            dokument.rechtsstatus = 'inKraft'
     ) AS t_typ_dokument
     RIGHT JOIN arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
     ON t_typ_dokument.eigentumsbeschraenkung = eigentumsbeschraenkung.t_id,
@@ -805,6 +863,13 @@ FROM
  * man die Beziehung in 'transferstruktur_hinweisvorschrift' einfügen muss. Sonst geht dieses
  * Wissen verloren. Braucht auch noch einen Filter beim Inserten dieser Beziehung, sonst kommen
  * ebenfalls die bereits direkt verlinkten.
+ * 
+ * (6) Weil jetzt in der Tabelle 'arp_npl_oereb.vorschriften_dokument' nur noch (vorangehende Query)
+ * die inKraft-Dokumente sind, weiss ich nicht genau, was passiert wenn ein nicht-inKraft-
+ * Dokument irgendwo zwischen zwei inKraft-Dokumenten bei der Rekursion zu liegen kommt.
+ * Ich bin nicht sicher, ob die 'ursprung' und 'hinweis'-Filter im zweiten Teil der
+ * rekursiven Query etwas bewirken.
+ * Müsste man anhand eines einfachen Beispieles ausprobieren.
  */
 
 
@@ -829,6 +894,15 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
         WHERE
             t_datasetname = 'ch.so.arp.nutzungsplanung'
     )
+    AND hinweis IN 
+    (
+        SELECT
+            t_id
+        FROM
+            arp_npl_oereb.vorschriften_dokument
+        WHERE
+            t_datasetname = 'ch.so.arp.nutzungsplanung'
+    )
 
     UNION ALL
   
@@ -844,8 +918,25 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
         ON (last_ursprung = t1.ursprung)
     WHERE 
         t1.hinweis IS NOT NULL
-)
-,
+    AND x.ursprung IN 
+    (
+        SELECT
+            t_id
+        FROM
+            arp_npl_oereb.vorschriften_dokument
+        WHERE
+            t_datasetname = 'ch.so.arp.nutzungsplanung'
+    )
+    AND x.hinweis IN 
+    (
+        SELECT
+            t_id
+        FROM
+            arp_npl_oereb.vorschriften_dokument
+        WHERE
+            t_datasetname = 'ch.so.arp.nutzungsplanung'
+    )
+),
 zusaetzliche_dokumente AS 
 (
     SELECT 
@@ -1331,10 +1422,10 @@ WITH transferstruktur_darstellungsdienst AS
         SELECT
             basket_dataset.basket_t_id AS t_basket,
             basket_dataset.datasetname AS t_datasetname,
-            --'https://geo-t.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
-            --'https://geo-t.so.ch/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
-            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
-            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER=ch.so.'||RTRIM(TRIM((thema||'.'||subthema||'.'||geometrietyp)), '.') AS legendeimweb
+            --'https://geo-t.so.ch/wms/oereb?
+            --'https://geo-t.so.ch/wms/oereb?
+            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS='||RTRIM(TRIM((layername||'.'||geometrietyp)), '.')||'&STYLES=&SRS=EPSG%3A2056&CRS=EPSG%3A2056&DPI=96&WIDTH=1200&HEIGHT=1146&BBOX=2591250%2C1211350%2C2646050%2C1263700' AS verweiswms,
+            'http://wms:80/wms/oereb?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphics&FORMAT=image/png&LAYER='||RTRIM(TRIM((layername||'.'||geometrietyp)), '.') AS legendeimweb
         FROM
         (
             SELECT 
@@ -1343,13 +1434,17 @@ WITH transferstruktur_darstellungsdienst AS
                 subthema,
                 CASE 
                     WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Grundnutzung%' THEN ''
-                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungUeberlagernd') THEN 'Flaeche'
-                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungSondernutzungsplaene') THEN ''
+                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd') THEN 'Flaeche'
+                    WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'ch.so.Nutzungsplanung.NutzungsplanungSondernutzungsplaene') THEN ''
                     WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%' THEN 'Linie'
                     WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%' THEN 'Punkt'
                     WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Flaechenobjekt%' THEN ''
                     WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Linienobjekt%' THEN ''
-                END AS geometrietyp
+                END AS geometrietyp,
+                CASE 
+                    WHEN subthema != ''::text THEN subthema
+                    ELSE 'ch.so.'||thema
+                END AS layername
             FROM
                 arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung 
         ) AS eigentumsbeschraenkung,
@@ -1364,7 +1459,6 @@ WITH transferstruktur_darstellungsdienst AS
             WHERE
                 dataset.datasetname = 'ch.so.arp.nutzungsplanung' 
         ) AS basket_dataset
-
     RETURNING *
 )
 INSERT INTO 
@@ -1408,8 +1502,8 @@ INSERT INTO
             eigentumsbeschraenkung.subthema,
             CASE 
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Grundnutzung%' THEN ''
-                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungUeberlagernd') THEN 'Flaeche'
-                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'NutzungsplanungSondernutzungsplaene') THEN ''
+                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd') THEN 'Flaeche'
+                WHEN (artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%' AND subthema = 'ch.so.Nutzungsplanung.NutzungsplanungSondernutzungsplaene') THEN ''
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%' THEN 'Linie'
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%' THEN 'Punkt'
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Flaechenobjekt%' THEN ''
@@ -1427,7 +1521,7 @@ UPDATE
 SET 
     darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungGrundnutzung%')
 WHERE
-    subthema = 'NutzungsplanungGrundnutzung'
+    subthema = 'ch.so.Nutzungsplanung.NutzungsplanungGrundnutzung'
 ;
 
 UPDATE 
@@ -1443,7 +1537,7 @@ WHERE
         FROM
             arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
-            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+            eigentumsbeschraenkung.subthema = 'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd'
         AND
             artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Flaeche%'
     )
@@ -1462,7 +1556,7 @@ WHERE
         FROM
             arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
-            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+            eigentumsbeschraenkung.subthema = 'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd'
         AND
             artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Linie%'
     )
@@ -1481,7 +1575,7 @@ WHERE
         FROM
             arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung
         WHERE
-            eigentumsbeschraenkung.subthema = 'NutzungsplanungUeberlagernd'
+            eigentumsbeschraenkung.subthema = 'ch.so.Nutzungsplanung.NutzungsplanungUeberlagernd'
         AND
             artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%'
     )
@@ -1492,7 +1586,7 @@ UPDATE
 SET 
     darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%NutzungsplanungSondernutzungsplaene%')
 WHERE
-    subthema = 'NutzungsplanungSondernutzungsplaene'
+    subthema = 'ch.so.Nutzungsplanung.NutzungsplanungSondernutzungsplaene'
 ;
 
 UPDATE 
@@ -1500,7 +1594,7 @@ UPDATE
 SET 
     darstellungsdienst = (SELECT t_id FROM arp_npl_oereb.transferstruktur_darstellungsdienst WHERE verweiswms ILIKE '%Baulinien%')
 WHERE
-    subthema = 'Baulinien'
+    subthema = 'ch.so.Nutzungsplanung.Baulinien'
 ;
 
 UPDATE 
