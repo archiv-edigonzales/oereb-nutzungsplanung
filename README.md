@@ -26,20 +26,14 @@ Es müssen folgende Daten in die Edit-DB importiert werden, damit der Datenumbau
 - Nutzungsplanung im kantonalen Modell
 
 ```
-gradle -I $PWD/init.gradle -b initdb/build.gradle importFederalLegalBasisToOereb importCantonalLegalBasisToOereb importResponsibleOfficesToOereb replaceLandUsePlansData
-```
-
-oder
-
-```
-gradle -I $PWD/init.gradle -b initdb/build.gradle importData
+gradle -I $PWD/init.gradle -b initdb/build.gradle replaceLandUsePlansData
 ```
 
 ### (3) Datenumbau und -export
 Die Daten werden mit einem `SQLExecutor`-Task umgebaut und anschliessend in die Transferstruktur exportiert, geprüft und auf S3 hochgeladen. 
 
 ```
-gradle -I $PWD/init.gradle -b transfer/build.gradle insertToOereb updateSymbols exportLandUsePlansOereb validateFullLandUsePlansExport uploadToS3
+gradle -I $PWD/init.gradle -b transfer/build.gradle deleteFromOereb importFederalLegalBasisToOereb importCantonalLegalBasisToOereb importResponsibleOfficesToOereb insertToOereb updateSymbols exportLandUsePlansOereb validateFullLandUsePlansExport uploadToS3
 ```
 
 ## ÖREB-Datenbank mit Daten

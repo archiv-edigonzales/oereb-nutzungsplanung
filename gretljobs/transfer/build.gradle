@@ -23,17 +23,80 @@ ext {
     dbUserEdit = "gretl"
     dbPwdEdit = "gretl"
 
+    pathToTempFolder = System.getProperty("java.io.tmpdir")
+
+    iliModelVorschriften = "OeREBKRMvs_V1_1"
     iliModelTransferstruktur = "OeREBKRMtrsfr_V1_1"
     dbSchemaLandUsePlansOereb = "arp_npl_oereb"
 
     symbolsWmsBaseUrl = "https://geo-t.so.ch"
 
     xtfFileName = "ch.so.arp.nutzungsplanung.oereb.xtf"
+
+    federalLegalBasisBaseUrl = "http://models.geo.admin.ch/V_D/OeREB/"
+    federalLegalBaseDataSet = "OeREBKRM_V1_1_Gesetze_20180501"
+
+    cantonalLegalBasisBaseUrl = "https://geo.so.ch/geodata/ch.so.sk.gesetze.oereb/"
+    cantonalLegalBaseDataSet = "ch.so.sk.gesetze"
+
+    responsibleOfficesBaseUrl = "https://geo.so.ch/geodata/ch.so.agi.zustaendigestellen.oereb/"
+    responsibleOfficesDataSet = "ch.so.agi.zustaendigestellen"
 }
 
 aws {
 	profileName = "default"
 	region = "eu-central-1"
+}
+
+task downloadFederalLegalBasis(type: Download) {
+    description = "Download Bundesgesetze ($federalLegalBaseDataSet)."
+    src federalLegalBasisBaseUrl + federalLegalBaseDataSet + ".xml"
+    dest pathToTempFolder
+    overwrite true      
+}
+
+task importFederalLegalBasisToOereb(type: Ili2pgReplace, dependsOn: 'downloadFederalLegalBasis') {
+    description = "Import Bundesgesetze ($federalLegalBaseDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelVorschriften
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), federalLegalBaseDataSet + ".xml"))
+    dataset = "ch.admin.bk.gesetze" 
+    disableValidation = true
+}
+
+task downloadCantonalLegalBasis(type: Download) {
+    description = "Download kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    src cantonalLegalBasisBaseUrl + cantonalLegalBaseDataSet + ".xtf"
+    dest pathToTempFolder
+    overwrite true    
+}
+
+task importCantonalLegalBasisToOereb(type: Ili2pgReplace, dependsOn: 'downloadCantonalLegalBasis') {
+    description = "Import kantonale Gesetze ($cantonalLegalBaseDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelVorschriften
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), cantonalLegalBaseDataSet + ".xtf"))
+    dataset = cantonalLegalBaseDataSet 
+    disableValidation = true
+}
+
+task downloadResponsibleOffices(type: Download) {
+    description = "Download zuständige Stellen ($responsibleOfficesDataSet)."
+    src responsibleOfficesBaseUrl + responsibleOfficesDataSet + ".xtf"
+    dest pathToTempFolder
+    overwrite true       
+}
+
+task importResponsibleOfficesToOereb(type: Ili2pgReplace, dependsOn: 'downloadResponsibleOffices') {
+    description = "Import zuständige Stellen ($responsibleOfficesDataSet)."
+    database = [dbUriEdit, dbUserEdit, dbPwdEdit]
+    models = iliModelTransferstruktur
+    dbschema = dbSchemaLandUsePlansOereb
+    dataFile = file(Paths.get(pathToTempFolder.toString(), responsibleOfficesDataSet + ".xtf"))
+    dataset = "ch.so.arp.nutzungsplanung"
+    disableValidation = true
 }
 
 task deleteFromOereb(type: SqlExecutor) {
