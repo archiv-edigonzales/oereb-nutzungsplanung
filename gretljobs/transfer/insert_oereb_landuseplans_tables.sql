@@ -1508,7 +1508,11 @@ INSERT INTO
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Ueberlagernd_Punkt%' THEN 'Punkt'
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Flaechenobjekt%' THEN ''
                 WHEN artcodeliste ILIKE '%NP_Typ_Kanton_Erschliessung_Linienobjekt%' THEN ''
-            END AS geometrietyp
+            END AS geometrietyp,
+            CASE 
+                WHEN subthema != ''::text THEN subthema
+                ELSE 'ch.so.'||thema
+            END AS layername
         FROM
             arp_npl_oereb.transferstruktur_eigentumsbeschraenkung AS eigentumsbeschraenkung 
     ) AS eigentumsbeschraenkung
