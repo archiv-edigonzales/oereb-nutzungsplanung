@@ -20,9 +20,6 @@ Startet einen Docker-Container mit einer PostgreSQL/PostGIS-DB, welche die Edit-
 ### (2) Import der notwendigen Daten:
 Es müssen folgende Daten in die Edit-DB importiert werden, damit der Datenumbau durchgeführt werden kann und Daten modellkonform in die Transferstruktur exportiert werden können:
 
-- Bundesgesetze und -Verordnungen
-- Kantonale Gesetzt und Verordnungen
-- Zuständige Stellen
 - Nutzungsplanung im kantonalen Modell
 
 ```
