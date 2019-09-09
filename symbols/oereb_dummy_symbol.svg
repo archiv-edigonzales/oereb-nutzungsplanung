@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   sodipodi:docname="dummy_symbol.svg">
+   sodipodi:docname="oereb_dummy_symbol.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,17 +25,30 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="310.22756"
-     inkscape:cy="738.6296"
+     inkscape:zoom="3.959798"
+     inkscape:cx="287.53942"
+     inkscape:cy="785.87948"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1544"
-     inkscape:window-height="1017"
-     inkscape:window-x="449"
-     inkscape:window-y="269"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="2034"
+     inkscape:window-height="1133"
+     inkscape:window-x="132"
+     inkscape:window-y="46"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="43.097211,230.05224"
+       orientation="0,1"
+       id="guide819"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="30.001004,221.23236"
+       orientation="1,0"
+       id="guide821"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -44,7 +57,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -53,30 +66,31 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;stroke:#ff0000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;paint-order:normal"
+       style="fill:#ffffff;stroke:#ff0000;stroke-width:3.65227509;stroke-miterlimit:4;stroke-dasharray:none;paint-order:normal"
        id="rect10"
-       width="70"
-       height="35"
-       x="43.845234"
-       y="77.547607"
+       width="65.737328"
+       height="31.071413"
+       x="31.844696"
+       y="68.821114"
        inkscape:export-filename="/Users/stefan/text4508.png"
        inkscape:export-xdpi="22.794876"
        inkscape:export-ydpi="22.794876" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:21.23274803px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.5308187"
-       x="47.999519"
-       y="102.85347"
+       style="font-style:normal;font-weight:normal;font-size:19.38695717px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.48467395"
+       x="34.754974"
+       y="93.889526"
        id="text4508"
        inkscape:export-filename="/Users/stefan/text4508.png"
        inkscape:export-xdpi="22.794876"
-       inkscape:export-ydpi="22.794876"><tspan
+       inkscape:export-ydpi="22.794876"
+       transform="scale(1.0285147,0.97227582)"><tspan
          sodipodi:role="line"
          id="tspan4506"
-         x="47.999519"
-         y="102.85347"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Barlow Semi Condensed';-inkscape-font-specification:'Barlow Semi Condensed,  Bold';stroke-width:0.5308187"><tspan
-           style="fill:#ff0000;stroke-width:0.5308187"
+         x="34.754974"
+         y="93.889526"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Barlow Semi Condensed';-inkscape-font-specification:'Barlow Semi Condensed,  Bold';stroke-width:0.48467395"><tspan
+           style="fill:#ff0000;stroke-width:0.48467395"
            id="tspan4512">DUMMY</tspan></tspan></text>
   </g>
 </svg>
