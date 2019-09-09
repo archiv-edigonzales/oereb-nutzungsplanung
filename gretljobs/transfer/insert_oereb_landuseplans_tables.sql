@@ -894,15 +894,6 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
         WHERE
             t_datasetname = 'ch.so.arp.nutzungsplanung'
     )
-    AND hinweis IN 
-    (
-        SELECT
-            t_id
-        FROM
-            arp_npl_oereb.vorschriften_dokument
-        WHERE
-            t_datasetname = 'ch.so.arp.nutzungsplanung'
-    )
 
     UNION ALL
   
@@ -919,15 +910,6 @@ WITH RECURSIVE x(ursprung, hinweis, parents, last_ursprung, depth) AS
     WHERE 
         t1.hinweis IS NOT NULL
     AND x.ursprung IN 
-    (
-        SELECT
-            t_id
-        FROM
-            arp_npl_oereb.vorschriften_dokument
-        WHERE
-            t_datasetname = 'ch.so.arp.nutzungsplanung'
-    )
-    AND x.hinweis IN 
     (
         SELECT
             t_id
