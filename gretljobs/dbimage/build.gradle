@@ -76,6 +76,7 @@ ext {
     landRegisterSubunitDataSet = "ch.so.agi.av-gb-administrative-einteilung"
 
     annexBaseUrl = "https://s3.eu-central-1.amazonaws.com/ch.so.agi.oereb-extract-annex/"
+    //annexBaseUrl = "https://geo.so.ch/geodata/ch.so.agi.extractannex.oereb/"
     annexDataSets = [
         "ch.so.agi.OeREB_extractAnnex-Stammdaten",
         "ch.so.agi.OeREB_extractAnnex-KatatasterAmt",
@@ -439,7 +440,7 @@ task replaceLandUsePlansData(type: Ili2pgReplace, dependsOn: downloadLandUsePlan
 
 task refreshMaterializedViews(type: SqlExecutor) {
     description = "Rechnet sämtliche materialisierten Views neu."
-    database = [dbUriOereb, "admin", "admin"]
+    database = [dbUriOereb, "gretl", "gretl"]
     sqlFiles = ["refresh_materialized_views.sql"]
 } 
 
